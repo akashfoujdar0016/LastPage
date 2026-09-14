@@ -460,3 +460,27 @@ export function isActivityLiked(activityId) {
   } catch {}
   return false;
 }
+
+// Search peers/friends by query across username, displayName, and bio
+export function searchUsers(query = '', excludeUsername = '') {
+  const cleanQ = (query || '').trim().toLowerCase();
+  const followingList = getFollowingList();
+
+  return PEER_USERS
+    .filter(u => {
+      if (excludeUsername && u.username.toLowerCase() === excludeUsername.toLowerCase()) {
+        return false;
+      }
+      if (!cleanQ) return true;
+      return (
+        u.username.toLowerCase().includes(cleanQ) ||
+        (u.displayName && u.displayName.toLowerCase().includes(cleanQ)) ||
+        (u.bio && u.bio.toLowerCase().includes(cleanQ))
+      );
+    })
+    .map(u => ({
+      ...u,
+      isFollowing: followingList.includes(u.username),
+    }));
+}
+

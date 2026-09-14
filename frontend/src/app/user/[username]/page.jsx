@@ -5,16 +5,11 @@ import Link from 'next/link';
 import {
   Heart,
   Star,
-  Check,
   MessageSquare,
   ArrowLeft,
-  Calendar,
   Film,
   BookOpen,
   ArrowUpRight,
-  UserCheck,
-  UserPlus,
-  Share2,
 } from 'lucide-react';
 import {
   getUserByUsername,

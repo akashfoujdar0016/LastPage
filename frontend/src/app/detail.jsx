@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Heart, Star, Check, ArrowLeft, Calendar } from 'lucide-react';
+import { Heart, Star, Check, ArrowLeft } from 'lucide-react';
 import { api, getToken } from '../lib/api';
 import { CURATED_MOVIES, CURATED_BOOKS } from '../lib/curatedCatalogue';
 import { recordActivity, formatLogDate } from '../lib/activityStore';

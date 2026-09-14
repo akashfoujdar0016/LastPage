@@ -7,7 +7,6 @@ import { getUserWatchlist } from '../../lib/activityStore';
 
 export default function WatchlistPage() {
   const [items, setItems] = useState([]);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const loadItems = () => {
     setItems(getUserWatchlist('MOVIE'));

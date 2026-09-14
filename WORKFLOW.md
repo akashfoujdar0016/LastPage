@@ -1,141 +1,207 @@
-# LastPage — User & System Workflow
-Version 1.0 — MongoDB Atlas + Vercel
+# LastPage — User & System Workflow Specification
+**Version 2.5 — Production Reference · Next.js 15 · Tailwind CSS · MongoDB Atlas · Vercel**
 
 ---
 
-## 1. GLOBAL ENTRY
-Landing → Browse Movies/Books → Sign Up / Sign In → Hub (choose section) → Movies or Books.
-Guest users can browse, search, and view public detail pages. Authenticated users get full actions (rate, review, track, follow).
+## 1. GLOBAL ENTRY & PORTAL GATEWAY
 
-## 2. GLOBAL ACTION FLOW
-User action → authentication check → authorization check → Zod validation → MongoDB write → aggregate counter update → activity entry (where applicable) → notification (where applicable) → updated state returned → frontend UI update.
+```
+Landing Page (/) [Single Viewport]
+  ├── Left: Brand Statement + Direct Gateways ("Cinema" & "Library")
+  └── Right: AuthCard (Sign In / Create Account)
+        │
+        ▼
+  Atmospheric Portal (/hub)
+        ├── [Cinema Portal Card]  ──>  Cinema Journal (/movies)
+        └── [Library Portal Card] ──>  Library Journal (/books)
+```
 
-## 3. MOVIE DISCOVERY
-Movies page → Discover / Popular / Trending / Top Rated / New Releases / Genres → Search → Filters → Results → Movie Detail.
+1. **Guest or Authenticated Access**:
+   - Guests can explore Cinema (`/movies`) and Library (`/books`), search titles, open item details, and view public curator profiles (`/user/[username]`).
+   - Authenticated members get full logging, rating, social graph, and timeline capabilities.
+2. **Session Persistence**:
+   - Authentication tokens are stored in `localStorage` (`accessToken`, `currentUser`).
+   - A `mounted` guard in client components ensures that initial server rendering reconciles seamlessly with local browser state without hydration mismatches.
 
-## 4. MOVIE DETAIL
-Load provider metadata + community rating/count + current user state (watched, watchlist, rating, like, favorite) + reviews + similar movies.
-Actions: Watched, Watchlist, Rate (0.5–5), Like, Favorite, Review, Add to List, Report.
+---
 
-## 5. MOVIE WATCHED
-Detail → Mark Watched → validate → upsert status & watched date → optionally remove from Watchlist → create activity entry → update recommendation signal → refresh library → return updated state.
+## 2. SOCIAL GRAPH & FRIEND DISCOVERY WORKFLOWS
 
-## 6. MOVIE WATCHLIST
-Detail → Add to Watchlist → save status → appears in library Watchlist tab → later: Mark Watched or Remove → library updates.
+### 2.1. Find Friends Search (Profile Section)
 
-## 7. RATING
-Detail → select 0.5–5 stars → validate → upsert user/content rating → recalculate aggregate (average + count) → update recommendation signal → return user rating + aggregate.
-Removing a rating deletes the record and recalculates.
+```
+User visits /profile
+  │
+  ▼
+Find Friends Section
+  ├── Inset Search Capsule ("Search friends by name or @…")
+  │     │
+  │     ├── Type query (e.g., "Elena", "Marcus", "critic")
+  │     │     ▼
+  │     └── socialStore.searchUsers(query, currentUsername)
+  │           │
+  │           ▼
+  └── Instant Results Grid
+        ├── Avatar with user initial
+        ├── Display Name & @username handle
+        ├── Bio snippet & logged works / follower count
+        ├── Direct [Follow] / [Following] toggle button
+        │     └── Updates localStorage & fires 'socialUpdated' event
+        └── Clickable Card ──> Navigates to Peer Taste Profile (/user/[username])
+```
 
-## 8. LIKE
-Detail or review → Like → create relationship if absent → increment count → optional activity/notification. Unlike removes the relationship. Like is independent of rating and favorite.
+- **Empty Query State**: Displays curated peer accounts (`PEER_USERS`) as suggested curators to follow.
+- **Active Search State**: Filters in real-time across display names, usernames, and bio descriptions.
+- **Immediate Follow/Unfollow**: Toggling follow status updates the user's Following count instantly and broadcasts a `socialUpdated` event to refresh all feeds.
 
-## 9. FAVORITE
-Detail → Favorite → create relationship → increment count → appears in Favorites library tab. Unfavorite removes relationship. Independent of Like and Rating.
+### 2.2. Following & Followers Modal Workflow
 
-## 10. MOVIE REVIEW
-Detail → Write Review → body + optional spoiler flag → validate → publish → create activity → notify eligible followers → review visible on detail page and profile.
-Edit requires ownership and preserves original identity. Delete soft-deletes the record.
+```
+Profile Header (/profile or /user/[username])
+  ├── Click [X] Following or [Y] Followers
+  │
+  ▼
+FollowModal Opens
+  ├── Modal Header with account count
+  ├── Modal Search Filter Input ("Search following…" / "Search followers…")
+  │     └── Filters listed accounts as the user types
+  ├── Account List:
+  │     ├── Peer avatar & display name
+  │     ├── Bio snippet
+  │     ├── Link to public taste profile (/user/[username])
+  │     └── Dynamic Follow / Following toggle button (with red "Unfollow" hover indicator)
+  └── Close via (X) button, backdrop click, or profile navigation
+```
 
-## 11. BOOK DISCOVERY
-Books page → Discover / Popular / Trending / Top Rated / New Releases / Genres → Search → Filters → Results → Book Detail.
+### 2.3. Peer Taste Profile Exploration (`/user/[username]`)
 
-## 12. BOOK DETAIL
-Load cover + metadata + authors + community rating + user state (want to read, reading, read, rating, like, favorite) + reviews + similar books.
-Actions: Want to Read, Currently Reading, Read, Track Progress, Rate, Like, Favorite, Review, Add to Shelf, Report.
+```
+Navigate to /user/[username]
+  │
+  ├── Profile Header:
+  │     ├── Peer identity, bio, and social counters
+  │     └── Dynamic [Follow] / [Following] button
+  │
+  ├── Media Switcher (All Media | Cinema | Library)
+  │
+  └── Collection Tabs:
+        ├── Watched / Read: Grid of posters/covers with user's star rating & log date
+        ├── Favourites: Curated all-time favourite films & books
+        ├── Likes: Liked media items
+        ├── Watchlist / TBR: Peer's planned queue
+        └── Journal Activity: Public activity cards with review snippets & like buttons
+```
 
-## 13. BOOK STATUS
-Detail → Want to Read → library. Want to Read → Start Reading → Currently Reading (progress/page tracking) → Finish → Read → completion date recorded → activity created → recommendation signal updated.
+---
 
-## 14. BOOK SHELF
-Profile → Shelves → Create Shelf → name / description / visibility → Add Books → reorder / remove → save.
-Public shelves are shareable. Private shelves enforce authorization at API level.
+## 3. MEDIA LOGGING & DETAIL PAGE WORKFLOWS
 
-## 15. GLOBAL SEARCH
-Search bar → All / Movies / Books filter → query → debounced API request → paginated results → filter/sort → select → detail page → action.
+### 3.1. Item Detail & Action Cycle (`/movies/[id]`, `/books/[id]`)
 
-## 16. PROFILE
-Profile page → privacy-safe display of: identity, stats, favorites, reviews, ratings, recent activity, lists, shelves, followers/following count.
-If account is private, viewer/privacy relationship is checked before any data is returned.
+```
+Open Media Detail Page
+  │
+  ├── 1. Artwork & Meta: Poster/jacket, director/author, genres, synopsis
+  │
+  ├── 2. Star Rating (0.5 – 5.0 Stars):
+  │     ├── Hover previews star score with visual precision
+  │     ├── Click sets rating in localStorage & fires 'activityUpdated'
+  │     └── Updates average community rating
+  │
+  ├── 3. Status Action (Watched / Read):
+  │     ├── Click [Mark as Watched] / [Mark as Read]
+  │     ├── Automatically records current date (or opens date picker)
+  │     └── Optional inline date edit via "formatLogDate"
+  │
+  ├── 4. Fast Interactions:
+  │     ├── [Like] toggle (heart icon)
+  │     ├── [Favourite] toggle (gold star icon)
+  │     └── [Watchlist / Reading List] toggle
+  │
+  └── 5. Marginalia & Community Reviews:
+        ├── Private notes input (saved locally for personal reference)
+        └── Public text review submission with optional rating
+```
 
-## 17. FOLLOW
-Profile → Follow → validate target (prevent self-follow) → create unique relationship → notify target → update follow counts.
-Unfollow removes the relationship.
+---
 
-## 18. BLOCK
-Profile → Block → store block relationship → remove/suppress mutual follow → suppress blocked content, activity, and notifications per policy.
+## 4. CULTURAL ACTIVITY STREAM WORKFLOW (`/activity`)
 
-## 19. ACTIVITY FEED
-Eligible action (watched, read, rated, reviewed, favorited, list/shelf created) → create activity record → determine eligible viewers (followers) → apply privacy + block rules → serve newest-first paginated feed.
+```
+Navigate to /activity
+  │
+  ├── Stream Mode Switcher:
+  │     ├── [Friends Activity] ──> Filtered to peers in user's following list
+  │     └── [Your Journal]    ──> Personal chronological log history
+  │
+  ├── Category Filter: [All] | [Cinema] | [Library]
+  │
+  └── Grouped Timeline Render:
+        ├── "Today" header
+        ├── "Yesterday" header
+        ├── "Mon DD, YYYY" headers
+        │
+        └── Activity Card:
+              ├── User avatar, handle, and action label (rated, reviewed, watched, read, favorited)
+              ├── Media title, poster thumbnail, and creator name
+              ├── Star rating badge (★ X.X) & review quote snippet
+              └── Like Button:
+                    ├── Heart icon with active like counter
+                    └── Click toggles like in socialStore & dispatches 'socialUpdated'
+```
 
-## 20. NOTIFICATIONS
-Trigger event → check user notification preferences + privacy rules → create notification record → unread badge → Notifications page → mark read / mark all read.
+---
 
-## 21. REVIEW SOCIAL
-Review → Like / Comment / Mention → privacy/block checks → notify relevant participants → moderation/report checks applied.
+## 5. BROWSE & SEARCH ENGINES (`/movies`, `/books`)
 
-## 22. MOVIE LIST
-Profile → Create List → name / description / visibility → add movies → reorder → remove → save.
-Public lists have a shareable URL. Stable item positions are maintained.
+```
+Navigate to /movies or /books
+  │
+  ├── Top Navigation & Search:
+  │     ├── Inset Search Capsule: Searches title, director/author, and genres
+  │     └── View Mode Toggle: [Grid View] (posters) vs [List View] (compact rows)
+  │
+  ├── Sub-View Segmented Pills:
+  │     ├── Cinema: Watched | Watchlist | Favourites | Liked | Section Activity
+  │     └── Library: Books Read | Reading List | Favourites | Liked | Section Activity
+  │
+  └── Content Card:
+        ├── Poster with aspect-[2/3] ratio and subtle border
+        ├── Hover Action Capsule: Quick Like, Favourite, and "View ↗" pill
+        ├── Title & creator link
+        └── Rating badge & logged date indicator
+```
 
-## 23. LIBRARY
-**Movies:** Watched, Watchlist, Favorites, Ratings, Reviews, Lists.
-**Books:** Want to Read, Currently Reading, Read, Favorites, Ratings, Reviews, Shelves.
-**Filters:** genre, year, rating, date added, watched/read date, author/director where applicable.
+---
 
-## 24. RECOMMENDATIONS
-Signals: ratings + likes + favorites + history + genres + creators/authors + popularity + trending + recency → preference profile → candidate generation → exclude already-consumed/hidden → score → recommendation feed sections → new user action feeds back as signal.
+## 6. CLIENT HYDRATION & EXTENSION COMPATIBILITY LIFECYCLE
 
-## 25. MODERATION
-User → Report target with reason → create report → moderation queue.
-Moderator → inspect context/history → action: No Action / Warn / Hide / Delete / Suspend / Ban → write audit log → resolve → notify user if policy requires.
+```
+Server (SSR)
+  └── Renders minimal clean HTML shell with suppressHydrationWarning
+        │
+        ▼
+Browser DOM Loading
+  └── Third-party autofill / password extensions inject attributes (e.g. fdprocessedid)
+        │
+        ▼
+React Hydration
+  ├── suppressHydrationWarning on <html>, <body>, and <input> elements
+  │     └── Suppresses attribute mismatch warnings
+  └── AuthCard mounted guard:
+        ├── Before mount: renders stable layout container
+        └── After useEffect (mounted = true): renders interactive form inputs
+              └── React hydrates cleanly with 0 console warnings or error overlays
+```
 
-## 26. ADMIN
-Admin Dashboard → Users / Content / Reports / Moderation / Taxonomy / Provider Sync / Analytics / Audit Logs / Settings.
-Every privileged mutation checks role and writes an audit log entry.
+---
 
-## 27. AUTH FLOWS
-- **Register:** validate inputs → check uniqueness → hash password → create User → issue access + refresh tokens → return user + tokens.
-- **Login:** verify credentials → issue tokens.
-- **Refresh:** validate refresh token hash → revoke old token → issue new token pair.
-- **Logout:** revoke refresh token → clear client session.
+## 7. PRIMARY CURATOR JOURNEY (END-TO-END)
 
-## 28. API REQUEST LIFECYCLE
-Browser → Vercel frontend → API route → security middleware (Helmet, CORS) → auth middleware → authorization → Zod validation → controller → Mongoose model → MongoDB Atlas → transformed response → frontend state update.
-
-## 29. MONGODB CONNECTION (SERVERLESS)
-Vercel function invoked → check cached Mongoose connection → reuse if warm (readyState === 1) → otherwise open new Atlas connection → execute query → retain connection for warm re-use.
-Never create unnecessary connections per request.
-
-## 30. CONTENT SYNC
-Admin / scheduled job → provider API request → validate response → normalize to LastPage schema → upsert Content document → upsert People/Authors/Credits → store provider IDs/image URLs per licensing terms → update searchable fields → record sync result and any errors.
-
-## 31. SECURITY MODEL
-Protected mutation → auth check → authorization + ownership check → Zod validation → optional rate-limit check → mutation → audit log entry where required.
-Public responses strip secrets and private fields and apply privacy/block rules.
-
-## 32. ERROR HANDLING
-Request → error thrown → central Express error handler → structured log with request ID → safe client-facing message → correct HTTP status code → no production stack traces or secrets leaked.
-
-## 33. DEPLOYMENT PIPELINE
-Git push → CI checks → Vercel build (frontend + backend separately) → Preview deployment → smoke test → promote to Production.
-Frontend on Vercel + Backend on Vercel + MongoDB Atlas. All secrets in Vercel environment variables only.
-
-## 34. RELEASE CHECKLIST
-Configure env vars → Atlas IP access → MongoDB indexes → provider API keys → CORS origins → auth secrets → rate limits → privacy defaults → error monitoring → Atlas backups → build → automated tests → Preview smoke test → Production promotion.
-
-## 35. PRIMARY USER JOURNEY
-Landing → Sign Up → Hub (choose section) → Movies or Books → Discover / Search → Detail page → Watch/Read or Save → Rate → Like / Favorite → Write Review → Build List or Shelf → Profile / Library → Activity Feed → Follow Friends → Notifications → Recommendations → Discovery loop.
-
-## 36. DEFINITION OF DONE
-A feature is production-ready when:
-- Responsive UI with loading, empty, and error states
-- Input validation with Zod
-- Authorization and privacy enforced at API level
-- MongoDB indexes support all critical queries
-- Duplicate relationships prevented by unique indexes
-- Activity and notifications trigger correctly
-- Errors are observable (logs + monitoring)
-- Critical paths have tests
-- No secrets exposed to the browser
-- Feature works in Vercel Preview and Production
+1. **Enter & Authenticate**: Single-viewport landing page (`/`) → Enter credentials or explore as guest → Arrive at atmospheric Hub (`/hub`).
+2. **Choose Realm**: Select **Cinema** (`/movies`) or **Library** (`/books`).
+3. **Discover & Inspect**: Browse curated works → Use instant search bar → Click poster to open Detail view.
+4. **Log & Reflect**: Set star rating (0.5–5) → Click "Mark as Watched/Read" → Add review snippet or private marginalia.
+5. **Feed Emission**: Logged item is recorded in `activityStore` → Emitted to personal timeline and followers' feeds.
+6. **Connect with Peers**: Open `/profile` → Use **Find Friends** search bar → Search and follow peer curators → Inspect peer taste profiles at `/user/[username]`.
+7. **Social Timeline**: Open `/activity` → View friends' logs, ratings, and reviews → Like friend activities → Continuous cultural discovery loop.

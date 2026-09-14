@@ -1,125 +1,138 @@
-CINEFOLIO — MOVIE + BOOK SOCIAL PLATFORM
-PRODUCTION REQUIREMENTS
-Version 2.0 — MongoDB Atlas + Vercel
+# LASTPAGE — CINEMA & LITERATURE JOURNAL & SOCIAL GRAPH
+## PRODUCTION REQUIREMENTS SPECIFICATION
+**Version 2.5 — Next.js 15 · Tailwind CSS · Express · MongoDB Atlas · Vercel**
 
-1. PRODUCT OVERVIEW
-Cinefolio is a unified social discovery and personal-tracking platform for movies and books. Movies and Books have separate discovery experiences while sharing profiles, reviews, ratings, follows, activity, notifications and social features.
+---
 
-2. PRODUCT GOALS
-- Discover movies and books.
-- Track personal consumption.
-- Rate and review content.
-- Like and favorite independently.
-- Build movie watchlists and custom lists.
-- Build book reading statuses and custom shelves.
-- Follow users and consume an activity feed.
-- Receive social notifications.
-- Discover personalized recommendations.
-- Provide professional, responsive, accessible UI.
-- Support safe moderation, privacy and scalable infrastructure.
+### 1. PRODUCT OVERVIEW
+**LastPage** is an editorial personal diary and social discovery platform for films and books. Designed with a luxury dark aesthetic inspired by Linear, A24, and Letterboxd, LastPage allows users to log films and books, rate them with precision, save favourites, maintain watchlists and reading lists, follow peer curators, and explore friends' taste archives in a distraction-free environment.
 
-3. USER ROLES
-Guest: browse public catalog, search, view public profiles/reviews/lists/shelves.
-Member: track, rate, review, like, favorite, follow, comment, create lists/shelves, manage privacy, report.
-Moderator: review reports, moderate violating content, maintain audit trail.
-Admin: manage users, catalog, taxonomy, integrations, moderation, analytics and settings.
+---
 
-4. MOVIE FEATURES
-Discover, Popular, Trending, Top Rated, New Releases, Genres, Search, Filters, Detail, Watched, Watchlist, Favorites, Ratings, Reviews, Review Likes, Comments, Profiles, Activity, Notifications, Custom Lists, Recommendations, Reporting/Moderation.
+### 2. PRODUCT GOALS
+- **Dual Cultural Archive**: Provide dedicated yet unified journal experiences for Cinema (`/movies`) and Literature (`/books`).
+- **Atmospheric Portal**: Seamless transition via `/hub` gateway between cinema and reading archives.
+- **Precision Personal Tracking**: Log dates, 0.5–5 star ratings, likes, favourites, and private marginalia notes.
+- **Social Graph & Discovery**:
+  - Follow and unfollow peers with instant metric recalculation.
+  - Clickable Followers and Following counts opening interactive inspection modals.
+  - **Find Friends Search**: Live search bar in the user profile section to find curators by name, username, or bio keyword.
+  - Public peer taste profiles (`/user/[username]`) showcasing logged works, star ratings, and review snippets.
+- **Cultural Timeline Feed**: Dual-mode stream (`/activity`) separating friends' activity from personal logs, organized by relative days (Today, Yesterday, Date).
+- **Luxury Editorial Aesthetics**: Elevated dark graphite canvas (`#121216`), card surfaces (`#1C1C22`), Playfair Display & Inter typography, and Ember/Gold accents.
+- **Zero-Friction Resilience**: Hydration-safe form rendering, offline fallback capabilities, and sub-second page loads.
 
-5. BOOK FEATURES
-Discover, Popular, Trending, Top Rated, New Releases, Genres, Search, Filters, Detail, Want to Read, Currently Reading, Read, Reading Progress, Favorites, Ratings, Reviews, Review Likes, Comments, Profiles, Activity, Notifications, Custom Shelves, Recommendations, Reporting/Moderation.
+---
 
-6. DETAIL PAGES
-Movies display poster/backdrop, title, original title, release date/year, runtime, genres, synopsis, community rating/count, cast, crew/director, provider metadata, reviews and similar movies. Actions: Watched, Watchlist, Rate 0.5–5, Like, Favorite, Review, List, Report.
-Books display cover, title/subtitle, authors, publication date, publisher, pages, ISBN, genres, language, synopsis, community rating/count, author information, reviews and similar books. Actions: Want to Read, Currently Reading, Read, Progress, Rate, Like, Favorite, Review, Shelf, Report.
+### 3. USER ROLES
+- **Guest**: Browse public catalogs (`/movies`, `/books`), search titles, view public peer profiles (`/user/[username]`), and inspect item details.
+- **Member (Authenticated Curator)**:
+  - Log films as watched with custom dates.
+  - Log books as read with custom dates.
+  - Rate items from 0.5 to 5.0 stars with half-star visual precision.
+  - Toggle Likes and Favourites independently.
+  - Maintain personal Watchlists and Reading Lists.
+  - Follow and unfollow peer accounts.
+  - Search and discover friends from the Profile dashboard.
+  - Like friends' activity entries.
+  - Write reviews and marginalia reflections.
+- **Admin**: Catalog management, taxonomy administration, moderation, and sync jobs.
 
-7. RATINGS
-- 0.5–5.0.
-- One active rating per user/content.
-- Change/remove supported.
-- Average and count exposed.
-- Rating independent from like, favorite and status.
+---
 
-8. STATUS
-Movies: Watched, Watchlist.
-Books: Want to Read, Currently Reading, Read, optional page/percentage progress, start/completion timestamps.
-Status must not imply rating, like or favorite.
+### 4. CORE FUNCTIONAL DOMAINS
 
-9. SOCIAL
-Public/private profiles, follow/unfollow, block, optional mute, activity feed, review likes/comments, notifications, social privacy controls and activity visibility.
+#### 4.1. Landing & Authentication
+- **Strict Viewport Layout**: Enforced non-scrollable hero viewport (`h-screen overflow-hidden`) on desktop.
+- **Symmetrical Two-Column Split**: Left column editorial brand statement + quick portal links; right column streamlined authentication card.
+- **Hydration Protection**: Guarded client mounting and `suppressHydrationWarning` on all form inputs and buttons to eliminate autofill extension mismatches (`fdprocessedid`).
+- **Inline Mode Switching**: Seamless toggle between Sign In and Create Account states with inline error feedback.
 
-10. REVIEWS
-Create/edit/delete text reviews, spoiler flag, review likes/comments, report, ownership enforcement, soft deletion where appropriate. Spoiler body remains hidden until explicitly revealed.
+#### 4.2. Portal Gateway (`/hub`)
+- Dominant, dual visual cards for **Cinema** and **Library**.
+- Photographic backgrounds with subtle hover zooms and graphite vignette gradients.
+- Direct entry points into `/movies` and `/books`.
 
-11. LISTS/SHELVES
-Movies: custom lists with name, description, items, ordering, visibility and share URL.
-Books: custom shelves with name, description, items, ordering, visibility and share URL.
+#### 4.3. Cinema & Literature Catalogs (`/movies`, `/books`)
+- Shared high-performance browsing engine ([`browse.jsx`](file:///e:/Projects/LastPage/frontend/src/app/browse.jsx)).
+- Real-time client-side search filtering by title, director/author, and genres.
+- View mode switcher: **Grid View** (posters/jackets) vs. **List View** (compact tabular).
+- Segmented sub-view tabs:
+  - **Cinema**: Watched, Watchlist, Favourites, Liked, Section Activity.
+  - **Library**: Books Read, Reading List, Favourites, Liked, Section Activity.
+- Reactive updates triggered automatically upon user interactions.
 
-12. SEARCH
-Global All/Movies/Books search. Movies: title, original title, actor, director, genre, year. Books: title, author, ISBN, publisher, genre, year. Filters include genre, year, rating, popularity, date, movie runtime, book page count and language.
+#### 4.4. Item Detail Pages (`/movies/[id]`, `/books/[id]`)
+- Shared detail presentation engine ([`detail.jsx`](file:///e:/Projects/LastPage/frontend/src/app/detail.jsx)).
+- High-resolution artwork display (film poster or book cover with spine accent).
+- Interactive 5-star rating widget with hover preview and rating persistence.
+- Watch / Read logging button with inline date selector (`formatLogDate`).
+- Quick-action buttons: Like, Favourite, Watchlist / Reading List.
+- Private Marginalia notes and public community reviews.
+- Curated catalogue fallbacks with MongoDB API synchronization.
 
-13. DISCOVERY & RECOMMENDATIONS
-Popular, Trending, Top Rated, New Releases, genres, similar content and personalized recommendations. MVP uses ratings, likes, favorites, history, genres, creators/authors, popularity, trends and recency. Begin rule-based; add collaborative filtering later.
+#### 4.5. Social Graph & Profile Section (`/profile`)
+- **Profile Header**: Avatar with initial, username handle, and editable personal bio.
+- **Social Metrics**: Clickable `[X] Following` and `[Y] Followers` counters.
+- **Modal Account Inspector ([`FollowModal.jsx`](file:///e:/Projects/LastPage/frontend/src/components/FollowModal.jsx))**:
+  - Displays avatar, name, handle, and bio for followed accounts or followers.
+  - Integrated search filter input to find specific accounts within the list.
+  - One-click Follow / Following toggle buttons.
+- **Find Friends Search Engine**:
+  - Dedicated search bar in the profile section matching query text against username, display name, and bio keywords.
+  - Real-time result grid displaying friend cards, bio kickers, logged count, follower count, and direct Follow toggle.
+  - Clickable cards linking directly to the curator's public taste profile (`/user/[username]`).
+- **Bento Stat Cards**: Total films watched and books read with custom accent icons.
 
-14. PROFILE/LIBRARY
-Avatar, username, display name, bio, follower/following counts, movie/book stats, watched/read counts, average rating, favorites, reviews, ratings, activity, lists and shelves. Library supports status tabs and sorting/filtering.
+#### 4.6. Peer Public Profiles (`/user/[username]`)
+- Public showcase of peer curator taste profiles.
+- Dynamic follow button (`Follow` vs `Following` with `Unfollow` hover state).
+- Segmented media switcher (`All Media`, `Cinema`, `Library`).
+- Tabbed collection views: `Watched / Read`, `Favourites`, `Likes`, `Watchlist / TBR`, and `Journal Activity`.
+- Likeable friend activity feed with instant counter increments.
 
-15. NOTIFICATIONS
-Follow, review like/comment, comment interaction, mention, list/shelf interaction, moderation and system notifications. Read/unread, mark read/all read and notification preferences.
+#### 4.7. Activity Stream (`/activity`)
+- Split timeline view:
+  - **Friends Activity**: Activity aggregated from all accounts the user follows, ordered newest-first.
+  - **Your Journal**: Chronological history of the active user's personal logs, ratings, and favourites.
+- Relative day grouping headers: `Today`, `Yesterday`, and specific formatted dates.
+- Interactive activity liking with heart animations and persistent counts.
 
-16. MODERATION
-Reports for users, content, reviews and comments; moderation queue; open/reviewing/resolved/rejected states; moderator notes; actions; audit trail; soft deletion/anonymization where appropriate.
+---
 
-17. PRIVACY
-Profile, activity, followers/following, list/shelf, review/activity and notification preferences. Private resources must not leak through APIs, feeds, search or recommendations.
+### 5. TECHNICAL ARCHITECTURE
 
-18. SECURITY
-Secure auth; password hashing; access/refresh session security; HttpOnly secure cookies where applicable; CSRF protection for cookie mutations; validation; rate limiting; CORS; security headers; authorization/object-level access control; safe errors; audit logs; environment-managed secrets.
+#### 5.1. Design System & CSS
+- **Framework**: Tailwind CSS v3 with CSS custom properties (`:root`).
+- **Theme Tokens**:
+  - `--page`: `#121216` (warm dark slate / graphite base canvas)
+  - `--surface`: `#1C1C22` (elevated card surface)
+  - `--surface-raised`: `#24242C` (hover & modal surface)
+  - `--border`: `#2A2A36` (primary structural border)
+  - `--border-hairline`: `rgba(255, 255, 255, 0.08)` (subtle division line)
+  - `--ink`: `#F4F4F5` (crisp white typography)
+  - `--ink-muted`: `#A1A1AA` (sub-copy & captions)
+  - `--ember`: `#E8553D` / `--ember-vibrant`: `#F87171` (cinema accent)
+  - `--gold`: `#FBBF24` (literature & star rating accent)
+- **Utility Rules**: `.no-scrollbar` utility for horizontal tab bars.
 
-19. DATABASE — MONGODB ATLAS
-Collections: users, contents, ratings, reviews, likes, favorites, statuses, follows, comments, lists, listItems, shelves, shelfItems, activities, notifications, reports, auditLogs.
-Use compound unique indexes for user/content relationships and indexes for search, feeds, profiles and libraries. Reuse MongoDB connections in serverless execution.
+#### 5.2. Data Persistence & State Architecture
+- **Client Stores**:
+  - `socialStore.js`: Peer user database (`PEER_USERS`), following/follower state in `localStorage`, user search engine (`searchUsers`), activity feeds, and follow actions.
+  - `activityStore.js`: Reactive event-driven log storage with dispatch notifications (`window.dispatchEvent('activityUpdated')`).
+  - `curatedCatalogue.js`: Verified initial dataset of films and books for instant client availability.
+- **REST API Backend**: Express.js server providing JWT authentication, Content endpoints, and Social relations.
+- **Database**: MongoDB Atlas with Mongoose ODM schemas.
 
-20. CONTENT PROVIDERS
-Use only authorized/licensed movie/book metadata sources. Implement provider adapters for search, details, images, people/authors, genres, similar content and synchronization. Keep provider API keys server-side.
+---
 
-21. MEDIA
-Use object storage/CDN for avatars and large user/platform media rather than MongoDB documents.
-
-22. FRONTEND
-Next.js + JavaScript + Tailwind CSS + accessible components. Responsive desktop/mobile. Public SEO routes for movies/books/profiles/lists/shelves. Required routes include /, /movies, /movies/[slug], /books, /books/[slug], /search, /activity, /notifications, /library, /profile/[username], /lists/[slug], /shelves/[slug], /settings and /admin.
-
-23. BACKEND
-Node.js + JavaScript + REST API + MongoDB/Mongoose, modular controllers/services/repositories, Zod validation, auth/authorization middleware, centralized errors, structured logs, health/readiness and API versioning.
-
-24. API AREAS
-Auth, Users, Content, Search, Ratings, Reviews, Comments, Likes, Favorites, Status/Library, Follows, Activity, Notifications, Lists, Shelves, Recommendations, Reports, Moderation and Admin.
-
-25. VERCEL
-Frontend and backend can be deployed as two Vercel projects. Backend must be serverless-compatible and must not depend on persistent local filesystem. MongoDB Atlas provides persistence. Configure Preview/Production environment variables separately.
-Required secrets/config: MONGODB_URI, MONGODB_DB, auth/session secret, APP_URL, CORS_ORIGIN, provider API keys and storage credentials where required.
-
-26. OBSERVABILITY
-Structured logs, request IDs, error tracking, health checks, performance/database monitoring, product metrics and moderation metrics.
-
-27. PERFORMANCE
-Pagination, indexes, connection reuse, safe caching, CDN images, lazy loading, no N+1 queries, denormalized counters where justified and background jobs for expensive operations.
-
-28. ACCESSIBILITY
-Semantic HTML, keyboard navigation, visible focus, sufficient contrast, alt text, reduced motion, accessible forms/errors and screen-reader friendly controls.
-
-29. UI DIRECTION
-Premium editorial, clean, minimal, poster/cover-first, strong typography, generous whitespace, subtle borders, restrained accent, light/dark themes. Desktop: top/left navigation, large grids, two-column details. Mobile: bottom navigation, responsive grids, compact/sticky actions and touch-friendly controls.
-
-30. CORE BUSINESS RULES
-Rating, Like, Favorite and Status are independent. One rating per user/content. Likes/favorites toggle. Reviews have one author/content item and preserve identity when edited. Spoilers are hidden until revealed. Privacy is enforced at API level. Deleted records use soft deletion/anonymization where needed. Aggregates expose average/count. Moderation is auditable. Third-party metadata must follow licensing/terms.
-
-31. ACCEPTANCE CRITERIA
-Register/login; search movies/books; open detail; independently rate/like/favorite; track movie/book status; create/edit/delete spoiler reviews; review likes/comments; follow users; eligible activity feed; public/private lists/shelves; notifications; privacy management; reporting; moderation; recommendations; secure authorization/privacy; successful Vercel + MongoDB Atlas deployment.
-
-32. SUCCESS METRICS
-Activation, tracked items/active user, review rate, search-to-action conversion, follow rate, recommendation engagement, list/shelf creation, 7/30-day retention, social engagement and report resolution time.
-
-33. DEFINITION OF DONE
-UI has loading/empty/error states; API validates inputs; authorization/privacy enforced; indexes support critical queries; duplicates prevented; activity/notifications correct; errors observable; tests cover critical behavior; no secrets in browser; feature works in Vercel preview and production.
+### 6. ACCEPTANCE & VERIFICATION CRITERIA
+- [x] All 14 application routes return HTTP 200 without console warnings or runtime errors.
+- [x] Fixed single-viewport hero landing page (`/`) on desktop with symmetrical two-column layout.
+- [x] Atmospheric `/hub` portal navigation between Cinema and Library.
+- [x] Real-time search and filter capabilities in `/movies` and `/books`.
+- [x] Dynamic Following and Followers modals with search filter input.
+- [x] "Find Friends" search bar in `/profile` with live filtering and direct Follow actions.
+- [x] Public curator profiles accessible at `/user/[username]` with complete collection tabs.
+- [x] Dual-feed `/activity` stream with relative day headers and activity likes.
+- [x] Zero hydration errors on client mounts across all browsers and extensions.

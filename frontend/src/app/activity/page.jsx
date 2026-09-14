@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { Heart, Star, Check, MessageSquare, ArrowUpRight, Users, User, ArrowLeft } from 'lucide-react';
+import { Heart, Star, MessageSquare, Users, User, ArrowLeft, Check, ArrowUpRight } from 'lucide-react';
 import { getActivities, getRelativeDayLabel, formatLogDate } from '../../lib/activityStore';
 import { getFriendsActivity, toggleActivityLike, isActivityLiked } from '../../lib/socialStore';
 import { CURATED_MOVIES, CURATED_BOOKS } from '../../lib/curatedCatalogue';

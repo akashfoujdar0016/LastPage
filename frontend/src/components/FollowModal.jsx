@@ -1,18 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { X, UserPlus, Check } from 'lucide-react';
+import { X, Search, UserPlus, Check } from 'lucide-react';
 import { getAccountsForModal, isFollowingUser, toggleFollowUser } from '../lib/socialStore';
 
 export default function FollowModal({ isOpen, onClose, type, username }) {
   const [accounts, setAccounts] = useState([]);
+  const [filterQuery, setFilterQuery] = useState('');
   const [hoveredBtnUser, setHoveredBtnUser] = useState(null);
   const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       setAccounts(getAccountsForModal(type, username));
+      setFilterQuery('');
     }
   }, [isOpen, type, username, refresh]);
 
@@ -21,6 +23,17 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
     window.addEventListener('socialUpdated', handleSocialUpdate);
     return () => window.removeEventListener('socialUpdated', handleSocialUpdate);
   }, []);
+
+  const displayedAccounts = useMemo(() => {
+    if (!filterQuery.trim()) return accounts;
+    const q = filterQuery.trim().toLowerCase();
+    return accounts.filter(
+      acc =>
+        acc.username.toLowerCase().includes(q) ||
+        (acc.displayName && acc.displayName.toLowerCase().includes(q)) ||
+        (acc.bio && acc.bio.toLowerCase().includes(q))
+    );
+  }, [accounts, filterQuery]);
 
   if (!isOpen) return null;
 
@@ -40,7 +53,7 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
               {type === 'FOLLOWING' ? 'Following' : 'Followers'}
             </span>
             <span className="text-xs text-zinc-400 font-mono">
-              ({accounts.length})
+              ({displayedAccounts.length}{filterQuery ? ` of ${accounts.length}` : ''})
             </span>
           </div>
 
@@ -53,14 +66,38 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
           </button>
         </div>
 
+        {/* Modal Search Filter */}
+        <div className="px-5 py-2.5 border-b border-white/[0.06] bg-[#17171C]">
+          <div className="relative flex items-center">
+            <Search size={13} className="absolute left-3 text-zinc-400 pointer-events-none" />
+            <input
+              type="text"
+              suppressHydrationWarning
+              value={filterQuery}
+              onChange={e => setFilterQuery(e.target.value)}
+              placeholder={`Search ${type === 'FOLLOWING' ? 'following' : 'followers'}…`}
+              className="w-full bg-[#1F1F26] border border-white/10 rounded-full pl-8 pr-7 py-1.5 text-xs text-white placeholder-zinc-500 outline-none focus:border-white/25 focus:ring-1 focus:ring-white/20 transition-all"
+            />
+            {filterQuery && (
+              <button
+                type="button"
+                onClick={() => setFilterQuery('')}
+                className="absolute right-2.5 text-zinc-400 hover:text-white transition-colors"
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+        </div>
+
         {/* Modal Account List */}
         <div className="overflow-y-auto p-4 divide-y divide-white/5 space-y-1">
-          {accounts.length === 0 ? (
+          {displayedAccounts.length === 0 ? (
             <div className="py-12 text-center text-xs text-zinc-400">
-              No accounts in this list yet.
+              {filterQuery ? `No matches found for "${filterQuery}"` : 'No accounts in this list yet.'}
             </div>
           ) : (
-            accounts.map((acc) => {
+            displayedAccounts.map((acc) => {
               const following = isFollowingUser(acc.username);
               const isHovered = hoveredBtnUser === acc.username;
 

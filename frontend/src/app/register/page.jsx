@@ -10,7 +10,5 @@ export default function RegisterPage() {
     router.replace('/login?tab=register');
   }, [router]);
 
-  return (
-    <div style={{ minHeight: '100vh', background: '#F9F8F5' }} />
-  );
+  return <div className="min-h-screen bg-page" />;
 }

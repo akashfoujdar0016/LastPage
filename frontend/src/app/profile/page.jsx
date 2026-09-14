@@ -1,15 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { api } from '../../lib/api';
 import { getUserWatched } from '../../lib/activityStore';
 import {
   getFollowingList,
   getFollowersList,
+  searchUsers,
+  toggleFollowUser,
+  isFollowingUser,
 } from '../../lib/socialStore';
 import FollowModal from '../../components/FollowModal';
-import { Film, BookOpen, ArrowLeft } from 'lucide-react';
+import { Film, BookOpen, ArrowLeft, Search, X, Users, ArrowUpRight } from 'lucide-react';
 
 export default function Profile() {
   const [u, setU] = useState(null);
@@ -22,6 +25,8 @@ export default function Profile() {
   const [modalState, setModalState] = useState({ isOpen: false, type: 'FOLLOWING' });
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [bioText, setBioText] = useState('Tracking cinema and literature in a private journal.');
+  const [friendSearch, setFriendSearch] = useState('');
+  const [hoveredFriendBtn, setHoveredFriendBtn] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
@@ -77,6 +82,17 @@ export default function Profile() {
       } catch {}
     }
   };
+
+  const handleToggleFollow = (targetUsername) => {
+    toggleFollowUser(targetUsername);
+    setFollowing(getFollowingList());
+    setFollowers(getFollowersList());
+    setRefreshTrigger(p => p + 1);
+  };
+
+  const searchedFriends = useMemo(() => {
+    return searchUsers(friendSearch, u?.username || '');
+  }, [friendSearch, u?.username, refreshTrigger]);
 
   return (
     <div className="min-h-[calc(100vh-52px)] bg-page text-ink pb-24 selection:bg-ember/30 selection:text-ink relative overflow-hidden">
@@ -189,8 +205,8 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* ── Bento Stat Cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-12">
+        {/* ── 2. Bento Stat Cards ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
           <div className="bg-surface border border-white/[0.08] hover:border-white/[0.14] rounded-2xl p-6 shadow-xl transition-all">
             <div className="flex items-center justify-between text-xs text-zinc-400 mb-3">
               <span className="font-medium uppercase tracking-wider">Films Watched</span>
@@ -210,6 +226,123 @@ export default function Profile() {
               {stats.books}
             </div>
           </div>
+        </div>
+
+        {/* ── 3. Find Friends & Discover Curators ── */}
+        <div className="bg-surface border border-white/[0.08] hover:border-white/[0.12] rounded-2xl p-6 sm:p-7 shadow-xl mb-10 transition-all">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Users size={16} className="text-[#F87171]" />
+                <h2 className="font-serif text-xl sm:text-2xl text-zinc-100 font-normal tracking-tight">
+                  Find Friends
+                </h2>
+              </div>
+              <p className="text-xs text-zinc-400">
+                Search curators, discover their cultural journals, and follow their taste.
+              </p>
+            </div>
+
+            {/* Inset Search Capsule */}
+            <div className="relative w-full sm:w-72">
+              <Search
+                size={14}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+              />
+              <input
+                type="text"
+                suppressHydrationWarning
+                value={friendSearch}
+                onChange={e => setFriendSearch(e.target.value)}
+                placeholder="Search friends by name or @…"
+                className="w-full bg-[#1A1A20] border border-white/10 rounded-full pl-9 pr-8 py-2 text-xs text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:border-white/25 focus:ring-1 focus:ring-white/20 focus:bg-[#202028]"
+              />
+              {friendSearch && (
+                <button
+                  type="button"
+                  suppressHydrationWarning
+                  onClick={() => setFriendSearch('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
+                >
+                  <X size={13} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Friends Result Grid */}
+          {searchedFriends.length === 0 ? (
+            <div className="py-8 text-center text-xs text-zinc-400 font-sans">
+              No curators found matching &ldquo;{friendSearch}&rdquo;.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {searchedFriends.map((peer) => {
+                const following = isFollowingUser(peer.username);
+                const isHovered = hoveredFriendBtn === peer.username;
+
+                return (
+                  <div
+                    key={peer.username}
+                    className="p-4 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/[0.06] hover:border-white/[0.12] transition-all flex flex-col justify-between gap-3 group"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <Link
+                        href={`/user/${peer.username}`}
+                        className="flex items-center gap-3 min-w-0 flex-1 group/user"
+                      >
+                        <div className="w-10 h-10 rounded-full bg-ember/15 border border-ember/30 text-ember flex items-center justify-center font-serif text-sm font-medium shrink-0 group-hover/user:scale-105 transition-transform">
+                          {peer.initial || peer.username.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-semibold text-zinc-100 group-hover/user:text-white transition-colors truncate">
+                              {peer.displayName || peer.username}
+                            </span>
+                            <ArrowUpRight size={11} className="text-zinc-500 group-hover/user:text-ember transition-colors shrink-0" />
+                          </div>
+                          <div className="text-[11px] text-zinc-400 font-mono truncate">
+                            @{peer.username}
+                          </div>
+                        </div>
+                      </Link>
+
+                      {/* Follow / Following Toggle */}
+                      <button
+                        type="button"
+                        suppressHydrationWarning
+                        onClick={() => handleToggleFollow(peer.username)}
+                        onMouseEnter={() => setHoveredFriendBtn(peer.username)}
+                        onMouseLeave={() => setHoveredFriendBtn(null)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 shrink-0 ${
+                          following
+                            ? isHovered
+                              ? 'bg-red-500/20 text-red-300 border border-red-500/30'
+                              : 'bg-white/10 text-zinc-200 border border-white/15'
+                            : 'bg-[#F4F4F5] text-[#121216] hover:bg-white font-semibold shadow-sm hover:shadow-white/10'
+                        }`}
+                      >
+                        {following ? (isHovered ? 'Unfollow' : 'Following') : 'Follow'}
+                      </button>
+                    </div>
+
+                    {/* Bio kicker */}
+                    {peer.bio && (
+                      <p className="text-[11px] text-zinc-400 line-clamp-2 leading-relaxed">
+                        {peer.bio}
+                      </p>
+                    )}
+
+                    {/* Meta stats */}
+                    <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono pt-2 border-t border-white/5">
+                      <span>{peer.reviewsCount || peer.watched?.length || 0} logged works</span>
+                      <span>{peer.followersCount || 0} followers</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Quick Links to Personal Journal Sections */}

@@ -7,8 +7,8 @@ import {
   X,
   LayoutGrid,
   List,
-  Heart,
   Star,
+  Heart,
   Check,
   MessageSquare,
   ArrowUpRight,
@@ -292,6 +292,7 @@ export default function Browse({ type, title }) {
                 />
                 <input
                   ref={inputRef}
+                  suppressHydrationWarning
                   value={q}
                   onChange={e => setQ(e.target.value)}
                   placeholder={isMovie ? 'Search films by title or director…' : 'Search books by title or author…'}

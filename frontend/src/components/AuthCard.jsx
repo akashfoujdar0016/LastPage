@@ -7,6 +7,7 @@ import { login, register } from '../lib/api';
 
 export default function AuthCard({ onClose }) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState('register');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,6 +18,7 @@ export default function AuthCard({ onClose }) {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    setMounted(true);
     try {
       const stored = localStorage.getItem('currentUser');
       if (stored) setCurrentUser(JSON.parse(stored));
@@ -71,6 +73,15 @@ export default function AuthCard({ onClose }) {
     setCurrentUser(null);
   };
 
+  // Guard against hydration mismatch from browser autofill extensions (e.g. fdprocessedid)
+  if (!mounted) {
+    return (
+      <div className="w-full bg-[#1C1C22] border border-white/[0.08] rounded-2xl p-6 sm:p-7 shadow-2xl min-h-[380px] flex items-center justify-center">
+        <div className="w-5 h-5 rounded-full border-2 border-white/10 border-t-white/40 animate-spin" />
+      </div>
+    );
+  }
+
   // ── Logged In State ──
   if (currentUser) {
     return (
@@ -95,6 +106,7 @@ export default function AuthCard({ onClose }) {
 
         <button
           type="button"
+          suppressHydrationWarning
           onClick={() => router.push('/hub')}
           className="w-full py-2.5 rounded-full bg-[#F4F4F5] text-[#121216] hover:bg-white font-semibold text-xs flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-white/10 active:scale-[0.99]"
         >
@@ -104,6 +116,7 @@ export default function AuthCard({ onClose }) {
 
         <button
           type="button"
+          suppressHydrationWarning
           onClick={handleSignOut}
           className="mt-3 w-full text-center text-xs text-zinc-400 hover:text-white transition-colors"
         >
@@ -120,6 +133,7 @@ export default function AuthCard({ onClose }) {
         {onClose && (
           <button
             type="button"
+            suppressHydrationWarning
             onClick={onClose}
             className="absolute top-4 right-4 text-zinc-400 hover:text-white text-sm transition-colors"
             aria-label="Close"
@@ -143,7 +157,7 @@ export default function AuthCard({ onClose }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+        <form suppressHydrationWarning onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <div>
             <label className="block text-[11px] font-medium text-zinc-400 mb-1 uppercase tracking-wider">
               Email
@@ -151,6 +165,7 @@ export default function AuthCard({ onClose }) {
             <input
               type="email"
               required
+              suppressHydrationWarning
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="you@example.com"
@@ -166,6 +181,7 @@ export default function AuthCard({ onClose }) {
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
+                suppressHydrationWarning
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -173,6 +189,7 @@ export default function AuthCard({ onClose }) {
               />
               <button
                 type="button"
+                suppressHydrationWarning
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
@@ -185,6 +202,7 @@ export default function AuthCard({ onClose }) {
           <button
             type="submit"
             disabled={loading}
+            suppressHydrationWarning
             className="mt-1 w-full py-2.5 rounded-full bg-[#F4F4F5] text-[#121216] hover:bg-white font-semibold text-xs flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-white/10 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading && <Loader2 size={13} className="animate-spin" />}
@@ -196,6 +214,7 @@ export default function AuthCard({ onClose }) {
           Need an account?{' '}
           <button
             type="button"
+            suppressHydrationWarning
             onClick={() => { setMode('register'); setError(''); }}
             className="text-white font-medium hover:text-ember transition-colors ml-1"
           >
@@ -212,6 +231,7 @@ export default function AuthCard({ onClose }) {
       {onClose && (
         <button
           type="button"
+          suppressHydrationWarning
           onClick={onClose}
           className="absolute top-4 right-4 text-zinc-400 hover:text-white text-sm transition-colors"
           aria-label="Close"
@@ -235,7 +255,7 @@ export default function AuthCard({ onClose }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form suppressHydrationWarning onSubmit={handleSubmit} className="flex flex-col gap-3">
         <div>
           <label className="block text-[11px] font-medium text-zinc-400 mb-1 uppercase tracking-wider">
             Username
@@ -243,6 +263,7 @@ export default function AuthCard({ onClose }) {
           <input
             type="text"
             required
+            suppressHydrationWarning
             value={username}
             onChange={e => setUsername(e.target.value)}
             placeholder="yourname"
@@ -257,6 +278,7 @@ export default function AuthCard({ onClose }) {
           <input
             type="email"
             required
+            suppressHydrationWarning
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com"
@@ -272,6 +294,7 @@ export default function AuthCard({ onClose }) {
             <input
               type={showPassword ? 'text' : 'password'}
               required
+              suppressHydrationWarning
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
@@ -279,6 +302,7 @@ export default function AuthCard({ onClose }) {
             />
             <button
               type="button"
+              suppressHydrationWarning
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
@@ -291,6 +315,7 @@ export default function AuthCard({ onClose }) {
         <button
           type="submit"
           disabled={loading}
+          suppressHydrationWarning
           className="mt-1.5 w-full py-2.5 rounded-full bg-[#F4F4F5] text-[#121216] hover:bg-white font-semibold text-xs flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-white/10 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading && <Loader2 size={13} className="animate-spin" />}
@@ -302,6 +327,7 @@ export default function AuthCard({ onClose }) {
         Already have an account?{' '}
         <button
           type="button"
+          suppressHydrationWarning
           onClick={() => { setMode('login'); setError(''); }}
           className="text-white font-medium hover:text-ember transition-colors ml-1"
         >
