@@ -1,364 +1,526 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { Search, X, Heart, Star, Layers } from 'lucide-react';
+import {
+  Search,
+  X,
+  LayoutGrid,
+  List,
+  Heart,
+  Star,
+  Check,
+  MessageSquare,
+  ArrowUpRight,
+} from 'lucide-react';
 import ContentCard from '../components/ContentCard';
 import { api } from '../lib/api';
+import { getCuratedItems } from '../lib/curatedCatalogue';
+import {
+  getUserWatched,
+  getUserWatchlist,
+  getUserFavourites,
+  getUserLiked,
+  getActivities,
+  getRelativeDayLabel,
+} from '../lib/activityStore';
 
 export default function Browse({ type, title }) {
   const isMovie = type === 'MOVIE';
-  const [items, setItems] = useState([]);
-  const [q, setQ] = useState('');
-  const [activeTab, setActiveTab] = useState('ALL');
-  const [loading, setLoading] = useState(true);
-  const [localUpdate, setLocalUpdate] = useState(0);
+  const fallbackItems = useMemo(() => getCuratedItems(type), [type]);
 
-  async function load(query = q) {
+  const [catalogueItems, setCatalogueItems] = useState(fallbackItems);
+  const [subView, setSubView] = useState('watched');
+  const [q, setQ] = useState('');
+  const [viewMode, setViewMode] = useState('grid');
+  const [loading, setLoading] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const inputRef = useRef(null);
+
+  // Load backend catalogue in background for search
+  async function loadCatalogue(query = '') {
     setLoading(true);
     try {
       const qs = query.trim() ? `&q=${encodeURIComponent(query.trim())}` : '';
       const d = await api(`/content?type=${type}${qs}&limit=60`);
-      setItems(d.items || []);
+      if (d?.items?.length > 0) {
+        setCatalogueItems(d.items);
+      } else {
+        setCatalogueItems(fallbackItems);
+      }
+    } catch {
+      setCatalogueItems(fallbackItems);
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => { load(''); }, [type]);
+  useEffect(() => {
+    loadCatalogue('');
+  }, [type]);
 
-  const handleLikeToggle = (id, nextState) => {
-    setItems(prev => prev.map(item => item._id === id ? { ...item, liked: nextState } : item));
-    setLocalUpdate(v => v + 1);
+  // Listen for activity updates so personal lists update reactively
+  useEffect(() => {
+    const handleUpdate = () => setRefreshTrigger(prev => prev + 1);
+    window.addEventListener('activityUpdated', handleUpdate);
+    return () => window.removeEventListener('activityUpdated', handleUpdate);
+  }, []);
+
+  // When search is active, search across the catalogue
+  const searchResults = useMemo(() => {
+    if (!q.trim()) return [];
+    const lq = q.toLowerCase();
+    return catalogueItems.filter(
+      it =>
+        it.title.toLowerCase().includes(lq) ||
+        (it.director && it.director.toLowerCase().includes(lq)) ||
+        (it.author && it.author.toLowerCase().includes(lq)) ||
+        (it.genres && it.genres.some(g => g.toLowerCase().includes(lq)))
+    );
+  }, [catalogueItems, q]);
+
+  // When not searching and not in activity, show the user's selected personal collection
+  const currentPersonalItems = useMemo(() => {
+    switch (subView) {
+      case 'watchlist':
+        return getUserWatchlist(type);
+      case 'favourites':
+        return getUserFavourites(type);
+      case 'liked':
+        return getUserLiked(type);
+      case 'watched':
+      default:
+        return getUserWatched(type);
+    }
+  }, [subView, type, refreshTrigger]);
+
+  // Activities for this specific section (Cinema vs Library)
+  const sectionActivities = useMemo(() => {
+    return getActivities(type);
+  }, [type, refreshTrigger]);
+
+  // Group section activities by relative day
+  const groupedActivities = useMemo(() => {
+    const groups = {};
+    for (const act of sectionActivities) {
+      const label = getRelativeDayLabel(act.createdAt);
+      if (!groups[label]) groups[label] = [];
+      groups[label].push(act);
+    }
+    return groups;
+  }, [sectionActivities]);
+
+  const activityDayKeys = Object.keys(groupedActivities);
+
+  const isSearching = q.trim().length > 0;
+  const isActivityView = !isSearching && subView === 'activity';
+  const displayed = isSearching ? searchResults : currentPersonalItems;
+
+  const subViewTabs = isMovie
+    ? [
+        { id: 'watched', label: 'Watched' },
+        { id: 'watchlist', label: 'Watchlist' },
+        { id: 'favourites', label: 'Favourites' },
+        { id: 'liked', label: 'Liked' },
+        { id: 'activity', label: 'Activity' },
+      ]
+    : [
+        { id: 'watched', label: 'Read' },
+        { id: 'watchlist', label: 'Reading list' },
+        { id: 'favourites', label: 'Favourites' },
+        { id: 'liked', label: 'Liked' },
+        { id: 'activity', label: 'Activity' },
+      ];
+
+  const getSubViewHeading = () => {
+    if (isSearching) return `Search catalogue for "${q}"`;
+    if (isMovie) {
+      switch (subView) {
+        case 'activity':
+          return 'Cinema activity';
+        case 'watchlist':
+          return 'Watchlist';
+        case 'favourites':
+          return 'Favourite films';
+        case 'liked':
+          return 'Liked films';
+        case 'watched':
+        default:
+          return 'Watched films';
+      }
+    } else {
+      switch (subView) {
+        case 'activity':
+          return 'Library activity';
+        case 'watchlist':
+          return 'Reading list';
+        case 'favourites':
+          return 'Favourite books';
+        case 'liked':
+          return 'Liked books';
+        case 'watched':
+        default:
+          return 'Books read';
+      }
+    }
   };
 
-  const handleFavoriteToggle = (id, nextState) => {
-    setItems(prev => prev.map(item => item._id === id ? { ...item, favorited: nextState } : item));
-    setLocalUpdate(v => v + 1);
+  const renderActionIcon = (actType) => {
+    switch (actType) {
+      case 'RATED':
+        return <Star size={13} className="text-gold fill-gold" />;
+      case 'LIKED':
+        return <Heart size={13} className="text-ember fill-ember" />;
+      case 'FAVORITED':
+        return <Star size={13} className="text-gold fill-gold" />;
+      case 'WATCHED':
+      case 'READ':
+        return <Check size={13} className="text-ink" />;
+      case 'REVIEWED':
+        return <MessageSquare size={13} className="text-ink-muted" />;
+      default:
+        return <ArrowUpRight size={13} className="text-ink-faint" />;
+    }
   };
 
-  const isLiked = (item) => {
-    if (item.liked) return true;
-    try { return localStorage.getItem(`like_${item._id}`) === 'true'; } catch { return false; }
+  const renderActionText = (act) => {
+    const targetUrl = `/${isMovie ? 'movies' : 'books'}/${act.contentId}`;
+    const titleLink = (
+      <Link
+        href={targetUrl}
+        className="font-serif text-lg text-ink hover:text-ember transition-colors duration-200"
+      >
+        {act.title}
+      </Link>
+    );
+
+    switch (act.type) {
+      case 'RATED':
+        return (
+          <div className="flex items-baseline gap-2 flex-wrap text-sm text-ink-muted">
+            <span>You rated</span>
+            {titleLink}
+            {act.score && (
+              <span className="inline-flex items-center gap-1 font-semibold text-gold text-xs">
+                ★ {Number(act.score).toFixed(1)}
+              </span>
+            )}
+          </div>
+        );
+      case 'LIKED':
+        return (
+          <div className="flex items-baseline gap-2 flex-wrap text-sm text-ink-muted">
+            <span>You liked</span>
+            {titleLink}
+          </div>
+        );
+      case 'FAVORITED':
+        return (
+          <div className="flex items-baseline gap-2 flex-wrap text-sm text-ink-muted">
+            <span>You added</span>
+            {titleLink}
+            <span>to favourites</span>
+          </div>
+        );
+      case 'WATCHED':
+        return (
+          <div className="flex items-baseline gap-2 flex-wrap text-sm text-ink-muted">
+            <span>You watched</span>
+            {titleLink}
+          </div>
+        );
+      case 'READ':
+        return (
+          <div className="flex items-baseline gap-2 flex-wrap text-sm text-ink-muted">
+            <span>You read</span>
+            {titleLink}
+          </div>
+        );
+      case 'REVIEWED':
+        return (
+          <div className="flex flex-col gap-1">
+            <div className="flex items-baseline gap-2 flex-wrap text-sm text-ink-muted">
+              <span>You reviewed</span>
+              {titleLink}
+            </div>
+            {act.reviewSnippet && (
+              <p className="font-serif italic text-sm text-ink-muted mt-1 leading-relaxed">
+                "{act.reviewSnippet}"
+              </p>
+            )}
+          </div>
+        );
+      default:
+        return (
+          <div className="flex items-baseline gap-2 text-sm text-ink-muted">
+            <span>You logged</span>
+            {titleLink}
+          </div>
+        );
+    }
   };
-  const isFavorited = (item) => {
-    if (item.favorited) return true;
-    try { return localStorage.getItem(`fav_${item._id}`) === 'true'; } catch { return false; }
-  };
-
-  const filtered = useMemo(() => {
-    if (activeTab === 'LIKED')     return items.filter(isLiked);
-    if (activeTab === 'FAVORITES') return items.filter(isFavorited);
-    return items;
-  }, [items, activeTab, localUpdate]);
-
-  const likedCount = useMemo(() => items.filter(isLiked).length, [items, localUpdate]);
-  const favCount   = useMemo(() => items.filter(isFavorited).length, [items, localUpdate]);
-
-  /* ── Filter tab config ── */
-  const tabs = [
-    { id: 'ALL',       label: 'All',       icon: Layers, count: items.length },
-    { id: 'LIKED',     label: 'Liked',     icon: Heart,  count: likedCount },
-    { id: 'FAVORITES', label: 'Favorites', icon: Star,   count: favCount },
-  ];
 
   return (
-    <div style={{ background: '#FAF9F6', minHeight: 'calc(100vh - 60px)', paddingBottom: 100 }}>
-      <div className="container" style={{ paddingTop: 48 }}>
+    <div className="min-h-[calc(100vh-52px)] bg-page text-ink pb-24 selection:bg-ember/30 selection:text-ink relative overflow-hidden">
+      {/* Background ambient light */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/[0.035] via-transparent to-transparent pointer-events-none" />
+      <div className="fixed top-0 right-1/4 w-96 h-96 rounded-full bg-radial from-ember/[0.05] to-transparent blur-3xl pointer-events-none" />
+      <div className="fixed bottom-0 left-1/3 w-[30rem] h-[30rem] rounded-full bg-radial from-gold/[0.03] to-transparent blur-3xl pointer-events-none" />
 
-        {/* ── Page Header ───────────────────────────────────────────── */}
-        <div className="fade-up" style={{ marginBottom: 36 }}>
+      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
 
-          {/* Back breadcrumb */}
-          <Link href="/hub" style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 10,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: '#A3A3A3',
-            marginBottom: 24,
-            transition: 'color 0.15s ease',
-            textDecoration: 'none',
-          }}
-          onMouseEnter={e => e.currentTarget.style.color = '#525252'}
-          onMouseLeave={e => e.currentTarget.style.color = '#A3A3A3'}
-          >
-            ← Collections
-          </Link>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
-            gap: 24,
-            flexWrap: 'wrap',
-          }}>
+        {/* ── Section Header ── */}
+        <div className="pt-10 pb-6 border-b border-white/[0.08] mb-8">
+          {/* Top Row: Category title & Search bar */}
+          <div className="flex items-end justify-between gap-6 flex-wrap mb-7">
             <div>
-              {/* Mono collection label */}
-              <div style={{
-                fontFamily: "'DM Mono', ui-monospace, monospace",
-                fontSize: 10,
-                fontWeight: 400,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: '#A3A3A3',
-                marginBottom: 10,
-              }}>
-                {isMovie ? 'COLLECTION // 01 — Motion Pictures' : 'COLLECTION // 02 — The Library'}
-              </div>
-
-              {/* Title */}
-              <h1 style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: 'clamp(36px, 4vw, 56px)',
-                fontWeight: 500,
-                letterSpacing: '-0.03em',
-                lineHeight: 1.0,
-                color: '#09090B',
-              }}>
-                {title}
+              <p className="text-[11px] font-semibold uppercase tracking-[0.20em] text-[#F87171] mb-2">
+                {isMovie ? 'CINEMA JOURNAL' : 'LIBRARY JOURNAL'}
+              </p>
+              <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-zinc-100 tracking-tight leading-none">
+                {getSubViewHeading()}
               </h1>
             </div>
 
-            {/* Search */}
-            <div style={{ display: 'flex', gap: 8, flexShrink: 0, width: '100%', maxWidth: 340 }}>
-              <div style={{ position: 'relative', flex: 1 }}>
-                <Search size={13} style={{
-                  position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)',
-                  color: '#A3A3A3', pointerEvents: 'none',
-                }} />
+            {/* Right: Search Capsule & View Mode Toggle */}
+            <div className="flex items-center gap-3.5 flex-wrap">
+              {/* Inset Rounded Capsule Search Bar */}
+              <div className="relative flex items-center w-64 sm:w-72">
+                <Search
+                  size={14}
+                  className="absolute left-3.5 text-zinc-400 pointer-events-none"
+                />
                 <input
-                  className="input"
+                  ref={inputRef}
                   value={q}
                   onChange={e => setQ(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') load(q); }}
-                  placeholder={`Search ${title.toLowerCase()}…`}
-                  style={{ paddingLeft: 36, paddingRight: q ? 34 : 14, fontSize: 13 }}
+                  placeholder={isMovie ? 'Search films by title or director…' : 'Search books by title or author…'}
+                  className="w-full bg-[#1A1A20] border border-white/10 rounded-full pl-9 pr-8 py-2 text-xs text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:border-white/25 focus:ring-1 focus:ring-white/20 focus:bg-[#202028]"
                 />
                 {q && (
                   <button
-                    onClick={() => { setQ(''); load(''); }}
-                    style={{
-                      position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: '#A3A3A3', display: 'flex', alignItems: 'center', padding: 0,
-                    }}
+                    onClick={() => setQ('')}
+                    title="Clear search"
+                    className="absolute right-3 text-zinc-400 hover:text-white transition-colors"
                   >
-                    <X size={12} />
+                    <X size={13} />
                   </button>
                 )}
               </div>
-              <button
-                className="btn btn-primary"
-                onClick={() => load(q)}
-                style={{ flexShrink: 0, borderRadius: 6, fontSize: 12.5, padding: '0 18px' }}
-              >
-                Search
-              </button>
+
+              {/* Grid / List view toggle (hidden on activity view) */}
+              {!isActivityView && (
+                <div className="flex items-center p-1 bg-surface border border-white/[0.08] rounded-full">
+                  {[
+                    { mode: 'grid', Icon: LayoutGrid, title: 'Grid view' },
+                    { mode: 'list', Icon: List, title: 'List view' },
+                  ].map(({ mode, Icon, title }) => (
+                    <button
+                      key={mode}
+                      onClick={() => setViewMode(mode)}
+                      title={title}
+                      className={`p-1.5 rounded-full transition-all duration-200 ${
+                        viewMode === mode
+                          ? 'bg-white/15 text-white shadow-sm'
+                          : 'text-zinc-400 hover:text-white'
+                      }`}
+                    >
+                      <Icon size={14} strokeWidth={1.7} />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
+
+          {/* Bottom Row: Segmented Pill Navigation */}
+          {!isSearching && (
+            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+              {subViewTabs.map(tab => {
+                const isActive = subView === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => {
+                      setSubView(tab.id);
+                      setQ('');
+                    }}
+                    className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
+                      isActive
+                        ? 'bg-white/10 text-white border border-white/20 shadow-sm'
+                        : 'text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* ── Hairline divider ────────────────────────────────────── */}
-        <div style={{ height: 1, background: 'rgba(0,0,0,0.06)', marginBottom: 28 }} />
-
-        {/* ── Filter Row ───────────────────────────────────────────── */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 16,
-          marginBottom: 36,
-          flexWrap: 'wrap',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            {tabs.map(({ id, label, icon: Icon, count }) => {
-              const active = activeTab === id;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setActiveTab(id)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 7,
-                    padding: '7px 16px',
-                    borderRadius: 6,
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: 12.5,
-                    fontWeight: active ? 600 : 400,
-                    border: `1px solid ${active ? 'rgba(0,0,0,0.10)' : 'transparent'}`,
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                    background: active ? '#FBFBFA' : 'transparent',
-                    color: active ? '#09090B' : '#A3A3A3',
-                    boxShadow: active ? '0 1px 4px rgba(0,0,0,0.06)' : 'none',
-                    letterSpacing: '0.01em',
-                  }}
-                >
-                  <Icon
-                    size={12}
-                    strokeWidth={id === 'ALL' ? 1.8 : 2}
-                    color={id === 'LIKED' && active ? '#e05252'
-                      : id === 'FAVORITES' && active ? '#C8963E'
-                      : active ? '#525252' : '#D4D4D4'}
-                    fill={id === 'LIKED' && active ? '#e05252'
-                      : id === 'FAVORITES' && active ? '#C8963E'
-                      : 'none'}
-                  />
-                  {label}
-                  {count > 0 && (
-                    <span style={{
-                      fontFamily: "'DM Mono', ui-monospace, monospace",
-                      fontSize: 10,
-                      padding: '1px 7px',
-                      borderRadius: 20,
-                      background: active ? 'rgba(0,0,0,0.06)' : 'rgba(0,0,0,0.04)',
-                      color: active ? '#525252' : '#A3A3A3',
-                      letterSpacing: '0.04em',
-                    }}>
-                      {count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Result count */}
-          <div style={{
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 10,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: '#A3A3A3',
-          }}>
-            {filtered.length} {filtered.length === 1
-              ? (isMovie ? 'film' : 'title')
-              : (isMovie ? 'films' : 'titles')}
-          </div>
-        </div>
-
-        {/* ── Content Grid ─────────────────────────────────────────── */}
+        {/* ── Main Content Area ── */}
         {loading ? (
-          <div style={{
-            padding: '100px 0',
-            textAlign: 'center',
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 10,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: '#D4D4D4',
-          }}>
-            Loading catalogue…
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="flex flex-col gap-3 animate-pulse">
+                <div className="aspect-[2/3] bg-surface-raised rounded-xl" />
+                <div className="h-4 bg-surface-raised rounded w-3/4" />
+                <div className="h-3 bg-surface-raised rounded w-1/2" />
+              </div>
+            ))}
           </div>
-        ) : filtered.length === 0 ? (
-          /* Empty state */
-          <div style={{
-            padding: '80px 20px',
-            textAlign: 'center',
-          }}>
-            {activeTab === 'LIKED' ? (
-              <>
-                <Heart size={28} color="#D4D4D4" style={{ margin: '0 auto 16px' }} />
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 500, color: '#09090B', marginBottom: 8 }}>
-                  Nothing liked yet
-                </p>
-                <p style={{ fontSize: 13.5, color: '#737373', marginBottom: 24, lineHeight: 1.65 }}>
-                  Tap the heart icon on any {isMovie ? 'film poster' : 'book cover'} to save it here.
-                </p>
-                <button onClick={() => setActiveTab('ALL')} className="btn btn-primary" style={{ fontSize: 12.5 }}>
-                  Browse all {isMovie ? 'films' : 'books'}
-                </button>
-              </>
-            ) : activeTab === 'FAVORITES' ? (
-              <>
-                <Star size={28} color="#D4D4D4" style={{ margin: '0 auto 16px' }} />
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 500, color: '#09090B', marginBottom: 8 }}>
-                  No favorites yet
-                </p>
-                <p style={{ fontSize: 13.5, color: '#737373', marginBottom: 24, lineHeight: 1.65 }}>
-                  Tap the star icon on any {isMovie ? 'film poster' : 'book cover'} to pin it to favorites.
-                </p>
-                <button onClick={() => setActiveTab('ALL')} className="btn btn-primary" style={{ fontSize: 12.5 }}>
-                  Browse all {isMovie ? 'films' : 'books'}
-                </button>
-              </>
-            ) : (
-              <>
-                <p style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: 24, fontWeight: 500, color: '#09090B', marginBottom: 8 }}>
-                  No titles found
-                </p>
-                <p style={{ fontSize: 13.5, color: '#737373', marginBottom: 24 }}>
-                  Try another keyword or title.
-                </p>
-                <button onClick={() => { setQ(''); load(''); }} className="btn btn-outline" style={{ fontSize: 12.5 }}>
-                  Reset search
-                </button>
-              </>
-            )}
+        ) : isSearching && displayed.length === 0 ? (
+          <div className="py-24 text-center">
+            <p className="font-serif italic text-2xl text-ink mb-2">
+              No results found for "{q}".
+            </p>
+            <p className="text-xs text-ink-muted">
+              Try searching with another keyword or explore the collection.
+            </p>
           </div>
-        ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-            gap: 18,
-          }}>
-            {filtered.map(item => (
+        ) : isActivityView ? (
+          /* ── Activity View ── */
+          activityDayKeys.length === 0 ? (
+            <div className="py-24 text-center">
+              <p className="font-serif italic text-2xl text-ink mb-2">
+                No activity recorded yet.
+              </p>
+              <p className="text-xs text-ink-muted">
+                Log, rate, or review items to build your personal timeline.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-10 max-w-3xl">
+              {activityDayKeys.map(dayLabel => {
+                const dayItems = groupedActivities[dayLabel];
+                return (
+                  <div key={dayLabel}>
+                    <h2 className="font-serif text-xl text-ink mb-4 flex items-center gap-3">
+                      <span>{dayLabel}</span>
+                      <span className="h-px flex-1 bg-border" />
+                    </h2>
+                    <div className="border-t border-border divide-y divide-border/60">
+                      {dayItems.map((act, idx) => (
+                        <div
+                          key={act.id || idx}
+                          className="flex items-start gap-4 py-3.5 hover:bg-white/[0.02] px-2 rounded-lg transition-colors"
+                        >
+                          <div className="mt-1 w-5 h-5 flex items-center justify-center shrink-0">
+                            {renderActionIcon(act.type)}
+                          </div>
+                          <div className="flex-1">
+                            {renderActionText(act)}
+                            {act.creator && (
+                              <div className="text-xs text-ink-faint mt-0.5">
+                                {act.creator}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )
+        ) : displayed.length === 0 ? (
+          <div className="py-24 text-center">
+            <p className="font-serif italic text-2xl text-ink mb-2">
+              No entries in this view.
+            </p>
+            <p className="text-xs text-ink-muted mb-6">
+              Start adding items by exploring the catalogue.
+            </p>
+            <button
+              onClick={() => {
+                if (inputRef.current) inputRef.current.focus();
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium bg-white/10 text-ink hover:bg-white/20 border border-white/15 transition-all"
+            >
+              <Search size={13} />
+              <span>Search the catalogue</span>
+            </button>
+          </div>
+        ) : viewMode === 'grid' ? (
+          /* ── Responsive Balanced Grid ── */
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {displayed.map(item => (
               <ContentCard
                 key={item._id}
                 item={item}
-                onLikeToggle={handleLikeToggle}
-                onFavoriteToggle={handleFavoriteToggle}
+                onFavoriteToggle={() => setRefreshTrigger(p => p + 1)}
+                onLikeToggle={() => setRefreshTrigger(p => p + 1)}
               />
             ))}
           </div>
-        )}
+        ) : (
+          /* ── Editorial List View ── */
+          <div className="border-t border-border divide-y divide-border/60">
+            {displayed.map(item => {
+              const creator = item.director || item.creatorNames?.[0] || item.author || item.authorNames?.[0] || '';
+              const href = `/${isMovie ? 'movies' : 'books'}/${item._id}`;
+              const rating = Number(item.averageRating || 0);
 
-        {/* ── Switch section footer ─────────────────────────────────── */}
-        <div style={{
-          marginTop: 80,
-          paddingTop: 28,
-          borderTop: '1px solid rgba(0,0,0,0.06)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 16,
-        }}>
-          <div style={{
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 10,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: '#A3A3A3',
-          }}>
-            {isMovie ? 'Also in the journal' : 'Also in the journal'}
+              return (
+                <div
+                  key={item._id}
+                  className="flex items-center justify-between py-3 px-2 hover:bg-white/[0.02] rounded-lg transition-colors gap-4"
+                >
+                  <div className="flex items-center gap-4 min-w-0">
+                    <Link
+                      href={href}
+                      className="w-10 h-14 shrink-0 rounded overflow-hidden bg-surface-raised border border-white/10 relative"
+                    >
+                      {item.imageUrl ? (
+                        <img
+                          src={item.imageUrl}
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[10px] text-ink-muted">
+                          {isMovie ? 'Film' : 'Book'}
+                        </div>
+                      )}
+                    </Link>
+
+                    <div className="min-w-0">
+                      <Link
+                        href={href}
+                        className="font-serif text-base text-ink hover:text-ember transition-colors truncate block"
+                      >
+                        {item.title}
+                      </Link>
+                      {creator && (
+                        <div className="text-xs text-ink-muted truncate">
+                          {creator}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-6 shrink-0">
+                    {rating > 0 && (
+                      <div className="inline-flex items-center gap-1 text-xs font-medium text-gold">
+                        <Star size={12} className="fill-gold stroke-gold" />
+                        <span>{rating.toFixed(1)}</span>
+                      </div>
+                    )}
+                    <Link
+                      href={href}
+                      className="text-xs text-ink-muted hover:text-ink inline-flex items-center gap-1"
+                    >
+                      <span>Details</span>
+                      <ArrowUpRight size={12} />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <Link
-            href={isMovie ? '/books' : '/movies'}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              fontFamily: "'Inter', sans-serif",
-              fontSize: 12.5,
-              fontWeight: 500,
-              color: '#525252',
-              textDecoration: 'none',
-              letterSpacing: '0.02em',
-              transition: 'color 0.15s ease',
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#09090B'}
-            onMouseLeave={e => e.currentTarget.style.color = '#525252'}
-          >
-            Switch to {isMovie ? 'Books' : 'Movies'} →
-          </Link>
-        </div>
+        )}
 
       </div>
     </div>

@@ -1,265 +1,194 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogOut, Film, BookOpen, LayoutGrid } from 'lucide-react';
-import { getCurrentUser, logout } from '../lib/api';
+import { useState, useEffect } from 'react';
+import { User } from 'lucide-react';
 
 export default function Nav() {
-  const [user, setUser] = useState(null);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const isHome = pathname === '/';
+  const [userInitial, setUserInitial] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     try {
-      const cached = localStorage.getItem('currentUser');
-      if (cached) setUser(JSON.parse(cached));
+      const stored = localStorage.getItem('currentUser');
+      if (stored) {
+        const u = JSON.parse(stored);
+        const name = u.displayName || u.username || u.email || '';
+        setUserInitial(name.charAt(0).toUpperCase() || null);
+      }
     } catch {}
-    getCurrentUser().then(u => setUser(u || null));
+  }, []);
 
-    const sync = () => {
-      try {
-        const c = localStorage.getItem('currentUser');
-        setUser(c ? JSON.parse(c) : null);
-      } catch {}
-    };
-    window.addEventListener('storage', sync);
-
+  useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-    return () => {
-      window.removeEventListener('storage', sync);
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, [pathname]);
+  const isCinema  = pathname.startsWith('/movies') || pathname === '/watchlist';
+  const isLibrary = pathname.startsWith('/books')  || pathname === '/reading-list';
+  const isSection = isCinema || isLibrary;
 
-  const links = [
-    { href: '/hub',    label: 'Sections', Icon: LayoutGrid },
-    { href: '/movies', label: 'Movies',   Icon: Film },
-    { href: '/books',  label: 'Books',    Icon: BookOpen },
-  ];
+  if (pathname === '/' || pathname === '/hub') return null;
 
-  /* On the homepage, the nav sits on the dark left panel — use transparent/dark style */
-  const navBg = isHome
-    ? scrolled
-      ? 'rgba(9, 9, 11, 0.97)'
-      : 'rgba(9, 9, 11, 0.82)'
-    : scrolled
-      ? 'rgba(250, 249, 246, 0.97)'
-      : 'rgba(250, 249, 246, 0.90)';
+  const SwitchLink = ({ href, label }) => (
+    <Link
+      href={href}
+      style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: 12,
+        fontWeight: 400,
+        color: 'var(--ink-muted)',
+        transition: 'color 0.18s ease',
+        letterSpacing: '0.01em',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.color = 'var(--ink)')}
+      onMouseLeave={e => (e.currentTarget.style.color = 'var(--ink-muted)')}
+    >
+      {label} →
+    </Link>
+  );
 
-  const navBorderColor = isHome
-    ? 'rgba(255,255,255,0.06)'
-    : 'rgba(0,0,0,0.06)';
-
-  const wordmarkColor = isHome ? '#FFFFFF' : '#09090B';
-  const wordmarkDotColor = '#C8963E';
-  const wordmarkMutedColor = isHome ? 'rgba(255,255,255,0.28)' : 'rgba(9,9,11,0.28)';
-  const linkColor = isHome ? 'rgba(255,255,255,0.42)' : '#A3A3A3';
-  const linkActiveColor = isHome ? '#FFFFFF' : '#09090B';
-  const linkActiveBg = isHome ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.04)';
-  const linkActiveBorder = isHome ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.06)';
+  const ProfileBtn = () => (
+    <Link
+      href="/profile"
+      title="Profile"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 28,
+        height: 28,
+        borderRadius: '50%',
+        background: userInitial ? 'var(--ember-dim)' : 'rgba(255,255,255,0.05)',
+        border: `1px solid ${userInitial ? 'rgba(232,85,61,0.25)' : 'rgba(255,255,255,0.08)'}`,
+        color: userInitial ? 'var(--ember)' : 'var(--ink-muted)',
+        fontFamily: "'Inter', sans-serif",
+        fontSize: 11,
+        fontWeight: 600,
+        flexShrink: 0,
+        transition: 'all 0.18s ease',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = 'var(--ember)';
+        e.currentTarget.style.color = '#fff';
+        e.currentTarget.style.borderColor = 'var(--ember)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = userInitial ? 'var(--ember-dim)' : 'rgba(255,255,255,0.05)';
+        e.currentTarget.style.color = userInitial ? 'var(--ember)' : 'var(--ink-muted)';
+        e.currentTarget.style.borderColor = userInitial ? 'rgba(232,85,61,0.25)' : 'rgba(255,255,255,0.08)';
+      }}
+    >
+      {userInitial || <User size={13} strokeWidth={1.6} />}
+    </Link>
+  );
 
   return (
-    <header style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      background: navBg,
-      backdropFilter: 'blur(18px)',
-      WebkitBackdropFilter: 'blur(18px)',
-      borderBottom: `1px solid ${navBorderColor}`,
-      boxShadow: scrolled
-        ? isHome
-          ? '0 4px 20px rgba(0,0,0,0.3)'
-          : '0 2px 16px rgba(0,0,0,0.06)'
-        : 'none',
-      transition: 'all 0.25s ease',
-    }}>
-      <div className="container" style={{
-        height: 60,
+    <header
+      style={{
+        position: 'sticky',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 100,
+        height: 52,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-      }}>
+        padding: '0 clamp(20px, 4vw, 56px)',
+        background: scrolled
+          ? 'rgba(18,18,22,0.92)'
+          : 'rgba(18,18,22,0.80)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        borderBottom: `1px solid ${scrolled ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)'}`,
+        transition: 'background 0.2s ease, border-color 0.2s ease',
+      }}
+    >
+      {/* ── Logo ── */}
+      <Link
+        href="/"
+        style={{
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: 18,
+          fontWeight: 500,
+          letterSpacing: '0.06em',
+          color: 'var(--ink)',
+          transition: 'color 0.18s ease',
+          lineHeight: 1,
+          flexShrink: 0,
+        }}
+        onMouseEnter={e => (e.currentTarget.style.color = 'var(--ember)')}
+        onMouseLeave={e => (e.currentTarget.style.color = 'var(--ink)')}
+      >
+        LastPage
+      </Link>
 
-        {/* LEFT — Wordmark */}
-        <Link href="/" style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 6,
-          textDecoration: 'none',
-        }}>
-          <span style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: 20,
-            fontWeight: 500,
-            letterSpacing: '-0.01em',
-            color: wordmarkColor,
-            lineHeight: 1,
-          }}>
-            Last<span style={{ color: wordmarkMutedColor }}>Page</span>
-          </span>
-          <span style={{
-            width: 4,
-            height: 4,
-            borderRadius: '50%',
-            background: wordmarkDotColor,
-            flexShrink: 0,
-          }} />
-        </Link>
-
-        {/* CENTER — Nav links */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          {links.map(({ href, label, Icon }) => {
-            const active = pathname.startsWith(href);
-            return (
-              <Link
-                key={href}
-                href={href}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '5px 12px',
-                  borderRadius: 6,
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: 12.5,
-                  fontWeight: active ? 500 : 400,
-                  color: active ? linkActiveColor : linkColor,
-                  background: active ? linkActiveBg : 'transparent',
-                  border: `1px solid ${active ? linkActiveBorder : 'transparent'}`,
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={e => {
-                  if (!active) {
-                    e.currentTarget.style.color = linkActiveColor;
-                    e.currentTarget.style.background = linkActiveBg;
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!active) {
-                    e.currentTarget.style.color = linkColor;
-                    e.currentTarget.style.background = 'transparent';
-                  }
-                }}
-              >
-                <Icon size={13} strokeWidth={1.8} />
-                {label}
-              </Link>
-            );
-          })}
+      {/* ── Right: nav + profile ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <nav style={{ display: 'flex', alignItems: 'center', gap: 12, whiteSpace: 'nowrap' }}>
+          {isCinema ? (
+            <>
+              <span style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'var(--ink)',
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+              }}>
+                Cinema
+              </span>
+              <span style={{ color: 'var(--border)', fontSize: 12 }}>·</span>
+              <SwitchLink href="/books" label="Library" />
+            </>
+          ) : isLibrary ? (
+            <>
+              <span style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: 12,
+                fontWeight: 600,
+                color: 'var(--ink)',
+                letterSpacing: '0.04em',
+                textTransform: 'uppercase',
+              }}>
+                Library
+              </span>
+              <span style={{ color: 'var(--border)', fontSize: 12 }}>·</span>
+              <SwitchLink href="/movies" label="Cinema" />
+            </>
+          ) : (
+            <>
+              {[{ href: '/movies', label: 'Cinema' }, { href: '/books', label: 'Library' }].map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: 12,
+                    color: 'var(--ink-muted)',
+                    letterSpacing: '0.03em',
+                    transition: 'color 0.18s ease',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--ink)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--ink-muted)')}
+                >
+                  {label}
+                </Link>
+              ))}
+            </>
+          )}
         </nav>
 
-        {/* RIGHT — User state */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              {/* Avatar + name chip */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 7,
-                padding: '4px 11px 4px 5px',
-                background: isHome ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
-                border: `1px solid ${isHome ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.06)'}`,
-                borderRadius: 7,
-              }}>
-                <span style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 6,
-                  background: 'linear-gradient(135deg, #272757, #505081)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 10.5,
-                  fontWeight: 700,
-                  color: '#FFFFFF',
-                  flexShrink: 0,
-                }}>
-                  {(user.displayName || user.username || 'U')[0].toUpperCase()}
-                </span>
-                <span style={{
-                  fontSize: 12.5,
-                  fontWeight: 500,
-                  color: isHome ? 'rgba(255,255,255,0.80)' : '#09090B',
-                  maxWidth: 100,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                }}>
-                  {user.displayName || user.username}
-                </span>
-              </div>
-
-              {/* Sign out icon button */}
-              <button
-                onClick={logout}
-                title="Sign out"
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 7,
-                  background: 'transparent',
-                  border: `1px solid ${isHome ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'}`,
-                  color: isHome ? 'rgba(255,255,255,0.35)' : '#A3A3A3',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.color = isHome ? '#FFFFFF' : '#09090B';
-                  e.currentTarget.style.background = isHome ? 'rgba(255,255,255,0.09)' : 'rgba(0,0,0,0.06)';
-                  e.currentTarget.style.borderColor = isHome ? 'rgba(255,255,255,0.13)' : 'rgba(0,0,0,0.09)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.color = isHome ? 'rgba(255,255,255,0.35)' : '#A3A3A3';
-                  e.currentTarget.style.background = 'transparent';
-                  e.currentTarget.style.borderColor = isHome ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)';
-                }}
-              >
-                <LogOut size={13} strokeWidth={1.8} />
-              </button>
-            </div>
-          ) : (
-            <a
-              href="#auth"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '7px 17px',
-                borderRadius: 8,
-                fontSize: 13,
-                fontWeight: 500,
-                fontFamily: "'Inter', sans-serif",
-                color: isHome ? '#09090B' : '#FFFFFF',
-                background: isHome ? '#FFFFFF' : '#09090B',
-                border: 'none',
-                transition: 'all 0.2s ease',
-                letterSpacing: '0.01em',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = isHome ? '#F4F2EE' : '#272757';
-                e.currentTarget.style.transform = 'translateY(-1px)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = isHome ? '#FFFFFF' : '#09090B';
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              Sign in
-            </a>
-          )}
-        </div>
-
+        {isSection && (
+          <>
+            <div style={{ width: 1, height: 14, background: 'rgba(255,255,255,0.08)', flexShrink: 0 }} />
+            <ProfileBtn />
+          </>
+        )}
       </div>
     </header>
   );

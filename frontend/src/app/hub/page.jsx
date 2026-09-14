@@ -1,418 +1,116 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Film, BookOpen, ArrowRight, Heart, Bookmark, Star, Layers } from 'lucide-react';
-import { api } from '../../lib/api';
+import { Film, BookOpen } from 'lucide-react';
 
-/* ─────────────────────────────────────────────────────────────────
-   Asymmetric Section Card — poster-left / copy-right
-   ───────────────────────────────────────────────────────────────── */
-function SectionCard({ href, index, type, title, description, featuredTitle, featuredYear, featuredRating }) {
-  const [hovered, setHovered] = useState(false);
-  const isMovie = type === 'MOVIE';
-
+export default function HubPage() {
   return (
-    <Link
-      href={href}
-      style={{ display: 'block', textDecoration: 'none' }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '180px 1fr',
-        background: hovered ? '#F4F2EE' : '#FAF9F6',
-        border: `1px solid ${hovered ? 'rgba(0,0,0,0.09)' : 'rgba(0,0,0,0.06)'}`,
-        borderRadius: 12,
-        overflow: 'hidden',
-        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-        boxShadow: hovered
-          ? '0 16px 48px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04)'
-          : '0 2px 12px rgba(0,0,0,0.04)',
-      }}>
+    <div className="min-h-screen bg-page text-ink flex flex-col justify-center items-center py-12 px-6 relative overflow-hidden selection:bg-ember/30 selection:text-ink">
+      {/* Subtle ambient lighting cones */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/[0.04] via-transparent to-transparent pointer-events-none" />
+      <div className="fixed top-1/4 left-1/4 w-[32rem] h-[32rem] rounded-full bg-radial from-ember/[0.05] to-transparent blur-3xl pointer-events-none" />
+      <div className="fixed bottom-1/4 right-1/4 w-[28rem] h-[28rem] rounded-full bg-radial from-gold/[0.035] to-transparent blur-3xl pointer-events-none" />
 
-        {/* LEFT — Tall matte poster frame */}
-        <div style={{
-          background: '#18181B',
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '32px 20px',
-          minHeight: 280,
-          overflow: 'hidden',
-        }}>
-          {/* Subtle ambient glow */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: isMovie
-              ? 'radial-gradient(ellipse at 50% 0%, rgba(80,80,129,0.18) 0%, transparent 65%)'
-              : 'radial-gradient(ellipse at 50% 0%, rgba(200,150,62,0.12) 0%, transparent 65%)',
-            pointerEvents: 'none',
-          }} />
+      {/* ── Top Header: Centered & Refined ── */}
+      <div className="w-full max-w-4xl text-center relative z-10 mb-8 sm:mb-10">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#F87171] mb-2.5">
+          PORTAL GATEWAY
+        </p>
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-zinc-100 tracking-tight leading-tight">
+          Where would you like to go?
+        </h1>
+      </div>
 
-          {/* Collection index — mono tracked */}
-          <div style={{
-            position: 'absolute',
-            top: 20,
-            left: 0,
-            right: 0,
-            textAlign: 'center',
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 9,
-            fontWeight: 400,
-            letterSpacing: '0.24em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.20)',
-          }}>
-            {isMovie ? 'COLLECTION // 01' : 'COLLECTION // 02'}
-          </div>
+      {/* ── Center: Two Dominant Feature Cards (Cinema & Library) ── */}
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 relative z-10">
 
-          {/* Minimalist icon */}
-          <div style={{
-            width: 52,
-            height: 52,
-            borderRadius: 10,
-            border: '1px solid rgba(255,255,255,0.10)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 14,
-            background: 'rgba(255,255,255,0.04)',
-          }}>
-            {isMovie
-              ? <Film size={22} color="rgba(255,255,255,0.55)" strokeWidth={1.4} />
-              : <BookOpen size={22} color="rgba(255,255,255,0.55)" strokeWidth={1.4} />
-            }
-          </div>
+        {/* ── Cinema Portal Card ── */}
+        <Link
+          href="/movies"
+          className="group relative block h-[360px] sm:h-[410px] lg:h-[460px] rounded-2xl overflow-hidden border border-white/[0.08] hover:border-white/[0.20] shadow-2xl transition-all duration-500 ease-out"
+        >
+          {/* Background Photography with Zoom Hover */}
+          <img
+            src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1200&q=85"
+            alt="Cinema"
+            className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 ease-out group-hover:scale-105"
+          />
 
-          {/* Monospace type label */}
-          <div style={{
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 10,
-            fontWeight: 400,
-            letterSpacing: '0.16em',
-            textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.28)',
-            textAlign: 'center',
-            lineHeight: 1.5,
-          }}>
-            {isMovie ? 'Motion\nPictures' : 'The\nLibrary'}
-          </div>
+          {/* Graphite Multi-stop Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121216]/95 via-[#121216]/45 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#121216]/30 via-transparent to-transparent" />
 
-          {/* Bottom rule */}
-          <div style={{
-            position: 'absolute',
-            bottom: 20,
-            left: 24,
-            right: 24,
-            height: 1,
-            background: 'rgba(255,255,255,0.06)',
-          }} />
-
-          {/* Hover indicator arrow */}
-          <div style={{
-            position: 'absolute',
-            bottom: 14,
-            right: 18,
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 13,
-            color: hovered ? 'rgba(255,255,255,0.50)' : 'rgba(255,255,255,0.18)',
-            transition: 'all 0.25s ease',
-            transform: hovered ? 'translateX(3px)' : 'translateX(0)',
-          }}>
-            →
-          </div>
-        </div>
-
-        {/* RIGHT — Editorial copy stack */}
-        <div style={{
-          padding: '32px 36px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}>
-          <div>
-            {/* Mono tag */}
-            <div style={{
-              fontFamily: "'DM Mono', ui-monospace, monospace",
-              fontSize: 9,
-              fontWeight: 400,
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              color: '#A3A3A3',
-              marginBottom: 14,
-            }}>
-              {isMovie ? 'COLLECTION // 01' : 'COLLECTION // 02'}
+          {/* Typography & Call to Action */}
+          <div className="absolute inset-0 p-8 sm:p-10 flex flex-col justify-end">
+            <div className="flex items-center gap-2 mb-3">
+              <Film size={15} className="text-[#F87171]" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
+                Cinema
+              </span>
             </div>
 
-            {/* Section title */}
-            <h2 style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 'clamp(36px, 3.4vw, 50px)',
-              fontWeight: 500,
-              letterSpacing: '-0.03em',
-              lineHeight: 1.0,
-              color: '#09090B',
-              marginBottom: 16,
-            }}>
-              {title}
+            <h2 className="font-serif text-3xl sm:text-4xl text-zinc-100 font-normal leading-tight mb-2.5">
+              Cinema
             </h2>
 
-            {/* Thin amber accent */}
-            <div style={{
-              width: 28,
-              height: 1,
-              background: '#C8963E',
-              marginBottom: 18,
-              opacity: 0.7,
-            }} />
-
-            {/* Description */}
-            <p style={{
-              fontSize: 14,
-              lineHeight: 1.72,
-              color: '#737373',
-              fontWeight: 400,
-              maxWidth: 360,
-              marginBottom: 24,
-            }}>
-              {description}
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed max-w-sm mb-6 font-normal">
+              Films that stayed with you. Track what you've watched, save favourites, and write reviews.
             </p>
 
-            {/* Featured item preview — if available */}
-            {featuredTitle && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: '10px 14px',
-                background: 'rgba(0,0,0,0.03)',
-                border: '1px solid rgba(0,0,0,0.05)',
-                borderRadius: 7,
-                marginBottom: 28,
-              }}>
-                <div style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: '50%',
-                  background: '#C8963E',
-                  flexShrink: 0,
-                }} />
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    color: '#09090B',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    letterSpacing: '-0.01em',
-                  }}>
-                    {featuredTitle}
-                  </div>
-                  <div style={{
-                    fontFamily: "'DM Mono', ui-monospace, monospace",
-                    fontSize: 10,
-                    color: '#A3A3A3',
-                    letterSpacing: '0.06em',
-                    marginTop: 2,
-                  }}>
-                    {featuredYear || '—'}{featuredRating > 0 ? ` · ${Number(featuredRating).toFixed(1)}` : ''}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Flat CTA — text line with arrow, no button box */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            paddingTop: featuredTitle ? 0 : 20,
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              color: hovered ? '#09090B' : '#525252',
-              fontSize: 12.5,
-              fontWeight: 500,
-              letterSpacing: '0.02em',
-              transition: 'all 0.2s ease',
-            }}>
-              <span>Enter {isMovie ? 'Cinema' : 'Literary'} Collection</span>
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 24,
-                height: 24,
-                borderRadius: 5,
-                background: hovered ? '#09090B' : 'rgba(0,0,0,0.06)',
-                color: hovered ? '#FFFFFF' : '#525252',
-                fontSize: 13,
-                transition: 'all 0.2s ease',
-                transform: hovered ? 'translateX(3px)' : 'translateX(0)',
-              }}>→</span>
+            <div className="flex items-center justify-between pt-4 border-t border-white/[0.08] text-xs font-medium text-zinc-200">
+              <span className="group-hover:text-ember transition-colors duration-200">
+                Open cinema
+              </span>
+              <span className="text-base text-ember transform group-hover:translate-x-1.5 transition-transform duration-200">
+                →
+              </span>
             </div>
           </div>
-        </div>
+        </Link>
 
-      </div>
-    </Link>
-  );
-}
+        {/* ── Library Portal Card ── */}
+        <Link
+          href="/books"
+          className="group relative block h-[360px] sm:h-[410px] lg:h-[460px] rounded-2xl overflow-hidden border border-white/[0.08] hover:border-white/[0.20] shadow-2xl transition-all duration-500 ease-out"
+        >
+          {/* Background Photography with Zoom Hover */}
+          <img
+            src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1200&q=85"
+            alt="Library"
+            className="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-700 ease-out group-hover:scale-105"
+          />
 
-/* ─────────────────────────────────────────────────────────────────
-   Bottom feature strip item
-   ───────────────────────────────────────────────────────────────── */
-function FeatureItem({ icon: Icon, label }) {
-  return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: 8,
-    }}>
-      <Icon size={12} color="#A3A3A3" strokeWidth={1.8} />
-      <span style={{
-        fontFamily: "'DM Mono', ui-monospace, monospace",
-        fontSize: 10,
-        letterSpacing: '0.14em',
-        textTransform: 'uppercase',
-        color: '#A3A3A3',
-        fontWeight: 400,
-      }}>
-        {label}
-      </span>
-    </div>
-  );
-}
+          {/* Graphite Multi-stop Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#121216]/95 via-[#121216]/45 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#121216]/30 via-transparent to-transparent" />
 
-/* ═══════════════════════════════════════════════════════════════════
-   HUB PAGE
-   ═══════════════════════════════════════════════════════════════════ */
-export default function HubPage() {
-  const [sample, setSample] = useState({ movie: null, book: null });
+          {/* Typography & Call to Action */}
+          <div className="absolute inset-0 p-8 sm:p-10 flex flex-col justify-end">
+            <div className="flex items-center gap-2 mb-3">
+              <BookOpen size={15} className="text-gold" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
+                Library
+              </span>
+            </div>
 
-  useEffect(() => {
-    api('/content?type=MOVIE&limit=1').then(d => {
-      if (d.items?.[0]) setSample(s => ({ ...s, movie: d.items[0] }));
-    }).catch(() => {});
-    api('/content?type=BOOK&limit=1').then(d => {
-      if (d.items?.[0]) setSample(s => ({ ...s, book: d.items[0] }));
-    }).catch(() => {});
-  }, []);
+            <h2 className="font-serif text-3xl sm:text-4xl text-zinc-100 font-normal leading-tight mb-2.5">
+              Library
+            </h2>
 
-  return (
-    <div style={{
-      minHeight: 'calc(100vh - 60px)',
-      background: '#FAF9F6',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      padding: 'clamp(40px, 6vh, 72px) clamp(24px, 5vw, 80px)',
-    }}>
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed max-w-sm mb-6 font-normal">
+              Books that made an impression. Track what you've read, save favourites, and write reviews.
+            </p>
 
-      <div style={{
-        maxWidth: 960,
-        width: '100%',
-        margin: '0 auto',
-      }}>
-
-        {/* ── Editorial Header ─────────────────────────────────────── */}
-        <div className="fade-up" style={{ marginBottom: 'clamp(36px, 5vh, 56px)' }}>
-
-          {/* Mono label */}
-          <div style={{
-            fontFamily: "'DM Mono', ui-monospace, monospace",
-            fontSize: 10,
-            fontWeight: 400,
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: '#A3A3A3',
-            marginBottom: 16,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-          }}>
-            <span style={{ display: 'inline-block', width: 20, height: 1, background: '#D4D4D4', verticalAlign: 'middle' }} />
-            Explore & Catalogue
+            <div className="flex items-center justify-between pt-4 border-t border-white/[0.08] text-xs font-medium text-zinc-200">
+              <span className="group-hover:text-gold transition-colors duration-200">
+                Open library
+              </span>
+              <span className="text-base text-gold transform group-hover:translate-x-1.5 transition-transform duration-200">
+                →
+              </span>
+            </div>
           </div>
-
-          <h1 style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: 'clamp(40px, 4.5vw, 60px)',
-            fontWeight: 500,
-            letterSpacing: '-0.03em',
-            lineHeight: 1.02,
-            color: '#09090B',
-            marginBottom: 14,
-          }}>
-            Choose your section.
-          </h1>
-
-          <p style={{
-            fontSize: 14,
-            lineHeight: 1.72,
-            color: '#737373',
-            maxWidth: 480,
-            fontWeight: 400,
-          }}>
-            Select a domain to log entries, discover curated recommendations, or cultivate your personal shelves.
-          </p>
-        </div>
-
-        {/* ── Twin Asymmetric Cards ────────────────────────────────── */}
-        <div className="fade-up" style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 16,
-          animationDelay: '0.08s',
-        }}>
-          <SectionCard
-            href="/movies"
-            index={1}
-            type="MOVIE"
-            title="Movies"
-            description="Feature films, art-house cinema, retrospectives and documentaries. Log what you've screened and write reflective reviews."
-            featuredTitle={sample.movie?.title}
-            featuredYear={sample.movie?.year}
-            featuredRating={sample.movie?.averageRating}
-          />
-
-          <SectionCard
-            href="/books"
-            index={2}
-            type="BOOK"
-            title="Books"
-            description="Novels, philosophical works, essays, poetry and anthologies. Track reading milestones and curate your personal canon."
-            featuredTitle={sample.book?.title}
-            featuredYear={sample.book?.year}
-            featuredRating={sample.book?.averageRating}
-          />
-        </div>
-
-        {/* ── Bottom Feature Strip ─────────────────────────────────── */}
-        <div className="fade-up" style={{
-          marginTop: 'clamp(32px, 4.5vh, 52px)',
-          paddingTop: 'clamp(20px, 3vh, 28px)',
-          borderTop: '1px solid rgba(0,0,0,0.06)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 'clamp(20px, 4vw, 44px)',
-          flexWrap: 'wrap',
-          animationDelay: '0.16s',
-        }}>
-          <FeatureItem icon={Star} label="Community Ratings" />
-          <FeatureItem icon={Bookmark} label="Watchlists" />
-          <FeatureItem icon={Heart} label="Curated Tastes" />
-          <FeatureItem icon={Layers} label="Cross-Domain Diary" />
-        </div>
+        </Link>
 
       </div>
     </div>

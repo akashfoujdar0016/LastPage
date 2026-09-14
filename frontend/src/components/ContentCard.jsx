@@ -1,36 +1,56 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Heart, Star } from 'lucide-react';
+import { Heart, ArrowUpRight } from 'lucide-react';
 import { api, getToken } from '../lib/api';
+import { recordActivity, formatLogDate } from '../lib/activityStore';
 
 export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
   const isMovie = item.type === 'MOVIE';
   const href = `/${isMovie ? 'movies' : 'books'}/${item._id}`;
-  const genre = item.genres?.[0] || '';
+  const creator = item.director || item.creatorNames?.[0] || item.author || item.authorNames?.[0] || '';
   const rating = Number(item.averageRating || 0);
 
-  const [liked, setLiked] = useState(() => {
-    if (typeof item.liked === 'boolean') return item.liked;
-    try { return localStorage.getItem(`like_${item._id}`) === 'true'; } catch { return false; }
-  });
+  const [liked, setLiked] = useState(false);
+  const [favorited, setFavorited] = useState(false);
+  const [loggedStatus, setLoggedStatus] = useState(null);
+  const [loggedDate, setLoggedDate] = useState(null);
+  const [userRating, setUserRating] = useState(null);
+  const [hovered, setHovered] = useState(false);
 
-  const [favorited, setFavorited] = useState(() => {
-    if (typeof item.favorited === 'boolean') return item.favorited;
-    try { return localStorage.getItem(`fav_${item._id}`) === 'true'; } catch { return false; }
-  });
-
-  const [cardHovered, setCardHovered] = useState(false);
+  useEffect(() => {
+    try {
+      setLiked(localStorage.getItem(`like_${item._id}`) === 'true');
+      setFavorited(localStorage.getItem(`fav_${item._id}`) === 'true');
+      setLoggedStatus(localStorage.getItem(`status_${item._id}`));
+      setLoggedDate(localStorage.getItem(`logged_date_${item._id}`));
+      const r = localStorage.getItem(`rating_${item._id}`);
+      if (r) setUserRating(Number(r));
+    } catch {}
+  }, [item._id]);
 
   const handleLike = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     const next = !liked;
     setLiked(next);
-    try { localStorage.setItem(`like_${item._id}`, String(next)); } catch {}
+    try {
+      localStorage.setItem(`like_${item._id}`, String(next));
+    } catch {}
+    if (next) {
+      recordActivity({
+        type: 'LIKED',
+        contentId: item._id,
+        contentType: item.type,
+        title: item.title,
+        creator,
+      });
+    }
     if (onLikeToggle) onLikeToggle(item._id, next);
-    try { if (getToken()) await api(`/content/${item._id}/like`, { method: 'POST' }); } catch {}
+    try {
+      if (getToken()) await api(`/content/${item._id}/like`, { method: 'POST' });
+    } catch {}
   };
 
   const handleFavorite = async (e) => {
@@ -38,243 +58,178 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
     e.stopPropagation();
     const next = !favorited;
     setFavorited(next);
-    try { localStorage.setItem(`fav_${item._id}`, String(next)); } catch {}
+    try {
+      localStorage.setItem(`fav_${item._id}`, String(next));
+    } catch {}
+    if (next) {
+      recordActivity({
+        type: 'FAVORITED',
+        contentId: item._id,
+        contentType: item.type,
+        title: item.title,
+        creator,
+      });
+    }
     if (onFavoriteToggle) onFavoriteToggle(item._id, next);
-    try { if (getToken()) await api(`/content/${item._id}/favorite`, { method: 'POST' }); } catch {}
+    try {
+      if (getToken()) await api(`/content/${item._id}/favorite`, { method: 'POST' });
+    } catch {}
   };
 
+  const displayedRating = userRating || rating;
+
   return (
-    <Link href={href} style={{ display: 'block', textDecoration: 'none' }}>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="group relative flex flex-col transition-all duration-300 ease-out"
+    >
+      {/* ── Artwork Container ── */}
       <div
-        onMouseEnter={() => setCardHovered(true)}
-        onMouseLeave={() => setCardHovered(false)}
-        style={{
-          background: '#FBFBFA',
-          border: `1px solid ${cardHovered ? 'rgba(0,0,0,0.09)' : 'rgba(0,0,0,0.06)'}`,
-          borderRadius: 9,
-          overflow: 'hidden',
-          transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-          transform: cardHovered ? 'translateY(-3px)' : 'none',
-          boxShadow: cardHovered
-            ? '0 12px 36px rgba(0,0,0,0.09), 0 3px 8px rgba(0,0,0,0.04)'
-            : '0 1px 4px rgba(0,0,0,0.04)',
-          position: 'relative',
-        }}
+        className={`relative w-full aspect-[2/3] overflow-hidden bg-surface-raised border border-white/[0.07] transition-all duration-300 ease-out group-hover:border-white/20 group-hover:shadow-2xl group-hover:shadow-black/60 ${
+          isMovie
+            ? 'rounded-lg'
+            : 'rounded-xl shadow-[2px_4px_16px_rgba(0,0,0,0.5),-1px_0_3px_rgba(255,255,255,0.06)_inset]'
+        }`}
       >
-        {/* Poster area — 2:3 aspect ratio */}
-        <div style={{
-          aspectRatio: '2/3',
-          background: '#18181B',
-          position: 'relative',
-          overflow: 'hidden',
-        }}>
+        <Link
+          href={href}
+          className="block w-full h-full relative"
+          tabIndex={-1}
+        >
           {item.imageUrl ? (
             <img
               src={item.imageUrl}
               alt={item.title}
-              style={{
-                position: 'absolute', inset: 0,
-                width: '100%', height: '100%',
-                objectFit: 'cover',
-                transition: 'transform 0.4s ease',
-                transform: cardHovered ? 'scale(1.03)' : 'scale(1)',
-              }}
+              loading="lazy"
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
             />
           ) : (
-            /* Typographic placeholder on matte dark */
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', flexDirection: 'column',
-              alignItems: 'center', justifyContent: 'center',
-              padding: '20px 14px',
-              gap: 10,
-            }}>
-              {/* Ambient glow */}
-              <div style={{
-                position: 'absolute', inset: 0,
-                background: 'radial-gradient(ellipse at 50% 30%, rgba(80,80,129,0.10) 0%, transparent 65%)',
-                pointerEvents: 'none',
-              }} />
-
-              {/* Mono label */}
-              <div style={{
-                fontFamily: "'DM Mono', ui-monospace, monospace",
-                fontSize: 8,
-                letterSpacing: '0.20em',
-                textTransform: 'uppercase',
-                color: 'rgba(255,255,255,0.18)',
-                textAlign: 'center',
-              }}>
-                {isMovie ? 'Film' : 'Book'}
-              </div>
-
-              {/* Title */}
-              <div style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: 14,
-                fontWeight: 500,
-                color: 'rgba(255,255,255,0.65)',
-                textAlign: 'center',
-                lineHeight: 1.35,
-                letterSpacing: '-0.01em',
-              }}>
+            <div className="absolute inset-0 flex flex-col justify-end p-4 bg-gradient-to-b from-surface to-surface-raised">
+              <div className="font-serif text-base text-ink leading-snug line-clamp-2 mb-1">
                 {item.title}
               </div>
-
-              {/* Bottom rule */}
-              {item.year && (
-                <div style={{
-                  fontFamily: "'DM Mono', ui-monospace, monospace",
-                  fontSize: 9,
-                  color: 'rgba(255,255,255,0.22)',
-                  letterSpacing: '0.12em',
-                }}>
-                  {item.year}
+              {creator && (
+                <div className="text-xs text-ink-muted line-clamp-1">
+                  {creator}
                 </div>
               )}
             </div>
           )}
 
-          {/* ── Action buttons overlay — top-left, minimal ── */}
-          <div style={{
-            position: 'absolute', top: 8, left: 8,
-            display: 'flex', alignItems: 'center', gap: 5,
-            zIndex: 10,
-            opacity: cardHovered ? 1 : 0.72,
-            transition: 'opacity 0.2s ease',
-          }}>
-            {/* Like button */}
+          {/* Book spine highlight effect */}
+          {!isMovie && (
+            <div className="absolute inset-y-0 left-0 w-3 pointer-events-none bg-gradient-to-r from-white/10 via-white/5 to-transparent mix-blend-overlay" />
+          )}
+
+          {/* Vignette on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        </Link>
+
+        {/* ── Hover Actions Overlay ── */}
+        <div
+          className={`absolute bottom-0 inset-x-0 p-2.5 flex items-center justify-between z-10 transition-all duration-300 ease-out ${
+            hovered
+              ? 'opacity-100 translate-y-0 pointer-events-auto'
+              : 'opacity-0 translate-y-2 pointer-events-none'
+          }`}
+        >
+          <div className="flex items-center gap-1.5">
+            {/* Like */}
             <button
-              type="button"
               onClick={handleLike}
               title={liked ? 'Unlike' : 'Like'}
-              style={{
-                width: 28, height: 28,
-                borderRadius: 6,
-                background: liked
-                  ? 'rgba(224, 82, 82, 0.90)'
-                  : 'rgba(9, 9, 11, 0.55)',
-                border: `1px solid ${liked ? 'rgba(224,82,82,0.4)' : 'rgba(255,255,255,0.10)'}`,
-                backdropFilter: 'blur(8px)',
-                color: '#FFFFFF',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={e => { if (!liked) e.currentTarget.style.background = 'rgba(9,9,11,0.75)'; }}
-              onMouseLeave={e => { if (!liked) e.currentTarget.style.background = 'rgba(9,9,11,0.55)'; }}
+              aria-label="Like"
+              className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium transition-all duration-200 backdrop-blur-md ${
+                liked
+                  ? 'bg-ember text-white shadow-sm'
+                  : 'bg-black/60 text-ink hover:bg-black/90 border border-white/15'
+              }`}
             >
               <Heart
-                size={12}
-                fill={liked ? '#FFFFFF' : 'none'}
-                strokeWidth={liked ? 0 : 2}
-                color="#FFFFFF"
+                size={10}
+                className={liked ? 'fill-white stroke-white' : 'stroke-current'}
               />
+              <span>{liked ? 'Liked' : 'Like'}</span>
             </button>
 
-            {/* Favorite button */}
+            {/* Favourite */}
             <button
-              type="button"
               onClick={handleFavorite}
-              title={favorited ? 'Remove from favorites' : 'Favorite'}
-              style={{
-                width: 28, height: 28,
-                borderRadius: 6,
-                background: favorited
-                  ? 'rgba(200, 150, 62, 0.90)'
-                  : 'rgba(9, 9, 11, 0.55)',
-                border: `1px solid ${favorited ? 'rgba(200,150,62,0.4)' : 'rgba(255,255,255,0.10)'}`,
-                backdropFilter: 'blur(8px)',
-                color: '#FFFFFF',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={e => { if (!favorited) e.currentTarget.style.background = 'rgba(9,9,11,0.75)'; }}
-              onMouseLeave={e => { if (!favorited) e.currentTarget.style.background = 'rgba(9,9,11,0.55)'; }}
+              title={favorited ? 'Remove from favourites' : 'Favourite'}
+              aria-label="Favourite"
+              className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium transition-all duration-200 backdrop-blur-md ${
+                favorited
+                  ? 'bg-gold text-black font-semibold shadow-sm'
+                  : 'bg-black/60 text-ink hover:bg-black/90 border border-white/15'
+              }`}
             >
-              <Star
-                size={12}
-                fill={favorited ? '#FFFFFF' : 'none'}
-                strokeWidth={favorited ? 0 : 2}
-                color="#FFFFFF"
-              />
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                className={favorited ? 'fill-black stroke-black' : 'fill-none stroke-current'}
+                strokeWidth="2"
+              >
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+              <span>{favorited ? 'Fav' : 'Fav'}</span>
             </button>
           </div>
 
-          {/* Year — bottom right, mono */}
-          {item.year && (
-            <div style={{
-              position: 'absolute', bottom: 8, right: 8,
-              fontFamily: "'DM Mono', ui-monospace, monospace",
-              fontSize: 9,
-              color: 'rgba(255,255,255,0.45)',
-              letterSpacing: '0.10em',
-            }}>
-              {item.year}
-            </div>
-          )}
-        </div>
-
-        {/* ── Info strip ── */}
-        <div style={{ padding: '11px 13px 13px' }}>
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: 12.5,
-            fontWeight: 600,
-            letterSpacing: '-0.015em',
-            color: '#09090B',
-            lineHeight: 1.35,
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            marginBottom: 7,
-          }}>
-            {item.title}
-          </p>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-            {genre ? (
-              <span style={{
-                fontFamily: "'DM Mono', ui-monospace, monospace",
-                fontSize: 9,
-                letterSpacing: '0.10em',
-                textTransform: 'uppercase',
-                color: '#A3A3A3',
-              }}>
-                {genre}
-              </span>
-            ) : <span />}
-
-            {rating > 0 ? (
-              <span style={{
-                fontFamily: "'DM Mono', ui-monospace, monospace",
-                fontSize: 10,
-                color: '#C8963E',
-                letterSpacing: '0.04em',
-                fontWeight: 500,
-              }}>
-                ★ {rating.toFixed(1)}
-              </span>
-            ) : (
-              <span style={{
-                fontFamily: "'DM Mono', ui-monospace, monospace",
-                fontSize: 9,
-                color: '#D4D4D4',
-                letterSpacing: '0.10em',
-                textTransform: 'uppercase',
-              }}>
-                Curated
-              </span>
-            )}
-          </div>
+          {/* View link */}
+          <Link
+            href={href}
+            title={isMovie ? 'View film' : 'View book'}
+            className="inline-flex items-center gap-0.5 px-2 py-1 rounded-full text-[10px] font-medium bg-white/90 text-black hover:bg-white transition-colors duration-200 shadow-sm"
+          >
+            <span>View</span>
+            <ArrowUpRight size={10} strokeWidth={2.5} />
+          </Link>
         </div>
       </div>
-    </Link>
+
+      {/* ── Metadata Underneath ── */}
+      <div className="mt-3 flex flex-col">
+        {/* Title */}
+        <Link
+          href={href}
+          className="font-serif text-[17px] text-ink font-normal leading-tight truncate transition-colors duration-200 hover:text-ember mb-0.5"
+        >
+          {item.title}
+        </Link>
+
+        {/* Author / Director */}
+        {creator && (
+          <div className="text-[12px] text-ink-muted truncate tracking-tight mb-1.5">
+            {creator}
+          </div>
+        )}
+
+        {/* Rating & Log Status */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {displayedRating > 0 && (
+            <div className="inline-flex items-center gap-1 text-[11px] font-medium text-gold">
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                className="fill-gold stroke-gold"
+              >
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+              <span>{displayedRating.toFixed(1)}</span>
+            </div>
+          )}
+
+          {/* Log date if marked as watched or read */}
+          {(loggedStatus === 'WATCHED' || loggedStatus === 'READ') && loggedDate && (
+            <span className="text-[10.5px] text-ink-faint tracking-tight">
+              {isMovie ? 'Watched' : 'Read'} {formatLogDate(loggedDate)}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
