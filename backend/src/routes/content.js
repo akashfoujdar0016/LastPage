@@ -174,8 +174,10 @@ router.post('/:id/status', auth(false), async (req, res, next) => {
       { upsert: true, new: true }
     );
 
-    if (req.user?.sub) {
-      await activity(req.user.sub, schema.status, content._id);
+    if (userId) {
+      try {
+        await activity(userId, schema.status, content._id);
+      } catch {}
     }
     res.json({ status: updatedStatus });
   } catch (err) {
@@ -205,9 +207,9 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
     );
 
     const { averageRating, ratingCount, breakdown } = await recalcRating(content._id);
-    if (req.user?.sub) {
+    if (userId) {
       try {
-        await activity(req.user.sub, 'RATED', content._id);
+        await activity(userId, 'RATED', content._id);
       } catch {}
     }
 
@@ -241,8 +243,10 @@ async function toggleInteraction(Model, field, actionType, req, res) {
 
   await Model.create({ userId, contentId: content._id });
   await Content.updateOne({ _id: content._id }, { $inc: { [field]: 1 } });
-  if (req.user?.sub) {
-    await activity(req.user.sub, actionType, content._id);
+  if (userId) {
+    try {
+      await activity(userId, actionType, content._id);
+    } catch {}
   }
   res.json({ active: true });
 }
@@ -301,8 +305,10 @@ router.post('/:id/reviews', auth(false), async (req, res, next) => {
       { upsert: true }
     );
 
-    if (req.user?.sub) {
-      await activity(req.user.sub, 'REVIEWED', content._id, review._id);
+    if (userId) {
+      try {
+        await activity(userId, 'REVIEWED', content._id, review._id);
+      } catch {}
     }
 
     const populated = await Review.findById(review._id)

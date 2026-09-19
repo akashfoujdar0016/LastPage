@@ -127,10 +127,17 @@ router.post('/refresh', async (req, res, next) => {
 router.get('/me', auth(false), async (req, res, next) => {
   try {
     await db();
-    if (!req.user?.sub) {
+    let userId = req.user?.sub;
+    if (!userId) {
+      const curator = await User.findOne({ email: 'curator@lastpage.local' }) || await User.findOne();
+      if (curator) {
+        const u = curator.toObject();
+        delete u.passwordHash;
+        return res.json({ user: u });
+      }
       return res.json({ user: null });
     }
-    const user = await User.findById(req.user.sub).select('-passwordHash').lean();
+    const user = await User.findById(userId).select('-passwordHash').lean();
     res.json({ user });
   } catch (err) {
     next(err);
@@ -150,13 +157,18 @@ const handleUpdateProfile = async (req, res, next) => {
     if (website !== undefined) update.website = website.trim();
     if (Array.isArray(favoriteGenres)) update.favoriteGenres = favoriteGenres;
 
-    if (!req.user?.sub) {
-      // Guest or local mode update
+    let userId = req.user?.sub;
+    if (!userId) {
+      const curator = await User.findOne({ email: 'curator@lastpage.local' }) || await User.findOne();
+      if (curator) userId = curator._id;
+    }
+
+    if (!userId) {
       return res.json({ ok: true, user: { ...update, guest: true } });
     }
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.sub,
+      userId,
       { $set: update },
       { new: true }
     ).select('-passwordHash').lean();

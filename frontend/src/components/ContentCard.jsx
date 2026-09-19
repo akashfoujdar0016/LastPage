@@ -49,7 +49,7 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
     }
     if (onLikeToggle) onLikeToggle(item._id, next);
     try {
-      if (getToken()) await api(`/content/${item._id}/like`, { method: 'POST' });
+      await api(`/content/${item._id}/like`, { method: 'POST' });
     } catch {}
   };
 
@@ -72,7 +72,7 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
     }
     if (onFavoriteToggle) onFavoriteToggle(item._id, next);
     try {
-      if (getToken()) await api(`/content/${item._id}/favorite`, { method: 'POST' });
+      await api(`/content/${item._id}/favorite`, { method: 'POST' });
     } catch {}
   };
 

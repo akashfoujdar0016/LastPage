@@ -153,9 +153,7 @@ export default function Detail({ type, params }) {
         : status === 'READ' ? 'Marked as read' : 'Added to reading list'
     );
     try {
-      if (getToken()) {
-        await api(`/content/${id}/status`, { method: 'POST', body: JSON.stringify({ status }) });
-      }
+      await api(`/content/${id}/status`, { method: 'POST', body: JSON.stringify({ status }) });
     } catch {}
   };
 
@@ -187,7 +185,7 @@ export default function Detail({ type, params }) {
     } catch {}
     showToast(next ? 'Liked' : 'Removed from liked');
     try {
-      if (getToken()) await api(`/content/${id}/like`, { method: 'POST' });
+      await api(`/content/${id}/like`, { method: 'POST' });
     } catch {}
   };
 
@@ -208,7 +206,7 @@ export default function Detail({ type, params }) {
     } catch {}
     showToast(next ? 'Added to favourites' : 'Removed from favourites');
     try {
-      if (getToken()) await api(`/content/${id}/favorite`, { method: 'POST' });
+      await api(`/content/${id}/favorite`, { method: 'POST' });
     } catch {}
   };
 

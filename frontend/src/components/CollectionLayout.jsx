@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ContentCard from './ContentCard';
+import { api } from '../lib/api';
 
 export default function CollectionLayout({
   title,
@@ -15,6 +16,7 @@ export default function CollectionLayout({
 }) {
   const [activeCategory, setActiveCategory] = useState(mode === 'SINGLE' ? contentType : 'MOVIE');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [cloudData, setCloudData] = useState(null);
 
   useEffect(() => {
     const handleUpdate = () => setRefreshTrigger(prev => prev + 1);
@@ -26,8 +28,43 @@ export default function CollectionLayout({
     };
   }, []);
 
-  const movieItems = getItems('MOVIE');
-  const bookItems = getItems('BOOK');
+  useEffect(() => {
+    api('/me/library')
+      .then((d) => {
+        if (d) setCloudData(d);
+      })
+      .catch(() => {});
+  }, [refreshTrigger]);
+
+  const mergeList = (local, cloud) => {
+    const map = new Map();
+    for (const it of cloud || []) {
+      if (it && (it.slug || it._id)) {
+        const key = String(it.slug || it._id).toLowerCase().replace(/^[mb]-/, '');
+        map.set(key, it);
+      }
+    }
+    for (const it of local || []) {
+      if (it && (it.slug || it._id)) {
+        const key = String(it.slug || it._id).toLowerCase().replace(/^[mb]-/, '');
+        map.set(key, { ...map.get(key), ...it });
+      }
+    }
+    return Array.from(map.values());
+  };
+
+  const getCloudItemsForType = (type) => {
+    if (!cloudData) return [];
+    const t = String(title).toLowerCase();
+    let list = [];
+    if (t.includes('fav')) list = cloudData.favorites || [];
+    else if (t.includes('like')) list = cloudData.likes || [];
+    else if (t.includes('watch') || t.includes('read')) list = cloudData.watchlist || [];
+    return list.filter((it) => it && it.type === type);
+  };
+
+  const movieItems = mergeList(getItems('MOVIE'), getCloudItemsForType('MOVIE'));
+  const bookItems = mergeList(getItems('BOOK'), getCloudItemsForType('BOOK'));
   const currentCategory = mode === 'SINGLE' ? contentType : activeCategory;
   const displayedItems = currentCategory === 'MOVIE' ? movieItems : bookItems;
 

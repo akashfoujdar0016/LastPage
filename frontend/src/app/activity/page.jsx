@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Heart, Star, MessageSquare, Users, User, ArrowLeft, Check, ArrowUpRight } from 'lucide-react';
+import { api } from '../../lib/api';
 import { getActivities, getRelativeDayLabel, formatLogDate } from '../../lib/activityStore';
 import { getFriendsActivity, toggleActivityLike, isActivityLiked } from '../../lib/socialStore';
 import { CURATED_MOVIES, CURATED_BOOKS } from '../../lib/curatedCatalogue';
@@ -17,6 +18,34 @@ export default function ActivityPage() {
   const loadData = () => {
     setPersonalActivities(getActivities());
     setFriendsFeed(getFriendsActivity());
+
+    // Fetch live activities from cloud MongoDB
+    api('/me/activity')
+      .then((data) => {
+        if (data?.items && Array.isArray(data.items) && data.items.length > 0) {
+          const fromDb = data.items.map((it) => ({
+            id: it._id,
+            type: it.type,
+            contentId: it.contentId?.slug || it.contentId?._id,
+            contentType: it.contentId?.type,
+            title: it.contentId?.title || 'Unknown',
+            creator: it.contentId?.creatorNames?.[0] || it.contentId?.authorNames?.[0] || '',
+            createdAt: it.createdAt,
+          }));
+
+          setPersonalActivities((prev) => {
+            const map = new Map();
+            for (const item of fromDb) {
+              if (item && item.id) map.set(item.id, item);
+            }
+            for (const item of prev) {
+              if (item && item.id) map.set(item.id, { ...map.get(item.id), ...item });
+            }
+            return Array.from(map.values());
+          });
+        }
+      })
+      .catch(() => {});
   };
 
   useEffect(() => {
