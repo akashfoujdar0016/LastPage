@@ -110,8 +110,8 @@ const CommentSchema = new Schema(
 // Generic Relation Schema (Like / Favorite)
 const RelSchema = new Schema(
   {
-    userId: Schema.Types.ObjectId,
-    contentId: Schema.Types.ObjectId,
+    userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+    contentId: { type: Schema.Types.ObjectId, ref: 'Content', index: true },
   },
   opts
 );
@@ -120,8 +120,8 @@ RelSchema.index({ userId: 1, contentId: 1 }, { unique: true });
 // Status Schema
 const StatusSchema = new Schema(
   {
-    userId: Schema.Types.ObjectId,
-    contentId: Schema.Types.ObjectId,
+    userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+    contentId: { type: Schema.Types.ObjectId, ref: 'Content', index: true },
     status: String,
     progress: Number,
     startedAt: Date,
@@ -134,8 +134,8 @@ StatusSchema.index({ userId: 1, contentId: 1 }, { unique: true });
 // Follow Schema
 const FollowSchema = new Schema(
   {
-    followerId: Schema.Types.ObjectId,
-    followingId: Schema.Types.ObjectId,
+    followerId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+    followingId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
   },
   opts
 );
@@ -144,7 +144,7 @@ FollowSchema.index({ followerId: 1, followingId: 1 }, { unique: true });
 // Custom List Schema
 const ListSchema = new Schema(
   {
-    userId: Schema.Types.ObjectId,
+    userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     type: { type: String, enum: ['MOVIE', 'BOOK'] },
     name: { type: String, maxlength: 120 },
     description: { type: String, maxlength: 1000 },
@@ -157,8 +157,8 @@ const ListSchema = new Schema(
 // List Item Schema
 const ListItemSchema = new Schema(
   {
-    listId: Schema.Types.ObjectId,
-    contentId: Schema.Types.ObjectId,
+    listId: { type: Schema.Types.ObjectId, ref: 'List', index: true },
+    contentId: { type: Schema.Types.ObjectId, ref: 'Content', index: true },
     position: Number,
   },
   opts
@@ -169,9 +169,9 @@ ListItemSchema.index({ listId: 1, position: 1 });
 // Activity Schema
 const ActivitySchema = new Schema(
   {
-    userId: Schema.Types.ObjectId,
+    userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     type: String,
-    contentId: Schema.Types.ObjectId,
+    contentId: { type: Schema.Types.ObjectId, ref: 'Content', index: true },
     targetId: Schema.Types.ObjectId,
     metadata: Schema.Types.Mixed,
   },

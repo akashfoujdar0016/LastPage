@@ -16,6 +16,21 @@ router.get('/activity', auth(false), async (req, res, next) => {
       .limit(100)
       .lean();
 
+    const missingIds = activities
+      .filter((a) => !a.contentId?.title && a.contentId)
+      .map((a) => String(a.contentId?._id || a.contentId));
+
+    if (missingIds.length > 0) {
+      const fallbackContents = await Content.find({ _id: { $in: missingIds } }).lean();
+      const map = new Map(fallbackContents.map((c) => [String(c._id), c]));
+      for (const a of activities) {
+        if (!a.contentId?.title && a.contentId) {
+          const found = map.get(String(a.contentId?._id || a.contentId));
+          if (found) a.contentId = found;
+        }
+      }
+    }
+
     res.json({ items: activities });
   } catch (err) {
     next(err);
@@ -30,6 +45,21 @@ router.get('/reviews', auth(false), async (req, res, next) => {
       .populate('contentId', 'title slug type imageUrl creatorNames authorNames year averageRating')
       .sort({ createdAt: -1 })
       .lean();
+
+    const missingIds = reviews
+      .filter((r) => !r.contentId?.title && r.contentId)
+      .map((r) => String(r.contentId?._id || r.contentId));
+
+    if (missingIds.length > 0) {
+      const fallbackContents = await Content.find({ _id: { $in: missingIds } }).lean();
+      const map = new Map(fallbackContents.map((c) => [String(c._id), c]));
+      for (const r of reviews) {
+        if (!r.contentId?.title && r.contentId) {
+          const found = map.get(String(r.contentId?._id || r.contentId));
+          if (found) r.contentId = found;
+        }
+      }
+    }
 
     res.json({ reviews });
   } catch (err) {
@@ -49,6 +79,31 @@ router.get('/library', auth(false), async (req, res, next) => {
       Review.find({ deletedAt: null }).populate('contentId').sort({ createdAt: -1 }).lean(),
     ]);
 
+    // Collect any unpopulated content IDs
+    const allContentIds = new Set();
+    const collectId = (doc) => {
+      const cid = doc.contentId?._id || doc.contentId;
+      if (cid) allContentIds.add(String(cid));
+    };
+    statuses.forEach(collectId);
+    favoritesDocs.forEach(collectId);
+    likesDocs.forEach(collectId);
+    ratingsDocs.forEach(collectId);
+    reviewsDocs.forEach(collectId);
+
+    const contents = await Content.find({ _id: { $in: Array.from(allContentIds) } }).lean();
+    const contentMap = new Map();
+    for (const c of contents) {
+      contentMap.set(String(c._id), c);
+      if (c.slug) contentMap.set(c.slug, c);
+    }
+
+    const resolveContent = (doc) => {
+      if (doc.contentId && doc.contentId.title) return doc.contentId;
+      const cid = String(doc.contentId?._id || doc.contentId);
+      return contentMap.get(cid) || null;
+    };
+
     const dedupe = (list, keyFn) => {
       const map = new Map();
       for (const it of list) {
@@ -61,41 +116,59 @@ router.get('/library', auth(false), async (req, res, next) => {
       return Array.from(map.values());
     };
 
-    const watchedRaw = statuses
-      .filter((s) => (s.status === 'WATCHED' || s.status === 'READ') && s.contentId)
-      .map((s) => ({ ...s.contentId, loggedDate: s.updatedAt, status: s.status }));
+    const watchedRaw = [];
+    for (const s of statuses) {
+      if (s.status === 'WATCHED' || s.status === 'READ') {
+        const c = resolveContent(s);
+        if (c) watchedRaw.push({ ...c, loggedDate: s.updatedAt, status: s.status });
+      }
+    }
     const watched = dedupe(watchedRaw, (it) => String(it._id || it.slug));
 
-    const watchlistRaw = statuses
-      .filter((s) => (s.status === 'WATCHLIST' || s.status === 'WANT_TO_READ') && s.contentId)
-      .map((s) => ({ ...s.contentId, status: s.status }));
+    const watchlistRaw = [];
+    for (const s of statuses) {
+      if (s.status === 'WATCHLIST' || s.status === 'WANT_TO_READ') {
+        const c = resolveContent(s);
+        if (c) watchlistRaw.push({ ...c, status: s.status });
+      }
+    }
     const watchlist = dedupe(watchlistRaw, (it) => String(it._id || it.slug));
 
-    const favorites = dedupe(
-      favoritesDocs.filter((f) => f.contentId).map((f) => f.contentId),
-      (it) => String(it._id || it.slug)
-    );
+    const favoritesRaw = [];
+    for (const f of favoritesDocs) {
+      const c = resolveContent(f);
+      if (c) favoritesRaw.push(c);
+    }
+    const favorites = dedupe(favoritesRaw, (it) => String(it._id || it.slug));
 
-    const likes = dedupe(
-      likesDocs.filter((l) => l.contentId).map((l) => l.contentId),
-      (it) => String(it._id || it.slug)
-    );
+    const likesRaw = [];
+    for (const l of likesDocs) {
+      const c = resolveContent(l);
+      if (c) likesRaw.push(c);
+    }
+    const likes = dedupe(likesRaw, (it) => String(it._id || it.slug));
 
-    const ratingsRaw = ratingsDocs
-      .filter((r) => r.contentId)
-      .map((r) => ({ ...r.contentId, userRating: r.score }));
+    const ratingsRaw = [];
+    for (const r of ratingsDocs) {
+      const c = resolveContent(r);
+      if (c) ratingsRaw.push({ ...c, userRating: r.score });
+    }
     const ratings = dedupe(ratingsRaw, (it) => String(it._id || it.slug));
 
-    const reviewsRaw = reviewsDocs
-      .filter((rv) => rv.contentId)
-      .map((rv) => ({
-        ...rv.contentId,
-        reviewId: rv._id,
-        reviewBody: rv.body,
-        reviewTitle: rv.title,
-        rating: rv.rating,
-        createdAt: rv.createdAt,
-      }));
+    const reviewsRaw = [];
+    for (const rv of reviewsDocs) {
+      const c = resolveContent(rv);
+      if (c) {
+        reviewsRaw.push({
+          ...c,
+          reviewId: rv._id,
+          reviewBody: rv.body,
+          reviewTitle: rv.title,
+          rating: rv.rating,
+          createdAt: rv.createdAt,
+        });
+      }
+    }
     const reviews = dedupe(reviewsRaw, (it) => String(it.reviewId || it._id));
 
     res.json({
