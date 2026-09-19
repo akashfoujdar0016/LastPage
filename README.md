@@ -8,14 +8,14 @@
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 15 (App Router) · React · Tailwind CSS · Lucide React |
-| Typography | Playfair Display (editorial serif) · Inter (sans-serif) · Monospace stats |
-| Design System | Bespoke Dark Graphite Palette (`#121216` base, `#1C1C22` surfaces, Ember `#E8553D` & Gold `#FBBF24` accents) |
-| Backend | Node.js · Express.js · REST API |
-| Database | MongoDB Atlas · Mongoose ODM |
-| Authentication | JWT Access + Rotating Refresh Tokens · bcryptjs password hashing · Offline fallback |
-| Validation | Zod schema validation |
-| Deployment | Vercel (Frontend & Backend serverless deployment) |
+| Frontend | Next.js 15 (App Router) · React 19 · Tailwind CSS v3 · Lucide React |
+| Typography | Playfair Display (editorial serif) · Inter (sans-serif) · JetBrains Mono (monospace stats) |
+| Design System | Bespoke Dark Graphite Palette (`#121216` base canvas, `#1C1C22` card surfaces, `#24242C` hover surfaces, Ember `#E8553D` cinema accent & Gold `#FBBF24` literature/rating accent) |
+| Backend | Node.js · Express.js · REST API · Zod validation |
+| Database | MongoDB Atlas · Mongoose ODM (16 schemas with bidirectional references & auto-population) |
+| Authentication | JWT Access Token (365d TTL) + Rotating Refresh Tokens · bcryptjs password hashing · Offline fallback |
+| Media Catalog | 84 Curated Works (52 iconic films & 32 landmark books) with high-res artwork, release years, directors, authors, and synopses |
+| Deployment | Vercel (Unified monorepo serverless deployment for Next.js 15 frontend and Express API backend) |
 
 ---
 
@@ -23,72 +23,93 @@
 
 ```
 LastPage/
-├── frontend/                     # Next.js 15 web application (port 3000)
+├── frontend/                         # Next.js 15 web application (port 3000)
 │   ├── src/
 │   │   ├── app/
-│   │   │   ├── page.jsx          # Single-viewport editorial landing page
-│   │   │   ├── hub/              # Atmosphere portal gateway (Cinema vs Library)
-│   │   │   ├── movies/           # Cinema journal & item detail pages
-│   │   │   ├── books/            # Library journal & item detail pages
-│   │   │   ├── activity/         # Dual-feed cultural activity stream (Friends & Personal)
-│   │   │   ├── profile/          # User profile, Bento stats, & Find Friends search
-│   │   │   ├── user/[username]/  # Public peer taste profiles & archives
-│   │   │   ├── watchlist/        # Cinema watchlist
-│   │   │   ├── reading-list/     # Books reading list
-│   │   │   ├── favourites/       # Unified favourites collection
-│   │   │   ├── liked/            # Liked media collection
-│   │   │   ├── login/            # Dedicated auth page
-│   │   │   ├── register/         # Register route (redirects to auth)
-│   │   │   ├── browse.jsx        # Unified media browse & search engine
-│   │   │   ├── detail.jsx        # Unified item detail & rating/logging engine
-│   │   │   ├── globals.css       # Design tokens, base resets, scrollbar styling
-│   │   │   └── layout.jsx        # RootLayout with fonts & sticky navigation
-│   │   ├── components/           # Reusable UI components
-│   │   │   ├── AuthCard.jsx      # Streamlined authentication & account management card
-│   │   │   ├── ContentCard.jsx   # Editorial poster card with hover actions
-│   │   │   ├── FollowModal.jsx   # Modal for followers & following with search filter
-│   │   │   └── Nav.jsx           # Global sticky frosted-glass header
-│   │   └── lib/                  # Client stores & API client
-│   │       ├── activityStore.js  # Reactive client activity & logging storage
-│   │       ├── api.js            # Fetch wrapper with JWT interceptors
-│   │       ├── curatedCatalogue.js # High-resolution curated cinema & literature catalogue
-│   │       └── socialStore.js    # Social graph layer, peer profiles, & user search
-├── backend/                      # Express.js REST API (port 4000)
+│   │   │   ├── page.jsx              # Single-viewport editorial landing page
+│   │   │   ├── hub/                  # Atmosphere portal gateway (Cinema vs Library)
+│   │   │   ├── movies/               # Cinema journal & item detail pages
+│   │   │   ├── books/                # Library journal & item detail pages
+│   │   │   ├── activity/             # Dual-feed cultural activity stream (Friends & Personal)
+│   │   │   ├── profile/              # User profile, Bento stats, & Find Friends search
+│   │   │   ├── user/[username]/      # Public peer taste profiles & archives
+│   │   │   ├── watchlist/            # Cinema watchlist collection
+│   │   │   ├── reading-list/         # Books reading list collection
+│   │   │   ├── favourites/           # Unified favourites collection (Cinema & Library tabs)
+│   │   │   ├── favorites/            # Alias route to favourites
+│   │   │   ├── liked/                # Liked media collection
+│   │   │   ├── login/                # Dedicated sign-in page with ambient glows
+│   │   │   ├── register/             # Registration route (redirects to auth)
+│   │   │   ├── browse.jsx            # Unified media browse & search engine
+│   │   │   ├── detail.jsx            # Unified item detail, rating widget & review engine
+│   │   │   ├── globals.css           # Design tokens, base resets, animations & scrollbars
+│   │   │   └── layout.jsx            # RootLayout with typography, viewport & sticky navigation
+│   │   ├── components/               # Reusable UI components
+│   │   │   ├── AuthCard.jsx          # Streamlined authentication & account management card
+│   │   │   ├── CollectionLayout.jsx  # Reusable collection view with dual tabs & cloud sync
+│   │   │   ├── ContentCard.jsx       # Editorial poster card with hover actions & quick links
+│   │   │   ├── EditProfileModal.jsx  # Profile customization (avatar URL, bio, genres, links)
+│   │   │   ├── FollowModal.jsx       # Modal for followers & following with real-time search
+│   │   │   └── Nav.jsx               # Global sticky frosted-glass header with dynamic avatar
+│   │   └── lib/                      # Client stores & API client
+│   │       ├── activityStore.js      # Reactive client activity & logging storage
+│   │       ├── api.js                # Fetch wrapper with auto-retry & dynamic origin resolution
+│   │       ├── curatedCatalogue.js   # 84 curated cinema & literature works with fallback cache
+│   │       └── socialStore.js        # Social graph layer, peer profiles & user discovery
+├── backend/                          # Express.js REST API (port 4000)
 │   ├── src/
-│   │   ├── db/                   # MongoDB connection management
-│   │   ├── models/               # Mongoose schemas (User, Content, Review, Follow, etc.)
-│   │   ├── routes/               # API endpoints (auth, content, social, library, discovery)
-│   │   ├── middleware/           # JWT auth, validation, security
-│   │   └── seed.js               # Database seeding script
-├── docs/                         # Deployment & architectural documentation
-├── REQUIREMENTS.md               # Product requirements & acceptance criteria
-└── WORKFLOW.md                   # User journeys & system workflows
+│   │   ├── config/                   # Environment configuration & Zod schema validation
+│   │   ├── data/                     # Authentic catalog seed data (52 movies, 32 books)
+│   │   ├── db/                       # MongoDB connection pooling & Mongoose lifecycle
+│   │   ├── middleware/               # JWT authentication, role guards & error handlers
+│   │   ├── models/                   # 16 Mongoose models (User, Content, Rating, Review, etc.)
+│   │   ├── routes/                   # API route handlers
+│   │   │   ├── auth.js               # Registration, login, token refresh, profile update
+│   │   │   ├── content.js            # Catalog search, ratings, reviews, likes, status
+│   │   │   ├── discovery.js          # Curated spotlight, trending, top-rated & recommendations
+│   │   │   ├── library.js            # User journal, cross-device sync, activity & custom lists
+│   │   │   └── social.js             # Follow graph, user profiles, notifications & reports
+│   │   ├── services/                 # Business logic & domain services
+│   │   │   ├── content.js            # Rating calculation, breakdown stats & content enrichment
+│   │   │   ├── seeder.js             # Database seeding logic for 84 curated works
+│   │   │   └── social.js             # Notification & activity dispatching
+│   │   ├── utils/                    # Password hashing, token signing & helper utilities
+│   │   ├── run-seed.js               # Standalone seeder runner script
+│   │   ├── seed.js                   # Development database seed script
+│   │   └── server.js                 # Express server initialization & middleware stack
+├── REQUIREMENTS.md                   # Complete product requirements specification (v3.0)
+├── WORKFLOW.md                       # Comprehensive user journeys & system workflows (v3.0)
+└── vercel.json                       # Monorepo multi-service deployment configuration
 ```
 
 ---
 
-## Visual Design & Architecture
+## Key Features & Architecture
 
-- **Luxury Dark Editorial Aesthetic**: Warm, dark graphite canvas (`#121216`) with elevated card surfaces (`#1C1C22`), crisp zinc typography, and subtle border definitions (`border-white/[0.08]`).
-- **Single-Viewport Landing Page (`/`)**: Strictly non-scrollable (`h-screen overflow-hidden`), featuring an editorial hero statement on the left and a streamlined authentication card on the right.
-- **Atmospheric Portal Gateway (`/hub`)**: Two prominent photographic portal cards leading to **Cinema** (`/movies`) and **Library** (`/books`).
-- **Unified Media Catalogs (`/movies`, `/books`)**: Fast client search, Grid/List view switching, and category tabs (Watched/Read, Watchlist, Favourites, Liked, Section Activity).
-- **Social Graph & Profile (`/profile`)**:
-  - Dynamic profile header with clickable **Following** and **Followers** counters.
-  - Interactive **Following/Followers Modal** with real-time account search filtering.
-  - **Find Friends Search**: Live search input capsule in the profile section to discover peer curators by name, username, or bio keyword, with instant Follow/Following toggle actions.
-- **Public Peer Taste Profiles (`/user/[username]`)**: Explore friends' logged works, star ratings, reviews, favourite films, and personal activity feeds.
-- **Cultural Activity Stream (`/activity`)**: Split timeline feed toggleable between **Friends Activity** and **Your Journal**, grouped by relative days (Today, Yesterday, Date), with likeable activity cards.
-- **Media Detail Pages (`/movies/[id]`, `/books/[id]`)**: Interactive 5-star ratings, logging dates with inline editing, private marginalia notes, and public reviews.
-- **Hydration-Safe Architecture**: Guarded client mounts and `suppressHydrationWarning` on forms and inputs to prevent browser autofill extension conflicts.
+- **Authentic 84-Item Curated Catalog**: 52 landmark films and 32 iconic books populated with authentic high-resolution artwork (TMDB / Open Library / Google Books), release years, directors, authors, runtimes, page counts, and genre classifications.
+- **Full Cloud MongoDB Persistence**: All user accounts, watch/read statuses, star ratings, text reviews, marginalia notes, likes, favourites, custom lists, and activities persist to MongoDB Atlas with complete cross-device synchronization between mobile and desktop devices.
+- **Precision Half-Star Rating Engine**: 0.5 to 5.0 star interactive rating widget with 10-tier percentage breakdown visualization, score distribution counts, and real-time community average recalculation.
+- **Full Profile Customization**: Seamless profile editing via `EditProfileModal` allowing users to update display name, bio, avatar (monogram, upload, or custom image URL), location, website, and favorite genre pills.
+- **Interactive Social Graph & Friend Discovery**:
+  - Live **Find Friends** search bar in `/profile` matching curators across display name, username, or bio keyword.
+  - Clickable **Following** and **Followers** counters opening an interactive inspection modal with live search filtering and direct follow toggling.
+  - Public peer taste profiles (`/user/[username]`) showcasing friend logs, ratings, reviews, favourite films, and personal activity feeds.
+- **Dual Cultural Activity Stream (`/activity`)**: Split timeline view toggleable between **Friends Activity** and **Your Journal**, grouped by relative days (Today, Yesterday, Date), with likeable activity cards.
+- **Single-Viewport Landing Page (`/`)**: Strictly non-scrollable hero viewport (`h-screen overflow-hidden`) with editorial brand statement on the left and streamlined authentication card on the right.
+- **Atmospheric Portal Gateway (`/hub`)**: Photographic portal cards providing an immersive gateway into **Cinema** (`/movies`) and **Library** (`/books`).
+- **Resilient Multi-Device Architecture**:
+  - 365-day access token TTL preventing unexpected logouts across devices.
+  - Dynamic API origin detection in `api.js` automatically adapting between local development (`localhost:4000`) and production deployment.
+  - Robust content resolution supporting MongoDB `ObjectId`, canonical slug, or sanitized title parameters.
+  - Hydration-safe client rendering with `suppressHydrationWarning` and safe mounting guards.
 
 ---
 
 ## Local Development
 
 ### Prerequisites
-- Node.js 18+
-- MongoDB Atlas cluster (or local MongoDB instance)
+- Node.js 18+ or 20+
+- MongoDB Atlas cluster URI (or local MongoDB instance)
 
 ### 1. Backend Setup
 
@@ -97,28 +118,29 @@ cd backend
 npm install
 ```
 
-Create `backend/.env`:
+Create `backend/.env` (or `backend/.env.local`):
 ```env
 NODE_ENV=development
 PORT=4000
-MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.xxxx.mongodb.net/lastpagedb
-MONGODB_DB_NAME=lastpagedb
-JWT_ACCESS_SECRET=your-random-32-char-access-secret
-JWT_REFRESH_SECRET=your-random-32-char-refresh-secret
-ACCESS_TOKEN_TTL=15m
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.xxxx.mongodb.net/cinefolio?retryWrites=true&w=majority
+MONGODB_DB_NAME=cinefolio
+JWT_ACCESS_SECRET=your-random-32-char-access-secret-here
+JWT_REFRESH_SECRET=your-random-32-char-refresh-secret-here
+ACCESS_TOKEN_TTL=365d
 REFRESH_TOKEN_TTL_DAYS=30
 CORS_ORIGINS=http://localhost:3000
 ```
 
-Start the backend:
+Start the backend API server:
 ```bash
-npm run dev   # Runs on http://localhost:4000
+npm run dev   # Runs on http://localhost:4000 with hot reload
 ```
 
-Seed initial catalog items:
+Seed the catalog with all 84 curated works:
 ```bash
 npm run seed
 ```
+*(The backend also auto-seeds automatically upon first request if fewer than 80 items are detected).*
 
 ### 2. Frontend Setup
 
@@ -143,19 +165,20 @@ npm run dev   # Runs on http://localhost:3000
 
 | Route | Description |
 |---|---|
-| `/` | Single-viewport hero landing page & streamlined auth card |
-| `/hub` | Atmospheric portal gateway to Cinema & Library |
-| `/movies` | Cinema catalog, watchlist, favourites, and logged films |
-| `/movies/[id]` | Film detail page with rating, logging date, marginalia, and reviews |
+| `/` | Single-viewport editorial hero landing page & streamlined auth card |
+| `/hub` | Atmospheric visual portal gateway to Cinema & Library |
+| `/movies` | Cinema catalog, filter tabs, watchlist, favourites, and logged films |
+| `/movies/[id]` | Film detail page with 0.5–5.0 star rating, watch status, marginalia, and reviews |
 | `/books` | Library catalog, reading list, favourites, and logged books |
-| `/books/[id]` | Book detail page with rating, reading status, notes, and reviews |
-| `/activity` | Social activity timeline feed (Friends & Personal tabs) |
-| `/profile` | User profile, bento stat cards, bio editor, and **Find Friends search** |
-| `/user/[username]` | Public taste profile of peer curators with collection tabs |
-| `/watchlist` | Dedicated cinema watchlist page |
-| `/reading-list` | Dedicated book reading list page |
+| `/books/[id]` | Book detail page with star rating, reading status, notes, and reviews |
+| `/activity` | Social activity timeline feed (Friends & Personal tabs) with relative date headers |
+| `/profile` | User profile, Bento stat cards, bio/avatar editor, and live Find Friends search |
+| `/user/[username]` | Public taste profile of peer curators with collection tabs & follow action |
+| `/watchlist` | Dedicated cinema watchlist collection page |
+| `/reading-list` | Dedicated book reading list collection page |
 | `/favourites` | Unified favourites collection (Cinema & Library tabs) |
-| `/liked` | Unified liked works collection |
+| `/favorites` | American spelling alias route redirecting to favourites |
+| `/liked` | Unified liked works collection (Cinema & Library tabs) |
 | `/login` | Dedicated sign-in page with ambient glows |
 | `/register` | Registration redirect to authentication flow |
 
@@ -164,14 +187,17 @@ npm run dev   # Runs on http://localhost:3000
 ## Deployment
 
 LastPage is architected for zero-configuration serverless deployment on Vercel:
-- **Frontend Project**: Rooted at `frontend/` deploying Next.js 15 App Router.
-- **Backend Project**: Rooted at `backend/` deploying Express API endpoints.
-- **Database**: MongoDB Atlas with connection pooling and warm connection reuse.
+- **Frontend**: Rooted at `frontend/` deploying Next.js 15 App Router.
+- **Backend**: Rooted at `backend/` deploying Express API endpoints as serverless functions.
+- **Monorepo Rewrites**: Root `vercel.json` automatically routes `/api/*` requests to the Express backend and all other routes to the Next.js frontend.
+- **Database**: MongoDB Atlas with connection pooling and warm connection reuse for optimal serverless execution.
 
- 
- # #   R e c e n t   U p d a t e s   ( V e r s i o n   2 . 5 ) 
- -   * * R e a l   C l o u d   P e r s i s t e n c e * * :   T r a n s i t i o n e d   u s e r   p r o f i l e s ,   j o u r n a l s ,   w a t c h l i s t s ,   a n d   a c t i v i t y   f e e d s   f r o m   l o c a l   s t o r a g e   t o   f u l l   M o n g o D B   p e r s i s t e n c e . 
- -   * * C r o s s - D e v i c e   S y n c * * :   A c t i v i t i e s   a n d   c o l l e c t i o n s   a r e   n o w   s t r i c t l y   s c o p e d   t o   a u t h e n t i c a t e d   u s e r   a c c o u n t s ,   e n s u r i n g   f l a w l e s s   s y n c   a c r o s s   d e v i c e s . 
- -   * * U I   P o l i s h * * :   A d d e d   m i s s i n g   C S S   a n i m a t i o n s   ( ` a n i m a t e - f a d e - i n ` ,   ` s h a d o w - l u x u r y ` ) ,   r e f i n e d   p r o f i l e   b e n t o   g r i d ,   a n d   i m p r o v e d   l o a d i n g   s k e l e t o n   s t a t e s . 
- -   * * I m p r o v e d   A P I   R e s i l i e n c e * * :   U p d a t e d   a u t h e n t i c a t i o n   f a l l b a c k   l o g i c   t o   p r e v e n t   t o k e n   r e t r y   l o o p s   a n d   e n s u r e   s t r i c t   i s o l a t i o n   b e t w e e n   u s e r s .  
- 
+---
+
+## Recent Updates (Version 3.0 Production Ready)
+
+- **Complete Cloud Persistence & Cross-Device Sync**: All user accounts, watch/read statuses, ratings, reviews, marginalia, likes, favourites, and activities are fully persisted in MongoDB Atlas, enabling flawless synchronization across laptop and mobile devices.
+- **Authentic 84-Item Media Catalog**: Purged all placeholder/dummy records in favor of 52 iconic movies and 32 landmark books with high-resolution poster artwork, directors, authors, runtimes, and synopses.
+- **Advanced Profile Customization**: Introduced `EditProfileModal` supporting custom image avatar URLs, monogram generation, file uploads, display name, bio, location, website, and favorite genres.
+- **Nuanced 0.5–5.0 Star Rating Engine**: Half-star precision rating widget with interactive hover preview, 10-tier percentage distribution bar chart, score count breakdowns, and instant community average recalculation.
+- **Resilient Content & Auth Architecture**: Extended access token TTL to 365 days, dynamic API client origin resolution, auto-retry on 401, multi-criteria content lookup (ObjectId, slug, title), and complete elimination of hydration errors.
