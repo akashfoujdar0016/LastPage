@@ -36,8 +36,8 @@ export default function Browse({ type, title }) {
   const fallbackItems = useMemo(() => getCuratedItems(type), [type]);
 
   const [catalogueItems, setCatalogueItems] = useState(fallbackItems);
-  // Standardized 5 Tabs: 'watched' | 'watchlist' | 'liked' | 'favourite' | 'activity'
-  const [activeTab, setActiveTab] = useState('watched');
+  // Standardized Tabs: 'all' | 'watched' | 'watchlist' | 'liked' | 'favourite' | 'activity'
+  const [activeTab, setActiveTab] = useState('all');
   const [browseCatalogueMode, setBrowseCatalogueMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState('grid');
@@ -50,7 +50,7 @@ export default function Browse({ type, title }) {
     setLoading(true);
     try {
       const qs = query.trim() ? `&q=${encodeURIComponent(query.trim())}` : '';
-      const d = await api(`/content?type=${type}${qs}&limit=60`);
+      const d = await api(`/content?type=${type}${qs}&limit=100`);
       if (d?.items?.length > 0) {
         setCatalogueItems(d.items);
       } else {
@@ -84,7 +84,9 @@ export default function Browse({ type, title }) {
     const q = searchQuery.toLowerCase().trim();
     return catalogueItems.filter(
       item =>
-        item.title.toLowerCase().includes(q) ||
+        item.title?.toLowerCase().includes(q) ||
+        (item.creatorNames && item.creatorNames.some(c => c.toLowerCase().includes(q))) ||
+        (item.authorNames && item.authorNames.some(a => a.toLowerCase().includes(q))) ||
         (item.director && item.director.toLowerCase().includes(q)) ||
         (item.author && item.author.toLowerCase().includes(q)) ||
         (item.genres && item.genres.some(g => g.toLowerCase().includes(q)))
@@ -116,6 +118,12 @@ export default function Browse({ type, title }) {
   // Tab configurations
   const tabs = [
     {
+      id: 'all',
+      label: isMovie ? 'All Films' : 'All Books',
+      count: catalogueItems.length,
+      icon: Sparkles,
+    },
+    {
       id: 'watched',
       label: isMovie ? 'Watched' : 'Read',
       count: watchedItems.length,
@@ -141,15 +149,15 @@ export default function Browse({ type, title }) {
     },
     {
       id: 'activity',
-      label: 'Activity Section',
+      label: 'Activity',
       count: sectionActivities.length,
       icon: ActivityIcon,
     },
   ];
 
-  // Currently displayed items for Tabs 1-4
+  // Currently displayed items
   const currentTabItems = useMemo(() => {
-    if (browseCatalogueMode) {
+    if (browseCatalogueMode || activeTab === 'all') {
       return catalogueItems;
     }
     switch (activeTab) {
@@ -160,8 +168,9 @@ export default function Browse({ type, title }) {
       case 'favourite':
         return favouriteItems;
       case 'watched':
-      default:
         return watchedItems;
+      default:
+        return catalogueItems;
     }
   }, [activeTab, browseCatalogueMode, catalogueItems, watchedItems, watchlistItems, likedItems, favouriteItems]);
 

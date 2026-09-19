@@ -17,11 +17,9 @@ export default function LandingPage() {
       if (stored) {
         const parsed = JSON.parse(stored);
         setUser(parsed);
-        // Automatically redirect to Choose Page (/hub) if already logged in
-        router.push('/hub');
       }
     } catch {}
-  }, [router]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#000000] text-[#E0E0E0] flex flex-col justify-center items-center px-6 py-12 relative overflow-hidden selection:bg-white/15 selection:text-white">
