@@ -193,4 +193,39 @@ img { display: block; max-width: 100%; }
   border-color: #FFFFFF;
 }
 
+/* ─── Missing Utility Animations ─────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in   { animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-slide-up  { animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* ─── Premium Shadow Utilities ───────────────────────────────── */
+.shadow-luxury {
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.4),
+    0 4px 16px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(255,255,255,0.04) inset;
+}
+.shadow-book-spine {
+  box-shadow:
+    -4px 0 16px rgba(0,0,0,0.6),
+    4px 0 8px rgba(0,0,0,0.3),
+    inset 4px 0 8px rgba(255,255,255,0.03);
+}
+
+/* ─── Border token aliases ────────────────────────────────────── */
+.border-theme-border        { border-color: #222222 !important; }
+.border-theme-border-strong { border-color: rgba(255,255,255,0.16) !important; }
+
+/* ─── Smooth page entry ──────────────────────────────────────── */
+main { animation: fadeIn 0.2s ease both; }
+
+
 

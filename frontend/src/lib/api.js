@@ -19,20 +19,28 @@ export async function api(path, opts = {}) {
     headers.set('Authorization', `Bearer ${token}`);
   }
   const base = getBase();
-  let res = await fetch(`${base}${path}`, { ...opts, headers, cache: 'no-store' });
 
-  // If 401 occurs due to an expired/stale token, clear it from localStorage and retry unauthenticated
+  // Auto-stringify body if it's a plain object
+  const body = opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData)
+    ? JSON.stringify(opts.body)
+    : opts.body;
+
+  const res = await fetch(`${base}${path}`, { ...opts, body, headers, cache: 'no-store' });
+
+  // If 401 occurs due to an expired/stale token, clear it and notify
   if (res.status === 401 && token) {
     try {
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('currentUser');
+      // Trigger Nav re-render
+      window.dispatchEvent(new Event('storage'));
     } catch {}
-    headers.delete('Authorization');
-    res = await fetch(`${base}${path}`, { ...opts, headers, cache: 'no-store' });
+    throw new Error('Session expired. Please log in again.');
   }
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.error || 'Request failed');
+    throw new Error(data.error || `Request failed (${res.status})`);
   }
   return data;
 }

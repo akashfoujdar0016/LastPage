@@ -129,12 +129,7 @@ router.get('/me', auth(false), async (req, res, next) => {
     await db();
     let userId = req.user?.sub;
     if (!userId) {
-      const curator = await User.findOne({ email: 'curator@lastpage.local' }) || await User.findOne();
-      if (curator) {
-        const u = curator.toObject();
-        delete u.passwordHash;
-        return res.json({ user: u });
-      }
+      // No token — return null so the frontend uses its stored localStorage data
       return res.json({ user: null });
     }
     const user = await User.findById(userId).select('-passwordHash').lean();
@@ -159,12 +154,8 @@ const handleUpdateProfile = async (req, res, next) => {
 
     let userId = req.user?.sub;
     if (!userId) {
-      const curator = await User.findOne({ email: 'curator@lastpage.local' }) || await User.findOne();
-      if (curator) userId = curator._id;
-    }
-
-    if (!userId) {
-      return res.json({ ok: true, user: { ...update, guest: true } });
+      // No authenticated user
+      return res.status(401).json({ error: 'Not authenticated' });
     }
 
     const updatedUser = await User.findByIdAndUpdate(

@@ -18,21 +18,15 @@ export async function enrich(content, userId) {
     ]);
   }
 
-  // If specific userId has no rating, check if this content has any rating logged in the shared journal
-  let myScore = ratingDoc?.score ?? null;
-  if (!myScore) {
-    const fallbackRating = await Rating.findOne({ contentId: contentObj._id }).sort({ updatedAt: -1 }).lean();
-    if (fallbackRating?.score) {
-      myScore = fallbackRating.score;
-    }
-  }
+  // Only use this user's own rating — never fall back to another user's rating
+  const myScore = ratingDoc?.score ?? null;
 
   return {
     ...contentObj,
     myRating: myScore,
     liked: !!likeDoc,
     favorited: !!favoriteDoc,
-    status: statusDoc?.status ?? (myScore ? (contentObj.type === 'MOVIE' ? 'WATCHED' : 'READ') : null),
+    status: statusDoc?.status ?? null,
     progress: statusDoc?.progress ?? null,
   };
 }

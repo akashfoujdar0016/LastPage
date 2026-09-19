@@ -2,15 +2,18 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db/mongoose.js';
 import { auth } from '../middleware/core.js';
-import { Content, Status, List, ListItem, Review, Rating, Favorite, Like, User, Activity } from '../models/index.js';
+import { Content, Status, List, ListItem, Review, Rating, Favorite, Like, Activity } from '../models/index.js';
 
 const router = Router();
 
-// GET /api/me/activity - Cross-device activity timeline
+// GET /api/me/activity - Cross-device activity timeline (scoped to authenticated user)
 router.get('/activity', auth(false), async (req, res, next) => {
   try {
     await db();
-    const activities = await Activity.find({})
+    const userId = req.user?.sub;
+    if (!userId) return res.json({ items: [] });
+
+    const activities = await Activity.find({ userId })
       .populate('contentId', 'title slug type imageUrl creatorNames authorNames year averageRating')
       .sort({ createdAt: -1 })
       .limit(100)
@@ -37,11 +40,14 @@ router.get('/activity', auth(false), async (req, res, next) => {
   }
 });
 
-// GET /api/me/reviews - Cross-device user reviews
+// GET /api/me/reviews - Cross-device user reviews (scoped to authenticated user)
 router.get('/reviews', auth(false), async (req, res, next) => {
   try {
     await db();
-    const reviews = await Review.find({ deletedAt: null })
+    const userId = req.user?.sub;
+    if (!userId) return res.json({ reviews: [] });
+
+    const reviews = await Review.find({ userId, deletedAt: null })
       .populate('contentId', 'title slug type imageUrl creatorNames authorNames year averageRating')
       .sort({ createdAt: -1 })
       .lean();
@@ -67,16 +73,21 @@ router.get('/reviews', auth(false), async (req, res, next) => {
   }
 });
 
-// GET /api/me/library - Full cross-device synced journal
+// GET /api/me/library - Full cross-device synced journal (scoped to authenticated user)
 router.get('/library', auth(false), async (req, res, next) => {
   try {
     await db();
+    const userId = req.user?.sub;
+    if (!userId) {
+      return res.json({ watched: [], watchlist: [], favorites: [], likes: [], ratings: [], reviews: [] });
+    }
+
     const [statuses, favoritesDocs, likesDocs, ratingsDocs, reviewsDocs] = await Promise.all([
-      Status.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
-      Favorite.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
-      Like.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
-      Rating.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
-      Review.find({ deletedAt: null }).populate('contentId').sort({ createdAt: -1 }).lean(),
+      Status.find({ userId }).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Favorite.find({ userId }).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Like.find({ userId }).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Rating.find({ userId }).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Review.find({ userId, deletedAt: null }).populate('contentId').sort({ createdAt: -1 }).lean(),
     ]);
 
     // Collect any unpopulated content IDs

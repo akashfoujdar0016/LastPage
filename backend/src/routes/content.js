@@ -29,14 +29,12 @@ async function findContent(param) {
   });
 }
 
-// Helper to get or create guest user for unauthenticated interactions
-async function getEffectiveUserId(req) {
+// Helper to get authenticated user ID — returns null if not authenticated
+function getEffectiveUserId(req) {
   if (req.user?.sub && mongoose.isValidObjectId(req.user.sub)) {
     return req.user.sub;
   }
-  const anyUser = await User.findOne();
-  if (anyUser) return anyUser._id;
-  return new mongoose.Types.ObjectId();
+  return null;
 }
 
 // GET & POST /api/content/seed - Explicitly trigger production catalog seed
@@ -162,7 +160,8 @@ router.post('/:id/status', auth(false), async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid status for content type' });
     }
 
-    const userId = await getEffectiveUserId(req);
+    const userId = getEffectiveUserId(req);
+    if (!userId) return res.status(401).json({ error: 'Login required to log status' });
     const isCompleted = schema.status === 'WATCHED' || schema.status === 'READ';
     const updatedStatus = await Status.findOneAndUpdate(
       { userId, contentId: content._id },
@@ -200,7 +199,8 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
       score: z.union([z.number().min(0.5).max(5), z.string().transform(Number)]),
     }).parse(req.body);
 
-    const userId = await getEffectiveUserId(req);
+    const userId = getEffectiveUserId(req);
+    if (!userId) return res.status(401).json({ error: 'Login required to rate' });
 
     const updatedRating = await Rating.findOneAndUpdate(
       { userId, contentId: content._id },
@@ -244,7 +244,8 @@ async function toggleInteraction(Model, field, actionType, req, res) {
     return res.status(404).json({ error: 'Content not found' });
   }
 
-  const userId = await getEffectiveUserId(req);
+  const userId = getEffectiveUserId(req);
+  if (!userId) return res.status(401).json({ error: 'Login required' });
   const existing = await Model.findOne({ userId, contentId: content._id });
 
   if (existing) {
@@ -289,7 +290,8 @@ router.post('/:id/reviews', auth(false), async (req, res, next) => {
       spoiler: z.boolean().default(false),
     }).parse(req.body);
 
-    const userId = await getEffectiveUserId(req);
+    const userId = getEffectiveUserId(req);
+    if (!userId) return res.status(401).json({ error: 'Login required to post a review' });
 
     let finalRating = (typeof reviewData.rating === 'number' && !isNaN(reviewData.rating)) ? reviewData.rating : undefined;
     if (!finalRating) {

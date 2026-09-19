@@ -121,25 +121,37 @@ export default function Detail({ type, params }) {
     } catch {}
   }, [id]);
 
-  const showToast = (msg) => {
+  const showToast = (msg, type = 'ok') => {
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(''), 2400);
+    setTimeout(() => setToastMsg(''), 2800);
   };
 
   const c = d?.content || curatedFallback;
+  // Use the canonical DB ID (from loaded content) for localStorage keys to prevent mismatch
+  const contentKey = c?._id || id;
   const creator = c?.director || c?.creatorNames?.[0] || c?.author || c?.authorNames?.[0] || 'Unknown';
 
+  // Check if user is logged in
+  const isLoggedIn = () => {
+    if (typeof window === 'undefined') return false;
+    return !!localStorage.getItem('accessToken');
+  };
+
   const handleStatus = async (status) => {
+    if (!isLoggedIn()) {
+      showToast('Please log in to track this');
+      return;
+    }
     setLoggedStatus(status);
     const dateStr = new Date().toISOString();
     try {
-      localStorage.setItem(`status_${id}`, status);
+      localStorage.setItem(`status_${contentKey}`, status);
       if (status === 'WATCHED' || status === 'READ') {
-        localStorage.setItem(`logged_date_${id}`, dateStr);
+        localStorage.setItem(`logged_date_${contentKey}`, dateStr);
         setLoggedDate(dateStr);
         recordActivity({
           type: status,
-          contentId: id,
+          contentId: contentKey,
           contentType: isMovie ? 'MOVIE' : 'BOOK',
           title: c?.title || 'Unknown',
           creator,
@@ -153,8 +165,10 @@ export default function Detail({ type, params }) {
         : status === 'READ' ? 'Marked as read' : 'Added to reading list'
     );
     try {
-      await api(`/content/${id}/status`, { method: 'POST', body: JSON.stringify({ status }) });
-    } catch {}
+      await api(`/content/${contentKey}/status`, { method: 'POST', body: JSON.stringify({ status }) });
+    } catch (err) {
+      if (err.message?.includes('Session expired')) showToast('Session expired — please log in again');
+    }
   };
 
   const handleDateChange = (newDateVal) => {
@@ -162,69 +176,76 @@ export default function Detail({ type, params }) {
     const iso = new Date(newDateVal).toISOString();
     setLoggedDate(iso);
     try {
-      localStorage.setItem(`logged_date_${id}`, iso);
+      localStorage.setItem(`logged_date_${contentKey}`, iso);
     } catch {}
     setIsEditingDate(false);
     showToast('Log date updated');
   };
 
   const handleLike = async () => {
+    if (!isLoggedIn()) { showToast('Please log in to like this'); return; }
     const next = !liked;
     setLiked(next);
     try {
-      localStorage.setItem(`like_${id}`, String(next));
+      localStorage.setItem(`like_${contentKey}`, String(next));
       if (next) {
         recordActivity({
           type: 'LIKED',
-          contentId: id,
+          contentId: contentKey,
           contentType: isMovie ? 'MOVIE' : 'BOOK',
           title: c?.title || 'Unknown',
           creator,
         });
       }
     } catch {}
-    showToast(next ? 'Liked' : 'Removed from liked');
+    showToast(next ? 'Liked ♥' : 'Removed from liked');
     try {
-      await api(`/content/${id}/like`, { method: 'POST' });
-    } catch {}
+      await api(`/content/${contentKey}/like`, { method: 'POST' });
+    } catch (err) {
+      if (err.message?.includes('Session expired')) showToast('Session expired — please log in again');
+    }
   };
 
   const handleFavorite = async () => {
+    if (!isLoggedIn()) { showToast('Please log in to favourite this'); return; }
     const next = !favorited;
     setFavorited(next);
     try {
-      localStorage.setItem(`fav_${id}`, String(next));
+      localStorage.setItem(`fav_${contentKey}`, String(next));
       if (next) {
         recordActivity({
           type: 'FAVORITED',
-          contentId: id,
+          contentId: contentKey,
           contentType: isMovie ? 'MOVIE' : 'BOOK',
           title: c?.title || 'Unknown',
           creator,
         });
       }
     } catch {}
-    showToast(next ? 'Added to favourites' : 'Removed from favourites');
+    showToast(next ? 'Added to favourites ★' : 'Removed from favourites');
     try {
-      await api(`/content/${id}/favorite`, { method: 'POST' });
-    } catch {}
+      await api(`/content/${contentKey}/favorite`, { method: 'POST' });
+    } catch (err) {
+      if (err.message?.includes('Session expired')) showToast('Session expired — please log in again');
+    }
   };
 
   const handleSetStarRating = async (score) => {
+    if (!isLoggedIn()) { showToast('Please log in to rate'); return; }
     setRating(score);
     const dateStr = new Date().toISOString();
     try {
-      localStorage.setItem(`rating_${id}`, String(score));
+      localStorage.setItem(`rating_${contentKey}`, String(score));
       if (!loggedStatus) {
         const autoStatus = isMovie ? 'WATCHED' : 'READ';
-        localStorage.setItem(`status_${id}`, autoStatus);
-        localStorage.setItem(`logged_date_${id}`, dateStr);
+        localStorage.setItem(`status_${contentKey}`, autoStatus);
+        localStorage.setItem(`logged_date_${contentKey}`, dateStr);
         setLoggedStatus(autoStatus);
         setLoggedDate(dateStr);
       }
       recordActivity({
         type: 'RATED',
-        contentId: id,
+        contentId: contentKey,
         contentType: isMovie ? 'MOVIE' : 'BOOK',
         title: c?.title || 'Unknown',
         creator,
@@ -239,15 +260,15 @@ export default function Detail({ type, params }) {
     setD((prev) => {
       const base = prev?.content || c || curatedFallback;
       if (!base) return prev;
-      const prevCount = base.ratingCount || 0;
-      const prevAvg = base.averageRating || 0;
-      const isNewRating = !rating || rating === 0;
+      const prevCount = Number(base.ratingCount) || 0;
+      const prevAvg = Number(base.averageRating) || 0;
+      const prevRating = Number(rating) || 0;
+      const isNewRating = prevRating === 0;
       const newCount = isNewRating ? prevCount + 1 : Math.max(1, prevCount);
-      const newAvg = isNewRating && prevCount > 0
-        ? Math.round(((prevAvg * prevCount + score) / newCount) * 10) / 10
-        : prevCount > 1
-        ? Math.round(((prevAvg * prevCount - (rating || score) + score) / prevCount) * 10) / 10
-        : score;
+      const newSum = isNewRating
+        ? prevAvg * prevCount + score
+        : prevAvg * prevCount - prevRating + score;
+      const newAvg = newCount > 0 ? Math.round((newSum / newCount) * 10) / 10 : score;
 
       const starBucket = Math.min(5, Math.max(1, Math.round(score)));
       const newBreakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -260,15 +281,15 @@ export default function Detail({ type, params }) {
           averageRating: newAvg,
           ratingCount: newCount,
           ratingBreakdown: newBreakdown,
+          myRating: score,
         },
         reviews: prev?.reviews || [],
       };
     });
 
-    // Send to server API
+    // Send to server API and sync real counts
     try {
-      const targetId = c?._id || id;
-      const res = await api(`/content/${targetId}/rating`, {
+      const res = await api(`/content/${contentKey}/rating`, {
         method: 'POST',
         body: JSON.stringify({ score }),
       });
@@ -282,16 +303,20 @@ export default function Detail({ type, params }) {
               averageRating: res.averageRating,
               ratingCount: res.ratingCount,
               ratingBreakdown: res.ratingBreakdown,
+              myRating: score,
             },
           };
         });
       }
-    } catch {}
+    } catch (err) {
+      if (err.message?.includes('Session expired')) showToast('Session expired — please log in again');
+    }
   };
 
   const handlePublishReview = async (e) => {
     e.preventDefault();
-    if (!reviewText.trim()) return;
+    if (!isLoggedIn()) { showToast('Please log in to write a review'); return; }
+    if (!reviewText.trim()) { showToast('Please write your review first'); return; }
 
     const targetRating = rating > 0 ? rating : undefined;
     const targetTitle = reviewTitle.trim() || undefined;
@@ -311,7 +336,7 @@ export default function Detail({ type, params }) {
       rating: targetRating,
       userId: {
         displayName: currentUser?.displayName || currentUser?.username || 'You',
-        username: currentUser?.username || 'curator',
+        username: currentUser?.username || '',
         avatarUrl: currentUser?.avatarUrl || '',
       },
       createdAt: createdAtIso,
@@ -322,7 +347,7 @@ export default function Detail({ type, params }) {
 
     try {
       localStorage.setItem(
-        `review_${id}`,
+        `review_${contentKey}`,
         JSON.stringify({
           title: targetTitle,
           body: targetBody,
@@ -332,7 +357,7 @@ export default function Detail({ type, params }) {
       );
       recordActivity({
         type: 'REVIEWED',
-        contentId: id,
+        contentId: contentKey,
         contentType: isMovie ? 'MOVIE' : 'BOOK',
         title: c?.title || 'Unknown',
         creator,
@@ -343,11 +368,10 @@ export default function Detail({ type, params }) {
 
     setReviewTitle('');
     setReviewText('');
-    showToast('Review published to your journal');
+    showToast('Review published ✓');
 
     try {
-      const targetId = c?._id || id;
-      const res = await api(`/content/${targetId}/reviews`, {
+      const res = await api(`/content/${contentKey}/reviews`, {
         method: 'POST',
         body: JSON.stringify({
           title: targetTitle,
@@ -358,6 +382,7 @@ export default function Detail({ type, params }) {
       });
 
       if (res?.review) {
+        // Replace the optimistic local review with the confirmed server one
         setD((prev) => {
           if (!prev) return prev;
           const filtered = (prev.reviews || []).filter((r) => r._id !== newRev._id);
@@ -367,16 +392,27 @@ export default function Detail({ type, params }) {
           };
         });
       }
-      await load();
     } catch (err) {
-      console.error('Error publishing review:', err);
+      if (err.message?.includes('Session expired')) showToast('Session expired — please log in again');
+      else console.error('Error publishing review:', err);
     }
   };
 
   if (!d && !curatedFallback) {
     return (
-      <div className="min-h-[calc(100vh-60px)] bg-base flex items-center justify-center text-xs text-text-muted">
-        Loading review record…
+      <div className="min-h-screen bg-[#000000] animate-pulse">
+        <div className="h-[380px] bg-[#111111]" />
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-5">
+            <div className="w-full aspect-[2/3] rounded-2xl bg-[#111111]" />
+          </div>
+          <div className="lg:col-span-7 flex flex-col gap-6 pt-4">
+            <div className="h-8 w-2/3 rounded bg-[#111111]" />
+            <div className="h-4 w-full rounded bg-[#111111]" />
+            <div className="h-4 w-5/6 rounded bg-[#111111]" />
+            <div className="h-4 w-4/5 rounded bg-[#111111]" />
+          </div>
+        </div>
       </div>
     );
   }

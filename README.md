@@ -167,3 +167,11 @@ LastPage is architected for zero-configuration serverless deployment on Vercel:
 - **Frontend Project**: Rooted at `frontend/` deploying Next.js 15 App Router.
 - **Backend Project**: Rooted at `backend/` deploying Express API endpoints.
 - **Database**: MongoDB Atlas with connection pooling and warm connection reuse.
+
+ 
+ # #   R e c e n t   U p d a t e s   ( V e r s i o n   2 . 5 ) 
+ -   * * R e a l   C l o u d   P e r s i s t e n c e * * :   T r a n s i t i o n e d   u s e r   p r o f i l e s ,   j o u r n a l s ,   w a t c h l i s t s ,   a n d   a c t i v i t y   f e e d s   f r o m   l o c a l   s t o r a g e   t o   f u l l   M o n g o D B   p e r s i s t e n c e . 
+ -   * * C r o s s - D e v i c e   S y n c * * :   A c t i v i t i e s   a n d   c o l l e c t i o n s   a r e   n o w   s t r i c t l y   s c o p e d   t o   a u t h e n t i c a t e d   u s e r   a c c o u n t s ,   e n s u r i n g   f l a w l e s s   s y n c   a c r o s s   d e v i c e s . 
+ -   * * U I   P o l i s h * * :   A d d e d   m i s s i n g   C S S   a n i m a t i o n s   ( ` a n i m a t e - f a d e - i n ` ,   ` s h a d o w - l u x u r y ` ) ,   r e f i n e d   p r o f i l e   b e n t o   g r i d ,   a n d   i m p r o v e d   l o a d i n g   s k e l e t o n   s t a t e s . 
+ -   * * I m p r o v e d   A P I   R e s i l i e n c e * * :   U p d a t e d   a u t h e n t i c a t i o n   f a l l b a c k   l o g i c   t o   p r e v e n t   t o k e n   r e t r y   l o o p s   a n d   e n s u r e   s t r i c t   i s o l a t i o n   b e t w e e n   u s e r s .  
+ 

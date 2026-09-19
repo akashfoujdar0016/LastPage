@@ -55,13 +55,20 @@ export default function Profile() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [friendSearch, setFriendSearch] = useState('');
   const [hoveredFriendBtn, setHoveredFriendBtn] = useState(null);
-  const [socialSubTab, setSocialSubTab] = useState('DISCOVER'); // 'DISCOVER' | 'FEED'
-  const [activeMediaFilter, setActiveMediaFilter] = useState('ALL'); // 'ALL' | 'CINEMA' | 'LIBRARY'
-  const [activeTab, setActiveTab] = useState('WATCHED'); // 'WATCHED' | 'FAVOURITES' | 'WATCHLIST' | 'REVIEWS' | 'NETWORK'
+  const [socialSubTab, setSocialSubTab] = useState('DISCOVER');
+  const [activeTab, setActiveTab] = useState('WATCHED');
   const [friendsFeed, setFriendsFeed] = useState([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-
   const [cloudLibrary, setCloudLibrary] = useState(null);
+  const [cloudActivity, setCloudActivity] = useState([]);
+
+  // Per-section media sub-filters (ALL | CINEMA | BOOKS)
+  const [watchedFilter, setWatchedFilter] = useState('ALL');
+  const [ratingFilter, setRatingFilter] = useState('ALL');
+  const [reviewFilter, setReviewFilter] = useState('ALL');
+  const [favouriteFilter, setFavouriteFilter] = useState('ALL');
+  const [watchlistFilter, setWatchlistFilter] = useState('ALL');
+  const [activityFilter, setActivityFilter] = useState('ALL');
 
   // Load user data and live authentic collections
   useEffect(() => {
@@ -82,9 +89,12 @@ export default function Profile() {
 
     // Fetch cross-device journal from cloud database
     api('/me/library')
-      .then((data) => {
-        if (data) setCloudLibrary(data);
-      })
+      .then((data) => { if (data) setCloudLibrary(data); })
+      .catch(() => {});
+
+    // Fetch user's own activity from cloud
+    api('/me/activity')
+      .then((data) => { if (data?.items) setCloudActivity(data.items); })
       .catch(() => {});
 
     setFollowing(getFollowingList());
@@ -183,19 +193,43 @@ export default function Profile() {
     return mergeItems(local, cloud);
   }, [cloudLibrary, refreshTrigger]);
 
-  // Filter items by media type: ALL | CINEMA | LIBRARY
-  const filterByMedia = (items = []) => {
-    if (activeMediaFilter === 'ALL') return items;
-    if (activeMediaFilter === 'CINEMA') return items.filter((it) => it.type === 'MOVIE');
-    if (activeMediaFilter === 'LIBRARY') return items.filter((it) => it.type === 'BOOK');
+  // Filter items by media type per-section
+  const filterByMedia = (items = [], filter = 'ALL') => {
+    if (filter === 'ALL') return items;
+    if (filter === 'CINEMA') return items.filter((it) => it.type === 'MOVIE');
+    if (filter === 'BOOKS') return items.filter((it) => it.type === 'BOOK');
     return items;
   };
 
-  const displayedWatched = useMemo(() => filterByMedia(allWatched), [allWatched, activeMediaFilter]);
-  const displayedRatings = useMemo(() => filterByMedia(userRatings), [userRatings, activeMediaFilter]);
-  const displayedReviews = useMemo(() => filterByMedia(userReviews), [userReviews, activeMediaFilter]);
-  const displayedFavourites = useMemo(() => filterByMedia(favourites), [favourites, activeMediaFilter]);
-  const displayedWatchlist = useMemo(() => filterByMedia(allWatchlist), [allWatchlist, activeMediaFilter]);
+  const displayedWatched = useMemo(() => filterByMedia(allWatched, watchedFilter), [allWatched, watchedFilter]);
+  const displayedRatings = useMemo(() => filterByMedia(userRatings, ratingFilter), [userRatings, ratingFilter]);
+  const displayedReviews = useMemo(() => filterByMedia(userReviews, reviewFilter), [userReviews, reviewFilter]);
+  const displayedFavourites = useMemo(() => filterByMedia(favourites, favouriteFilter), [favourites, favouriteFilter]);
+  const displayedWatchlist = useMemo(() => filterByMedia(allWatchlist, watchlistFilter), [allWatchlist, watchlistFilter]);
+
+  // Activity: parse cloud activity items
+  const allActivity = useMemo(() => {
+    return (cloudActivity || []).map((act) => {
+      const content = act.contentId || {};
+      return {
+        id: String(act._id || act.id),
+        type: act.actionType || act.type,
+        contentType: content.type || act.contentType,
+        contentId: String(content._id || act.contentId),
+        title: content.title || act.title || '',
+        imageUrl: content.imageUrl || act.imageUrl || '',
+        creator: (content.creatorNames?.[0] || content.authorNames?.[0] || act.creator || ''),
+        score: act.score,
+        reviewSnippet: act.reviewSnippet,
+        createdAt: act.createdAt,
+      };
+    }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }, [cloudActivity]);
+
+  const displayedActivity = useMemo(() => filterByMedia(
+    allActivity.map((a) => ({ ...a, type: a.contentType })),
+    activityFilter
+  ).map((a) => allActivity.find((x) => x.id === a.id) || a), [allActivity, activityFilter]);
 
 
   const searchedFriends = useMemo(() => {
@@ -208,8 +242,9 @@ export default function Profile() {
     return found?.imageUrl || '';
   };
 
-  const usernameHandle = u?.username || 'curator';
-  const displayName = u?.displayName || u?.username || 'Curator';
+  // Use actual user data from DB - never fall back to generic names
+  const usernameHandle = u?.username || '';
+  const displayName = u?.displayName || u?.username || '';
   const userBio = u?.bio || '';
   const userAvatar = u?.avatarUrl || '';
   const userLocation = u?.location || '';
@@ -268,12 +303,20 @@ export default function Profile() {
               {/* Names, Bio, Metadata */}
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <h1 className="font-serif text-2xl sm:text-3xl font-normal text-text-primary tracking-tight">
-                    {displayName}
-                  </h1>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-bg-surface-raised border border-theme-border text-text-secondary font-mono">
-                    @{usernameHandle}
-                  </span>
+                  {displayName ? (
+                    <h1 className="font-serif text-2xl sm:text-3xl font-normal text-text-primary tracking-tight">
+                      {displayName}
+                    </h1>
+                  ) : (
+                    <h1 className="font-serif text-2xl sm:text-3xl font-normal text-text-muted tracking-tight italic">
+                      Loading profile…
+                    </h1>
+                  )}
+                  {usernameHandle && (
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-bg-surface-raised border border-theme-border text-text-secondary font-mono">
+                      @{usernameHandle}
+                    </span>
+                  )}
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-theme-accent-dim text-theme-accent border border-theme-accent-border uppercase tracking-widest font-mono">
                     Curator
                   </span>
@@ -361,128 +404,120 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* ── 2. Quick Authentic Stats Bento ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+        {/* ── 2. Quick Stats Bento ── */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-8">
           <button
-            onClick={() => {
-              setActiveTab('WATCHED');
-              setActiveMediaFilter('CINEMA');
-            }}
-            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+            onClick={() => { setActiveTab('WATCHED'); setWatchedFilter('CINEMA'); }}
+            className="p-3 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
           >
-            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
-              <span className="group-hover:text-theme-accent transition-colors font-medium">Films Logged</span>
-              <Film size={14} className="text-theme-accent" />
+            <div className="flex items-center justify-between text-[10px] text-text-secondary mb-1.5">
+              <span className="group-hover:text-theme-accent transition-colors font-medium">Films</span>
+              <Film size={12} className="text-theme-accent" />
             </div>
-            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{watchedMovies.length}</div>
+            <div className="font-serif text-xl sm:text-2xl text-text-primary">{watchedMovies.length}</div>
           </button>
 
           <button
-            onClick={() => {
-              setActiveTab('WATCHED');
-              setActiveMediaFilter('LIBRARY');
-            }}
-            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+            onClick={() => { setActiveTab('WATCHED'); setWatchedFilter('BOOKS'); }}
+            className="p-3 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
           >
-            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
-              <span className="group-hover:text-theme-accent transition-colors font-medium">Books Logged</span>
-              <BookOpen size={14} className="text-theme-accent" />
+            <div className="flex items-center justify-between text-[10px] text-text-secondary mb-1.5">
+              <span className="group-hover:text-theme-accent transition-colors font-medium">Books</span>
+              <BookOpen size={12} className="text-theme-accent" />
             </div>
-            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{watchedBooks.length}</div>
+            <div className="font-serif text-xl sm:text-2xl text-text-primary">{watchedBooks.length}</div>
           </button>
 
           <button
             onClick={() => setActiveTab('RATINGS')}
-            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+            className="p-3 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
           >
-            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
+            <div className="flex items-center justify-between text-[10px] text-text-secondary mb-1.5">
               <span className="group-hover:text-theme-accent transition-colors font-medium">Ratings</span>
-              <Star size={14} className="text-theme-accent" />
+              <Star size={12} className="text-theme-accent" />
             </div>
-            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{userRatings.length}</div>
+            <div className="font-serif text-xl sm:text-2xl text-text-primary">{userRatings.length}</div>
           </button>
 
           <button
             onClick={() => setActiveTab('REVIEWS')}
-            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+            className="p-3 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
           >
-            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
+            <div className="flex items-center justify-between text-[10px] text-text-secondary mb-1.5">
               <span className="group-hover:text-theme-accent transition-colors font-medium">Reviews</span>
-              <MessageSquare size={14} className="text-theme-accent" />
+              <MessageSquare size={12} className="text-theme-accent" />
             </div>
-            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{userReviews.length}</div>
+            <div className="font-serif text-xl sm:text-2xl text-text-primary">{userReviews.length}</div>
           </button>
 
           <button
             onClick={() => setActiveTab('FAVOURITES')}
-            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+            className="p-3 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
           >
-            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
+            <div className="flex items-center justify-between text-[10px] text-text-secondary mb-1.5">
               <span className="group-hover:text-theme-accent transition-colors font-medium">Favourites</span>
-              <Heart size={14} className="text-theme-accent" />
+              <Heart size={12} className="text-theme-accent" />
             </div>
-            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{favourites.length}</div>
+            <div className="font-serif text-xl sm:text-2xl text-text-primary">{favourites.length}</div>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('ACTIVITY')}
+            className="p-3 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+          >
+            <div className="flex items-center justify-between text-[10px] text-text-secondary mb-1.5">
+              <span className="group-hover:text-theme-accent transition-colors font-medium">Activity</span>
+              <ActivityIcon size={12} className="text-theme-accent" />
+            </div>
+            <div className="font-serif text-xl sm:text-2xl text-text-primary">{allActivity.length}</div>
           </button>
         </div>
 
-        {/* ── 3. Media Switcher & Tab Navigation ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-6 border-b border-theme-border">
-          {/* Media Switcher: All | Cinema | Library */}
-          <div className="flex items-center p-1 rounded-full bg-bg-surface border border-theme-border shrink-0 self-start">
-            {[
-              { id: 'ALL', label: 'All Works' },
-              { id: 'CINEMA', label: 'Films', Icon: Film },
-              { id: 'LIBRARY', label: 'Books', Icon: BookOpen },
-            ].map((tab) => (
+        {/* ── 3. Tab Navigation ── */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 pb-4 mb-6 border-b border-theme-border">
+          {[
+            { id: 'WATCHED', label: 'Watched / Read', count: allWatched.length },
+            { id: 'RATINGS', label: 'Ratings', count: userRatings.length },
+            { id: 'REVIEWS', label: 'Reviews', count: userReviews.length },
+            { id: 'FAVOURITES', label: 'Favourites', count: favourites.length },
+            { id: 'WATCHLIST', label: 'Watchlist / TBR', count: allWatchlist.length },
+            { id: 'ACTIVITY', label: 'Activity', count: allActivity.length },
+            { id: 'NETWORK', label: 'Network', count: following.length },
+          ].map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
               <button
                 key={tab.id}
-                onClick={() => setActiveMediaFilter(tab.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
-                  activeMediaFilter === tab.id
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                  isActive
                     ? 'bg-theme-accent text-bg-base font-semibold shadow-sm'
-                    : 'text-text-secondary hover:text-text-primary'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface-raised border border-transparent'
                 }`}
               >
-                {tab.Icon && <tab.Icon size={12} />}
                 <span>{tab.label}</span>
+                <span className={`text-[10px] font-mono ${isActive ? 'text-bg-base/80' : 'text-text-muted'}`}>
+                  ({tab.count})
+                </span>
               </button>
-            ))}
-          </div>
-
-          {/* Tab Filter Navigation */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
-            {[
-              { id: 'WATCHED', label: 'Watched / Read', count: displayedWatched.length },
-              { id: 'RATINGS', label: 'Ratings', count: displayedRatings.length },
-              { id: 'REVIEWS', label: 'Reviews', count: displayedReviews.length },
-              { id: 'FAVOURITES', label: 'Favourites', count: displayedFavourites.length },
-              { id: 'WATCHLIST', label: 'Watchlist / TBR', count: displayedWatchlist.length },
-              { id: 'NETWORK', label: 'Taste Network', count: following.length },
-            ].map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap flex items-center gap-1.5 ${
-                    isActive
-                      ? 'bg-theme-accent text-bg-base font-semibold shadow-sm'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface-raised border border-transparent'
-                  }`}
-                >
-                  <span>{tab.label}</span>
-                  <span className={`text-[10px] font-mono ${isActive ? 'text-bg-base/80' : 'text-text-muted'}`}>
-                    ({tab.count})
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+            );
+          })}
         </div>
 
-        {/* ── 4. Main Tab Showcase Views (Zero Dummy Data) ── */}
+        {/* ── 4. WATCHED / READ ── */}
         {activeTab === 'WATCHED' && (
           <div>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-serif text-lg text-text-primary">Watched &amp; Read</h2>
+              <div className="flex items-center gap-1 p-0.5 rounded-full bg-bg-surface-raised border border-theme-border">
+                {[{ id: 'ALL', label: 'All' }, { id: 'CINEMA', label: 'Films', Icon: Film }, { id: 'BOOKS', label: 'Books', Icon: BookOpen }].map((f) => (
+                  <button key={f.id} onClick={() => setWatchedFilter(f.id)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all flex items-center gap-1 ${watchedFilter === f.id ? 'bg-theme-accent text-bg-base font-semibold shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}>
+                    {f.Icon && <f.Icon size={11} />}<span>{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
             {displayedWatched.length === 0 ? (
               <div className="py-20 text-center rounded-2xl bg-bg-surface border border-theme-border p-8">
                 <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3">
@@ -493,18 +528,8 @@ export default function Profile() {
                   Start logging films and books you have experienced to build your cultural diary.
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  <Link
-                    href="/movies"
-                    className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors"
-                  >
-                    Explore Films (50)
-                  </Link>
-                  <Link
-                    href="/books"
-                    className="px-4 py-2 rounded-full border border-theme-border text-xs text-text-secondary hover:text-text-primary transition-colors"
-                  >
-                    Explore Books (30)
-                  </Link>
+                  <Link href="/movies" className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors">Explore Films</Link>
+                  <Link href="/books" className="px-4 py-2 rounded-full border border-theme-border text-xs text-text-secondary hover:text-text-primary transition-colors">Explore Books</Link>
                 </div>
               </div>
             ) : (
@@ -512,54 +537,25 @@ export default function Profile() {
                 {displayedWatched.map((item) => {
                   const isMovie = item.type === 'MOVIE';
                   const href = `/${isMovie ? 'movies' : 'books'}/${item._id || item.slug}`;
-                  const score = localStorage.getItem(`rating_${item._id}`);
-                  const loggedDate = localStorage.getItem(`logged_date_${item._id}`);
-
+                  const score = item.userRating || (typeof window !== 'undefined' ? Number(localStorage.getItem(`rating_${item._id}`)) || null : null);
                   return (
-                    <div key={item._id} className="group flex flex-col">
-                      <div
-                        className={`relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury ${
-                          isMovie ? 'rounded-lg' : 'rounded-xl shadow-book-spine'
-                        }`}
-                      >
+                    <div key={item._id || item.slug} className="group flex flex-col">
+                      <div className={`relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury ${isMovie ? 'rounded-lg' : 'rounded-xl'}`}>
                         <Link href={href} className="block w-full h-full relative">
-                          <img
-                            src={item.imageUrl}
-                            alt={item.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                          <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                            <span className="text-[10px] font-semibold bg-white text-[#121212] px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
-                              <span>View details</span>
-                              <ArrowUpRight size={10} />
-                            </span>
+                            <span className="text-[10px] font-semibold bg-white text-[#121212] px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md"><span>View</span><ArrowUpRight size={10} /></span>
                           </div>
+                          {score > 0 && (
+                            <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md border border-theme-accent/50 text-theme-accent text-[10px] font-mono font-semibold flex items-center gap-0.5">
+                              <Star size={9} className="fill-theme-accent" /><span>{Number(score).toFixed(1)}</span>
+                            </div>
+                          )}
                         </Link>
                       </div>
-
-                      <div className="mt-2.5 flex flex-col">
-                        <Link
-                          href={href}
-                          className="font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors font-normal"
-                        >
-                          {item.title}
-                        </Link>
-                        <div className="text-[11px] text-text-secondary truncate mt-0.5">
-                          {item.year} · {isMovie ? item.creatorNames?.[0] : item.authorNames?.[0]}
-                        </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          {score && (
-                            <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-theme-accent">
-                              <Star size={11} className="fill-theme-accent" />
-                              <span>{Number(score).toFixed(1)}</span>
-                            </span>
-                          )}
-                          {loggedDate && (
-                            <span className="text-[10px] text-text-muted font-mono">
-                              {formatLogDate(loggedDate)}
-                            </span>
-                          )}
-                        </div>
+                      <div className="mt-2 flex flex-col gap-0.5">
+                        <Link href={href} className="font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors">{item.title}</Link>
+                        <div className="text-[11px] text-text-muted truncate">{item.year} · {isMovie ? item.creatorNames?.[0] : item.authorNames?.[0]}</div>
                       </div>
                     </div>
                   );
@@ -569,8 +565,20 @@ export default function Profile() {
           </div>
         )}
 
+        {/* ── 5. FAVOURITES ── */}
         {activeTab === 'FAVOURITES' && (
           <div>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-serif text-lg text-text-primary">Favourites</h2>
+              <div className="flex items-center gap-1 p-0.5 rounded-full bg-bg-surface-raised border border-theme-border">
+                {[{ id: 'ALL', label: 'All' }, { id: 'CINEMA', label: 'Films', Icon: Film }, { id: 'BOOKS', label: 'Books', Icon: BookOpen }].map((f) => (
+                  <button key={f.id} onClick={() => setFavouriteFilter(f.id)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all flex items-center gap-1 ${favouriteFilter === f.id ? 'bg-theme-accent text-bg-base font-semibold shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}>
+                    {f.Icon && <f.Icon size={11} />}<span>{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
             {displayedFavourites.length === 0 ? (
               <div className="py-20 text-center rounded-2xl bg-bg-surface border border-theme-border p-8">
                 <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3">
@@ -578,14 +586,9 @@ export default function Profile() {
                 </div>
                 <h3 className="font-serif text-lg text-text-primary mb-1">No favourites curated yet</h3>
                 <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">
-                  Click the heart icon on any masterpiece in the catalog to pin it to your personal favourites.
+                  Click the heart icon on any masterpiece to pin it as a favourite.
                 </p>
-                <Link
-                  href="/hub"
-                  className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block"
-                >
-                  Browse Catalogue
-                </Link>
+                <Link href="/hub" className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block">Browse Catalogue</Link>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
@@ -593,29 +596,14 @@ export default function Profile() {
                   const isMovie = item.type === 'MOVIE';
                   const href = `/${isMovie ? 'movies' : 'books'}/${item._id || item.slug}`;
                   return (
-                    <div key={item._id} className="group flex flex-col">
-                      <div
-                        className={`relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury ${
-                          isMovie ? 'rounded-lg' : 'rounded-xl shadow-book-spine'
-                        }`}
-                      >
+                    <div key={item._id || item.slug} className="group flex flex-col">
+                      <div className={`relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury ${isMovie ? 'rounded-lg' : 'rounded-xl'}`}>
                         <Link href={href} className="block w-full h-full relative">
-                          <img
-                            src={item.imageUrl}
-                            alt={item.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                          <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         </Link>
                       </div>
-                      <Link
-                        href={href}
-                        className="mt-2.5 font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors"
-                      >
-                        {item.title}
-                      </Link>
-                      <div className="text-[11px] text-text-secondary truncate mt-0.5">
-                        {item.year} · {isMovie ? item.creatorNames?.[0] : item.authorNames?.[0]}
-                      </div>
+                      <Link href={href} className="mt-2 font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors">{item.title}</Link>
+                      <div className="text-[11px] text-text-muted truncate mt-0.5">{item.year} · {isMovie ? item.creatorNames?.[0] : item.authorNames?.[0]}</div>
                     </div>
                   );
                 })}
@@ -624,30 +612,28 @@ export default function Profile() {
           </div>
         )}
 
+        {/* ── Watchlist / TBR ── */}
         {activeTab === 'WATCHLIST' && (
           <div>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-serif text-lg text-text-primary">Watchlist &amp; TBR</h2>
+              <div className="flex items-center gap-1 p-0.5 rounded-full bg-bg-surface-raised border border-theme-border">
+                {[{ id: 'ALL', label: 'All' }, { id: 'CINEMA', label: 'Films', Icon: Film }, { id: 'BOOKS', label: 'Books', Icon: BookOpen }].map((f) => (
+                  <button key={f.id} onClick={() => setWatchlistFilter(f.id)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all flex items-center gap-1 ${watchlistFilter === f.id ? 'bg-theme-accent text-bg-base font-semibold shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}>
+                    {f.Icon && <f.Icon size={11} />}<span>{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
             {displayedWatchlist.length === 0 ? (
               <div className="py-20 text-center rounded-2xl bg-bg-surface border border-theme-border p-8">
-                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3">
-                  <Bookmark size={20} />
-                </div>
-                <h3 className="font-serif text-lg text-text-primary mb-1">Watchlist & TBR is empty</h3>
-                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">
-                  Save works you intend to watch or read next from the cinema or library shelves.
-                </p>
+                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3"><Bookmark size={20} /></div>
+                <h3 className="font-serif text-lg text-text-primary mb-1">Watchlist &amp; TBR is empty</h3>
+                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">Save works you intend to watch or read next.</p>
                 <div className="flex items-center justify-center gap-3">
-                  <Link
-                    href="/movies"
-                    className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors"
-                  >
-                    Browse Cinema
-                  </Link>
-                  <Link
-                    href="/books"
-                    className="px-4 py-2 rounded-full border border-theme-border text-xs text-text-secondary hover:text-text-primary transition-colors"
-                  >
-                    Browse Books
-                  </Link>
+                  <Link href="/movies" className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors">Browse Cinema</Link>
+                  <Link href="/books" className="px-4 py-2 rounded-full border border-theme-border text-xs text-text-secondary hover:text-text-primary transition-colors">Browse Books</Link>
                 </div>
               </div>
             ) : (
@@ -656,29 +642,14 @@ export default function Profile() {
                   const isMovie = item.type === 'MOVIE';
                   const href = `/${isMovie ? 'movies' : 'books'}/${item._id || item.slug}`;
                   return (
-                    <div key={item._id} className="group flex flex-col">
-                      <div
-                        className={`relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury ${
-                          isMovie ? 'rounded-lg' : 'rounded-xl shadow-book-spine'
-                        }`}
-                      >
+                    <div key={item._id || item.slug} className="group flex flex-col">
+                      <div className={`relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury ${isMovie ? 'rounded-lg' : 'rounded-xl'}`}>
                         <Link href={href} className="block w-full h-full relative">
-                          <img
-                            src={item.imageUrl}
-                            alt={item.title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                          <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                         </Link>
                       </div>
-                      <Link
-                        href={href}
-                        className="mt-2.5 font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors"
-                      >
-                        {item.title}
-                      </Link>
-                      <div className="text-[11px] text-text-secondary truncate mt-0.5">
-                        {item.year} · {isMovie ? item.creatorNames?.[0] : item.authorNames?.[0]}
-                      </div>
+                      <Link href={href} className="mt-2 font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors">{item.title}</Link>
+                      <div className="text-[11px] text-text-muted truncate mt-0.5">{item.year} · {isMovie ? item.creatorNames?.[0] : item.authorNames?.[0]}</div>
                     </div>
                   );
                 })}
@@ -687,69 +658,48 @@ export default function Profile() {
           </div>
         )}
 
+        {/* ── Ratings ── */}
         {activeTab === 'RATINGS' && (
           <div>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-serif text-lg text-text-primary">My Ratings</h2>
+              <div className="flex items-center gap-1 p-0.5 rounded-full bg-bg-surface-raised border border-theme-border">
+                {[{ id: 'ALL', label: 'All' }, { id: 'CINEMA', label: 'Films', Icon: Film }, { id: 'BOOKS', label: 'Books', Icon: BookOpen }].map((f) => (
+                  <button key={f.id} onClick={() => setRatingFilter(f.id)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all flex items-center gap-1 ${ratingFilter === f.id ? 'bg-theme-accent text-bg-base font-semibold shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}>
+                    {f.Icon && <f.Icon size={11} />}<span>{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
             {displayedRatings.length === 0 ? (
               <div className="py-20 text-center rounded-2xl bg-bg-surface border border-theme-border p-8">
-                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3">
-                  <Star size={20} />
-                </div>
+                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3"><Star size={20} /></div>
                 <h3 className="font-serif text-lg text-text-primary mb-1">No rated works yet</h3>
-                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">
-                  Rate films and books to record your ratings in your cultural journal.
-                </p>
-                <Link
-                  href="/hub"
-                  className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block"
-                >
-                  Explore Works to Rate
-                </Link>
+                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">Rate films and books to record your impressions.</p>
+                <Link href="/hub" className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block">Explore Works to Rate</Link>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
                 {displayedRatings.map((item) => {
                   const isMovie = item.type === 'MOVIE';
                   const href = `/${isMovie ? 'movies' : 'books'}/${item._id || item.slug || item.contentId}`;
                   const poster = item.imageUrl || getItemImage(item._id || item.contentId, item.type);
-                  const score = item.userRating || item.score || item.averageRating;
+                  const score = item.userRating || item.score;
                   return (
-                    <div key={item._id || item.contentId} className="flex flex-col group">
-                      <Link
-                        href={href}
-                        className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all shadow-md"
-                      >
-                        {poster ? (
-                          <img
-                            src={poster}
-                            alt={item.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">
-                            No Cover
-                          </div>
-                        )}
-                        {score && (
-                          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/80 backdrop-blur-md border border-theme-accent/50 text-theme-accent text-[11px] font-mono font-semibold flex items-center gap-1">
-                            <Star size={10} className="fill-theme-accent" />
-                            <span>{Number(score).toFixed(1)}</span>
-                          </div>
-                        )}
-                      </Link>
-                      <Link
-                        href={href}
-                        className="mt-2.5 font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors"
-                      >
-                        {item.title}
-                      </Link>
-                      <div className="text-[11px] text-text-secondary truncate mt-0.5 flex items-center justify-between">
-                        <span>{item.year || (isMovie ? 'Film' : 'Book')}</span>
-                        {score && (
-                          <span className="text-theme-accent font-mono text-[10px]">
-                            ★ {Number(score).toFixed(1)}
-                          </span>
-                        )}
+                    <div key={item._id || item.contentId} className="group flex flex-col">
+                      <div className="relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury rounded-lg">
+                        <Link href={href} className="block w-full h-full relative">
+                          {poster ? <img src={poster} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /> : <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">No Cover</div>}
+                          {score && (
+                            <div className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full bg-black/80 backdrop-blur-md border border-theme-accent/50 text-theme-accent text-[10px] font-mono font-semibold flex items-center gap-0.5">
+                              <Star size={9} className="fill-theme-accent" /><span>{Number(score).toFixed(1)}</span>
+                            </div>
+                          )}
+                        </Link>
                       </div>
+                      <Link href={href} className="mt-2 font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors">{item.title}</Link>
+                      <div className="text-[11px] text-text-muted truncate mt-0.5">{item.year || (isMovie ? 'Film' : 'Book')}</div>
                     </div>
                   );
                 })}
@@ -758,23 +708,26 @@ export default function Profile() {
           </div>
         )}
 
+        {/* ── Reviews ── */}
         {activeTab === 'REVIEWS' && (
           <div>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-serif text-lg text-text-primary">My Reviews</h2>
+              <div className="flex items-center gap-1 p-0.5 rounded-full bg-bg-surface-raised border border-theme-border">
+                {[{ id: 'ALL', label: 'All' }, { id: 'CINEMA', label: 'Films', Icon: Film }, { id: 'BOOKS', label: 'Books', Icon: BookOpen }].map((f) => (
+                  <button key={f.id} onClick={() => setReviewFilter(f.id)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all flex items-center gap-1 ${reviewFilter === f.id ? 'bg-theme-accent text-bg-base font-semibold shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}>
+                    {f.Icon && <f.Icon size={11} />}<span>{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
             {displayedReviews.length === 0 ? (
               <div className="py-20 text-center rounded-2xl bg-bg-surface border border-theme-border p-8">
-                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3">
-                  <MessageSquare size={20} />
-                </div>
+                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3"><MessageSquare size={20} /></div>
                 <h3 className="font-serif text-lg text-text-primary mb-1">No written reviews yet</h3>
-                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">
-                  Share your reflections and critical notes on works you have experienced.
-                </p>
-                <Link
-                  href="/hub"
-                  className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block"
-                >
-                  Explore Works to Review
-                </Link>
+                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">Share your reflections on works you have experienced.</p>
+                <Link href="/hub" className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block">Explore Works to Review</Link>
               </div>
             ) : (
               <div className="max-w-3xl flex flex-col gap-4">
@@ -783,49 +736,97 @@ export default function Profile() {
                   const href = `/${isMovie ? 'movies' : 'books'}/${rev._id || rev.slug || rev.contentId}`;
                   const poster = rev.imageUrl || getItemImage(rev._id || rev.contentId, rev.type);
                   return (
-                    <div
-                      key={rev._id || rev.contentId}
-                      className="p-5 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all flex gap-4"
-                    >
+                    <div key={rev._id || rev.reviewId || rev.contentId} className="p-5 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all flex gap-4">
                       {poster && (
-                        <Link
-                          href={href}
-                          className="w-16 h-24 rounded-lg overflow-hidden shrink-0 border border-theme-border shadow-sm hidden sm:block"
-                        >
+                        <Link href={href} className="w-14 h-20 rounded-lg overflow-hidden shrink-0 border border-theme-border shadow-sm hidden sm:block">
                           <img src={poster} alt={rev.title} className="w-full h-full object-cover" />
                         </Link>
                       )}
                       <div className="flex-1 flex flex-col gap-2 min-w-0">
                         <div className="flex items-center justify-between gap-4">
-                          <Link
-                            href={href}
-                            className="font-serif text-base text-text-primary hover:text-theme-accent truncate"
-                          >
-                            {rev.title}
-                          </Link>
-                          {rev.rating && (
+                          <Link href={href} className="font-serif text-base text-text-primary hover:text-theme-accent truncate">{rev.title}</Link>
+                          {(rev.rating || rev.userRating) && (
                             <span className="text-xs font-semibold text-theme-accent bg-theme-accent-dim px-2 py-0.5 rounded-full border border-theme-accent-border flex items-center gap-1 shrink-0 font-mono">
-                              <Star size={10} className="fill-theme-accent" />
-                              <span>{Number(rev.rating).toFixed(1)}</span>
+                              <Star size={10} className="fill-theme-accent" /><span>{Number(rev.rating || rev.userRating).toFixed(1)}</span>
                             </span>
                           )}
                         </div>
+                        <div className="flex items-center gap-2 text-[10px] text-text-muted font-mono">
+                          <span className={`px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider border ${isMovie ? 'border-blue-500/30 text-blue-400 bg-blue-500/10' : 'border-amber-500/30 text-amber-400 bg-amber-500/10'}`}>{isMovie ? 'Film' : 'Book'}</span>
+                          {rev.year && <span>{rev.year}</span>}
+                        </div>
                         {rev.reviewTitle && rev.reviewTitle !== rev.title && (
-                          <h4 className="text-xs font-semibold text-text-primary font-serif tracking-wide">
-                            &ldquo;{rev.reviewTitle}&rdquo;
-                          </h4>
+                          <h4 className="text-xs font-semibold text-text-primary font-serif tracking-wide">&ldquo;{rev.reviewTitle}&rdquo;</h4>
                         )}
                         {rev.reviewBody && (
-                          <p className="text-xs text-text-secondary leading-relaxed font-sans pl-3 border-l-2 border-theme-accent italic">
-                            {rev.reviewBody}
-                          </p>
+                          <p className="text-xs text-text-secondary leading-relaxed font-sans pl-3 border-l-2 border-theme-accent italic line-clamp-3">{rev.reviewBody}</p>
                         )}
                         <div className="text-[10px] text-text-muted font-mono flex items-center justify-between pt-1">
                           <span>{formatLogDate(rev.createdAt)}</span>
-                          <Link href={href} className="text-theme-accent hover:underline">
-                            View Work Page →
-                          </Link>
+                          <Link href={href} className="text-theme-accent hover:underline">View Work →</Link>
                         </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── Activity ── */}
+        {activeTab === 'ACTIVITY' && (
+          <div>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-serif text-lg text-text-primary">My Activity</h2>
+              <div className="flex items-center gap-1 p-0.5 rounded-full bg-bg-surface-raised border border-theme-border">
+                {[{ id: 'ALL', label: 'All' }, { id: 'CINEMA', label: 'Films', Icon: Film }, { id: 'BOOKS', label: 'Books', Icon: BookOpen }].map((f) => (
+                  <button key={f.id} onClick={() => setActivityFilter(f.id)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-medium transition-all flex items-center gap-1 ${activityFilter === f.id ? 'bg-theme-accent text-bg-base font-semibold shadow-sm' : 'text-text-secondary hover:text-text-primary'}`}>
+                    {f.Icon && <f.Icon size={11} />}<span>{f.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            {displayedActivity.length === 0 ? (
+              <div className="py-16 text-center rounded-2xl bg-bg-surface border border-theme-border p-8">
+                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3"><ActivityIcon size={20} /></div>
+                <h3 className="font-serif text-lg text-text-primary mb-1">No activity recorded yet</h3>
+                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">Your ratings, reviews, and logging actions will appear here.</p>
+                <Link href="/hub" className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block">Start Exploring</Link>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {displayedActivity.map((act) => {
+                  const isMovie = act.contentType === 'MOVIE';
+                  const targetUrl = `/${isMovie ? 'movies' : 'books'}/${act.contentId}`;
+                  const actionLabel = { WATCHED: 'watched', READ: 'read', REVIEWED: 'reviewed', RATED: 'rated', FAVORITED: 'added to favourites', LIKED: 'liked', WATCHLIST: 'added to watchlist', WANT_TO_READ: 'added to TBR' }[act.type] || act.type?.toLowerCase();
+                  return (
+                    <div key={act.id} className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent-border transition-all flex gap-4 items-start">
+                      {act.imageUrl && (
+                        <Link href={targetUrl} className="w-10 aspect-[2/3] rounded overflow-hidden shrink-0 border border-theme-border">
+                          <img src={act.imageUrl} alt={act.title} className="w-full h-full object-cover" />
+                        </Link>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <Link href={targetUrl} className="font-serif text-sm text-text-primary hover:text-theme-accent truncate block">{act.title}</Link>
+                            <div className="text-[11px] text-text-secondary mt-0.5 flex items-center gap-2">
+                              <span className={`px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider border ${isMovie ? 'border-blue-500/30 text-blue-400 bg-blue-500/10' : 'border-amber-500/30 text-amber-400 bg-amber-500/10'}`}>{isMovie ? 'Film' : 'Book'}</span>
+                              {actionLabel && <span className="text-text-muted">{actionLabel}</span>}
+                            </div>
+                          </div>
+                          {act.score && (
+                            <span className="text-xs font-semibold text-theme-accent bg-theme-accent-dim px-2 py-0.5 rounded-full border border-theme-accent-border flex items-center gap-1 shrink-0 font-mono">
+                              <Star size={10} className="fill-theme-accent" /><span>{Number(act.score).toFixed(1)}</span>
+                            </span>
+                          )}
+                        </div>
+                        {act.reviewSnippet && (
+                          <p className="text-xs text-text-secondary italic mt-1.5 pl-3 border-l-2 border-theme-accent line-clamp-2">&ldquo;{act.reviewSnippet}&rdquo;</p>
+                        )}
+                        <div className="text-[10px] text-text-muted font-mono mt-2">{formatLogDate(act.createdAt)}</div>
                       </div>
                     </div>
                   );
