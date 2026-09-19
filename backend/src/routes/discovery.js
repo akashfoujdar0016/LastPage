@@ -10,7 +10,7 @@ router.get('/home', auth(false), async (_req, res, next) => {
   try {
     await db();
     const count = await Content.countDocuments({ deletedAt: null });
-    if (count === 0) {
+    if (count < 84) {
       const { seedCatalog } = await import('../services/seeder.js');
       await seedCatalog();
     }

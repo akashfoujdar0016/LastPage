@@ -9,12 +9,12 @@ import { seedCatalog } from '../services/seeder.js';
 
 const router = Router();
 
-// POST /api/content/seed - Explicitly trigger production catalog seed
-router.post('/seed', async (_req, res, next) => {
+// GET & POST /api/content/seed - Explicitly trigger production catalog seed
+router.all('/seed', async (_req, res, next) => {
   try {
     await db();
     const count = await seedCatalog();
-    res.json({ ok: true, message: `Production catalog seeded with ${count} entries.` });
+    res.json({ ok: true, message: `Production catalog seeded with ${count} entries (52 movies, 32 books).` });
   } catch (err) {
     next(err);
   }
@@ -24,6 +24,10 @@ router.post('/seed', async (_req, res, next) => {
 router.get('/', auth(false), async (req, res, next) => {
   try {
     await db();
+    const count = await Content.countDocuments({ deletedAt: null });
+    if (count < 84) {
+      await seedCatalog();
+    }
     const query = z.object({
       type: z.enum(['MOVIE', 'BOOK']).optional(),
       q: z.string().trim().max(100).optional(),
