@@ -41,6 +41,9 @@ export function auth(required = true) {
       req.user = verifyAccess(authHeader.replace(/^Bearer\s+/i, ''));
       next();
     } catch {
+      if (!required) {
+        return next();
+      }
       res.status(401).json({ error: 'Invalid or expired token' });
     }
   };

@@ -19,7 +19,17 @@ export async function api(path, opts = {}) {
     headers.set('Authorization', `Bearer ${token}`);
   }
   const base = getBase();
-  const res = await fetch(`${base}${path}`, { ...opts, headers, cache: 'no-store' });
+  let res = await fetch(`${base}${path}`, { ...opts, headers, cache: 'no-store' });
+
+  // If 401 occurs due to an expired/stale token, clear it from localStorage and retry unauthenticated
+  if (res.status === 401 && token) {
+    try {
+      localStorage.removeItem('accessToken');
+    } catch {}
+    headers.delete('Authorization');
+    res = await fetch(`${base}${path}`, { ...opts, headers, cache: 'no-store' });
+  }
+
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     throw new Error(data.error || 'Request failed');

@@ -10,14 +10,7 @@ const router = Router();
 router.get('/activity', auth(false), async (req, res, next) => {
   try {
     await db();
-    let userId = req.user?.sub;
-    if (!userId) {
-      const anyUser = await User.findOne();
-      if (anyUser) userId = anyUser._id;
-    }
-    if (!userId) return res.json({ items: [] });
-
-    const activities = await Activity.find({ userId })
+    const activities = await Activity.find({})
       .populate('contentId', 'title slug type imageUrl creatorNames authorNames year averageRating')
       .sort({ createdAt: -1 })
       .limit(100)
@@ -33,14 +26,7 @@ router.get('/activity', auth(false), async (req, res, next) => {
 router.get('/reviews', auth(false), async (req, res, next) => {
   try {
     await db();
-    let userId = req.user?.sub;
-    if (!userId) {
-      const anyUser = await User.findOne();
-      if (anyUser) userId = anyUser._id;
-    }
-    if (!userId) return res.json({ reviews: [] });
-
-    const reviews = await Review.find({ userId, deletedAt: null })
+    const reviews = await Review.find({ deletedAt: null })
       .populate('contentId', 'title slug type imageUrl creatorNames authorNames year averageRating')
       .sort({ createdAt: -1 })
       .lean();
@@ -55,42 +41,70 @@ router.get('/reviews', auth(false), async (req, res, next) => {
 router.get('/library', auth(false), async (req, res, next) => {
   try {
     await db();
-    let userId = req.user?.sub;
-    if (!userId) {
-      const anyUser = await User.findOne();
-      if (anyUser) userId = anyUser._id;
-    }
-    if (!userId) {
-      return res.json({ watched: [], watchlist: [], favorites: [], ratings: [], reviews: [] });
-    }
-
-    const [statuses, favorites, ratings, reviews] = await Promise.all([
-      Status.find({ userId }).populate('contentId').lean(),
-      Favorite.find({ userId }).populate('contentId').lean(),
-      Rating.find({ userId }).populate('contentId').lean(),
-      Review.find({ userId, deletedAt: null }).populate('contentId').lean(),
+    const [statuses, favoritesDocs, likesDocs, ratingsDocs, reviewsDocs] = await Promise.all([
+      Status.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Favorite.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Like.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Rating.find({}).populate('contentId').sort({ updatedAt: -1 }).lean(),
+      Review.find({ deletedAt: null }).populate('contentId').sort({ createdAt: -1 }).lean(),
     ]);
 
-    const watched = statuses
-      .filter(s => (s.status === 'WATCHED' || s.status === 'READ') && s.contentId)
-      .map(s => ({ ...s.contentId, loggedDate: s.updatedAt, status: s.status }));
+    const dedupe = (list, keyFn) => {
+      const map = new Map();
+      for (const it of list) {
+        if (!it) continue;
+        const key = keyFn(it);
+        if (key && !map.has(key)) {
+          map.set(key, it);
+        }
+      }
+      return Array.from(map.values());
+    };
 
-    const watchlist = statuses
-      .filter(s => (s.status === 'WATCHLIST' || s.status === 'WANT_TO_READ') && s.contentId)
-      .map(s => ({ ...s.contentId, status: s.status }));
+    const watchedRaw = statuses
+      .filter((s) => (s.status === 'WATCHED' || s.status === 'READ') && s.contentId)
+      .map((s) => ({ ...s.contentId, loggedDate: s.updatedAt, status: s.status }));
+    const watched = dedupe(watchedRaw, (it) => String(it._id || it.slug));
 
-    res.json({
-      watched,
-      watchlist,
-      favorites: favorites.filter(f => f.contentId).map(f => f.contentId),
-      ratings: ratings.filter(r => r.contentId).map(r => ({ ...r.contentId, userRating: r.score })),
-      reviews: reviews.filter(rv => rv.contentId).map(rv => ({
+    const watchlistRaw = statuses
+      .filter((s) => (s.status === 'WATCHLIST' || s.status === 'WANT_TO_READ') && s.contentId)
+      .map((s) => ({ ...s.contentId, status: s.status }));
+    const watchlist = dedupe(watchlistRaw, (it) => String(it._id || it.slug));
+
+    const favorites = dedupe(
+      favoritesDocs.filter((f) => f.contentId).map((f) => f.contentId),
+      (it) => String(it._id || it.slug)
+    );
+
+    const likes = dedupe(
+      likesDocs.filter((l) => l.contentId).map((l) => l.contentId),
+      (it) => String(it._id || it.slug)
+    );
+
+    const ratingsRaw = ratingsDocs
+      .filter((r) => r.contentId)
+      .map((r) => ({ ...r.contentId, userRating: r.score }));
+    const ratings = dedupe(ratingsRaw, (it) => String(it._id || it.slug));
+
+    const reviewsRaw = reviewsDocs
+      .filter((rv) => rv.contentId)
+      .map((rv) => ({
         ...rv.contentId,
+        reviewId: rv._id,
         reviewBody: rv.body,
         reviewTitle: rv.title,
         rating: rv.rating,
         createdAt: rv.createdAt,
-      })),
+      }));
+    const reviews = dedupe(reviewsRaw, (it) => String(it.reviewId || it._id));
+
+    res.json({
+      watched,
+      watchlist,
+      favorites,
+      likes,
+      ratings,
+      reviews,
     });
   } catch (err) {
     next(err);
