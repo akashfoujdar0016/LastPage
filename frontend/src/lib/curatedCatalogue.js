@@ -1,478 +1,1937 @@
-// ── Curated Masterpieces Dataset ──
-// High-fidelity photography and editorial critique data for LastPage
+// Production Curated Catalog (52 Movies & 32 Books)
+// Replaces all previous placeholder/dummy records with user selections
 
 export const CURATED_MOVIES = [
   {
-    _id: 'm-in-the-mood-for-love',
-    type: 'MOVIE',
-    title: 'In the Mood for Love',
-    year: 2000,
-    genres: ['Romance', 'Drama', 'Art House'],
-    creatorNames: ['Wong Kar-wai'],
-    director: 'Wong Kar-wai',
-    runtime: '98 min',
-    releaseDate: 'September 29, 2000',
-    expertScore: 92,
-    communityScore: 4.9,
-    ratingBreakdown: { 5: 82, 4: 13, 3: 4, 2: 1, 1: 0 },
-    imageUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600&q=85',
-    tagline: 'Feel the heat, the fragrance, and the silence of a secret romance.',
-    quote: 'He remembers those vanished years. As though looking through a dusty windowpane, the past is something he could see, but not touch.',
-    description: 'Two neighbors form a delicate, unspoken bond after discovering their spouses are having an affair. Set against the tight corridors of 1962 British Hong Kong, it is a masterwork of longing, color, and restraint.',
-    editorialReview: 'Wong Kar-wai transforms repressed desire into high cinematic art. Christopher Doyle and Mark Lee Ping-bin’s cinematography frames Tony Leung and Maggie Cheung within tight, claustrophobic hallways where every brush of fabric and swirl of cigarette smoke echoes an eternity of unspoken ache. Shigeru Umebayashi’s hypnotic waltz threads together memories of what could have been.',
-    reviewer: {
-      name: 'Julian Vance',
-      role: 'Senior Film Essayist',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80',
-    },
-    averageRating: 4.9,
-    ratingCount: 1840,
-    likeCount: 1420,
-    favoriteCount: 980,
-    featured: true,
+    "_id": "m-inception",
+    "type": "MOVIE",
+    "title": "Inception",
+    "year": 2010,
+    "genres": [
+      "Sci-Fi",
+      "Action",
+      "Heist",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+    "description": "A thief who steals corporate secrets through dream-sharing technology is tasked with the inverse job: planting an idea into the subconscious mind of a CEO.",
+    "runtime": 148,
+    "averageRating": 4.8,
+    "ratingCount": 3200,
+    "likeCount": 2450,
+    "favoriteCount": 1820,
+    "popularity": 99,
+    "director": "Christopher Nolan"
   },
   {
-    _id: 'm-blade-runner-2049',
-    type: 'MOVIE',
-    title: 'Blade Runner 2049',
-    year: 2017,
-    genres: ['Sci-Fi', 'Neo-Noir', 'Atmospheric'],
-    creatorNames: ['Denis Villeneuve'],
-    director: 'Denis Villeneuve',
-    runtime: '164 min',
-    releaseDate: 'October 6, 2017',
-    expertScore: 89,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 76, 4: 18, 3: 4, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=1600&q=85',
-    tagline: 'The key to the future is finally unearthed.',
-    quote: 'All the best memories are hers. Sometimes to love someone, you got to be a stranger.',
-    description: 'Officer K uncovers a long-buried secret that has the potential to plunge what is left of society into chaos, leading him to find Rick Deckard in an astonishing vision of future Los Angeles.',
-    editorialReview: 'Denis Villeneuve and Roger Deakins accomplish the impossible: expanding Ridley Scott’s seminal cyberpunk universe while crafting a profoundly philosophical meditation on what constitutes the human soul. The apocalyptic orange ruins of Las Vegas and monochromatic downpours of Los Angeles establish one of the most towering visual spectacles in cinematic history.',
-    reviewer: {
-      name: 'Marcus Thorne',
-      role: 'Cinematic Aesthetics Editor',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 2650,
-    likeCount: 1980,
-    favoriteCount: 1240,
-    featured: true,
+    "_id": "m-interstellar",
+    "type": "MOVIE",
+    "title": "Interstellar",
+    "year": 2014,
+    "genres": [
+      "Sci-Fi",
+      "Adventure",
+      "Drama"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80",
+    "description": "When Earth faces environmental collapse, an intrepid team of astronauts travels through a newly discovered wormhole near Saturn in search of a new home for humanity.",
+    "runtime": 169,
+    "averageRating": 4.9,
+    "ratingCount": 3800,
+    "likeCount": 2980,
+    "favoriteCount": 2310,
+    "popularity": 100,
+    "director": "Christopher Nolan"
   },
   {
-    _id: 'm-yi-yi',
-    type: 'MOVIE',
-    title: 'Yi Yi',
-    year: 2000,
-    genres: ['Drama', 'Family', 'Art House'],
-    creatorNames: ['Edward Yang'],
-    director: 'Edward Yang',
-    runtime: '173 min',
-    releaseDate: 'December 16, 2000',
-    expertScore: 93,
-    communityScore: 4.9,
-    ratingBreakdown: { 5: 80, 4: 15, 3: 4, 2: 1, 1: 0 },
-    imageUrl: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=1600&q=85',
-    tagline: 'A one and a two...',
-    quote: 'I want to show people things they can’t see on their own.',
-    description: 'A luminous, multi-perspective examination of a modern Taipei family\'s emotional and philosophical lives, seen through the candid lens of childhood and adulthood.',
-    editorialReview: 'Edward Yang’s final masterpiece feels less like watching a movie and more like inhabiting life itself. Through little Yang-Yang taking photographs of the backs of people’s heads so they can see what they cannot, Yang gives world cinema an enduring, gentle wisdom on memory, urban solitude, and grace.',
-    reviewer: {
-      name: 'Clara Lin',
-      role: 'Asian Cinema Curator',
-      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80',
-    },
-    averageRating: 4.9,
-    ratingCount: 1150,
-    likeCount: 880,
-    favoriteCount: 740,
+    "_id": "m-batman-begins",
+    "type": "MOVIE",
+    "title": "Batman Begins",
+    "year": 2005,
+    "genres": [
+      "Action",
+      "Crime",
+      "Drama"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
+    "description": "Driven by tragedy, Bruce Wayne trains with the League of Shadows before returning to a corrupt Gotham City to forge his crusade as the Dark Knight.",
+    "runtime": 140,
+    "averageRating": 4.7,
+    "ratingCount": 2100,
+    "likeCount": 1620,
+    "favoriteCount": 1100,
+    "popularity": 94,
+    "director": "Christopher Nolan"
   },
   {
-    _id: 'm-stalker',
-    type: 'MOVIE',
-    title: 'Stalker',
-    year: 1979,
-    genres: ['Sci-Fi', 'Philosophy', 'Art House'],
-    creatorNames: ['Andrei Tarkovsky'],
-    director: 'Andrei Tarkovsky',
-    runtime: '162 min',
-    releaseDate: 'May 1, 1979',
-    expertScore: 90,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 77, 4: 16, 3: 5, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?w=1600&q=85',
-    tagline: 'In the Zone, the shortest path is never a straight line.',
-    quote: 'Let everything that’s been planned come true. Let them believe. And let them have a laugh at their passions.',
-    description: 'A guide leads a writer and a scientist through a forbidden mysterious \'Zone\' to a fabled room said to fulfill humanity\'s deepest subconscious desires.',
-    editorialReview: 'Tarkovsky sculpts in time, guiding viewers through sepia-drenched industrial decay into a shimmering, lush green wilderness alive with transcendent dread and longing. Stalker remains an unmatched spiritual test of faith, reason, and human fallibility.',
-    reviewer: {
-      name: 'Julian Vance',
-      role: 'Senior Film Essayist',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 1120,
-    likeCount: 780,
-    favoriteCount: 610,
+    "_id": "m-the-dark-knight",
+    "type": "MOVIE",
+    "title": "The Dark Knight",
+    "year": 2008,
+    "genres": [
+      "Action",
+      "Crime",
+      "Drama",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
+    "description": "When the menacing Joker unleashes psychological anarchy on Gotham, Batman must navigate personal sacrifice and moral paradoxes to maintain order.",
+    "runtime": 152,
+    "averageRating": 5,
+    "ratingCount": 4500,
+    "likeCount": 3700,
+    "favoriteCount": 2900,
+    "popularity": 100,
+    "director": "Christopher Nolan"
   },
   {
-    _id: 'm-paris-texas',
-    type: 'MOVIE',
-    title: 'Paris, Texas',
-    year: 1984,
-    genres: ['Drama', 'Road Movie', 'Poetic'],
-    creatorNames: ['Wim Wenders'],
-    director: 'Wim Wenders',
-    runtime: '145 min',
-    releaseDate: 'May 19, 1984',
-    expertScore: 94,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 75, 4: 18, 3: 5, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1501139083538-0139583c060f?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1600&q=85',
-    tagline: 'A place for dreams. A place for heartbreaks.',
-    quote: 'I knew these people... these two people. They were in love with each other. The girl was very young, about sixteen...',
-    description: 'A silent wanderer emerges from the scorched Texas desert, attempting to piece back together his shattered identity and reunite with his estranged family.',
-    editorialReview: 'Robby Müller’s luminous neon palettes and Ry Cooder’s lonely slide guitar weave an indelible tapestry of the American Southwest. Harry Dean Stanton delivers the performance of a lifetime in this tender, devastating portrait of love lost and forgiveness sought.',
-    reviewer: {
-      name: 'Marcus Thorne',
-      role: 'Cinematic Aesthetics Editor',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 1290,
-    likeCount: 940,
-    favoriteCount: 710,
+    "_id": "m-the-dark-knight-rises",
+    "type": "MOVIE",
+    "title": "The Dark Knight Rises",
+    "year": 2012,
+    "genres": [
+      "Action",
+      "Drama",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80",
+    "description": "Eight years after the Joker’s reign of chaos, Batman resurfaces from self-imposed exile to defend Gotham from the brutal revolutionary Bane.",
+    "runtime": 165,
+    "averageRating": 4.7,
+    "ratingCount": 2600,
+    "likeCount": 1890,
+    "favoriteCount": 1350,
+    "popularity": 95,
+    "director": "Christopher Nolan"
   },
   {
-    _id: 'm-persona',
-    type: 'MOVIE',
-    title: 'Persona',
-    year: 1966,
-    genres: ['Psychological Drama', 'Mystery'],
-    creatorNames: ['Ingmar Bergman'],
-    director: 'Ingmar Bergman',
-    runtime: '85 min',
-    releaseDate: 'October 18, 1966',
-    expertScore: 96,
-    communityScore: 4.7,
-    ratingBreakdown: { 5: 73, 4: 20, 3: 5, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1600&q=85',
-    tagline: 'A sonata for two voices.',
-    quote: 'The hopeless dream of being. Not seeming to be, but being. Conscious of every tone and mask.',
-    description: 'An acclaimed stage actress suddenly falls mute during a performance; her nurse\'s identity slowly, irrevocably fuses with her own in this psychological masterwork.',
-    editorialReview: 'Bergman interrogates the fragile illusion of identity and artistic persona with blistering modernism. Sven Nykvist’s high-contrast monochrome cinematography dissects Bibi Andersson and Liv Ullmann’s faces until boundaries collapse into iconic cinema history.',
-    reviewer: {
-      name: 'Julian Vance',
-      role: 'Senior Film Essayist',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80',
-    },
-    averageRating: 4.7,
-    ratingCount: 890,
-    likeCount: 620,
-    favoriteCount: 450,
+    "_id": "m-the-prestige",
+    "type": "MOVIE",
+    "title": "The Prestige",
+    "year": 2006,
+    "genres": [
+      "Drama",
+      "Mystery",
+      "Sci-Fi",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=800&q=80",
+    "description": "In late-Victorian London, two rival illusionists engage in a bitter, escalating battle for trade supremacy that consumes everything and everyone around them.",
+    "runtime": 130,
+    "averageRating": 4.8,
+    "ratingCount": 2400,
+    "likeCount": 1850,
+    "favoriteCount": 1420,
+    "popularity": 96,
+    "director": "Christopher Nolan"
   },
   {
-    _id: 'm-grand-budapest',
-    type: 'MOVIE',
-    title: 'The Grand Budapest Hotel',
-    year: 2014,
-    genres: ['Comedy', 'Drama', 'Aesthetic'],
-    creatorNames: ['Wes Anderson'],
-    director: 'Wes Anderson',
-    runtime: '99 min',
-    releaseDate: 'March 28, 2014',
-    expertScore: 88,
-    communityScore: 4.7,
-    ratingBreakdown: { 5: 72, 4: 21, 3: 5, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1455587734955-081b22074882?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=85',
-    tagline: 'A confectionery heist in the heart of Europe.',
-    quote: 'There are still faint glimmers of civilization left in this barbaric slaughterhouse that was once known as humanity.',
-    description: 'The exploits of legendary concierge M. Gustave and lobby boy Zero Moustafa in a pastel-hued Central European spa town between the great wars.',
-    editorialReview: 'A sublime pastry box containing a wistful elegy for a vanishing world. Anderson balances exquisite dollhouse precision with deep melancholia inspired by Stefan Zweig, anchoring the eccentric caper with Ralph Fiennes’ glorious career-best turn.',
-    reviewer: {
-      name: 'Clara Lin',
-      role: 'Asian Cinema Curator',
-      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=80',
-    },
-    averageRating: 4.7,
-    ratingCount: 2310,
-    likeCount: 1680,
-    favoriteCount: 990,
+    "_id": "m-the-outfit",
+    "type": "MOVIE",
+    "title": "The Outfit",
+    "year": 2022,
+    "genres": [
+      "Crime",
+      "Drama",
+      "Mystery",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Graham Moore"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80",
+    "description": "An expert English cutter operating in 1950s Chicago must outwit a dangerous mob family over one fateful night inside his small tailor shop.",
+    "runtime": 105,
+    "averageRating": 4.6,
+    "ratingCount": 980,
+    "likeCount": 720,
+    "favoriteCount": 540,
+    "popularity": 88,
+    "director": "Graham Moore"
   },
   {
-    _id: 'm-drive-my-car',
-    type: 'MOVIE',
-    title: 'Drive My Car',
-    year: 2021,
-    genres: ['Drama', 'Meditative'],
-    creatorNames: ['Ryusuke Hamaguchi'],
-    director: 'Ryusuke Hamaguchi',
-    runtime: '179 min',
-    releaseDate: 'August 20, 2021',
-    expertScore: 91,
-    communityScore: 4.7,
-    ratingBreakdown: { 5: 71, 4: 21, 3: 6, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1600&q=85',
-    tagline: 'We must keep on living.',
-    quote: 'Those who survive keep thinking about the dead. In one way or another, that will continue. You and I must keep on living like that.',
-    description: 'A widowed theater director is assigned a quiet young driver for his vintage red Saab 900 while staging Chekhov\'s Uncle Vanya in Hiroshima.',
-    editorialReview: 'Hamaguchi turns an intimate car cabin into a sacred confessional. As the red Saab cruises quiet coastal highways, dialogue strips away artifice to uncover the raw, shared grief that makes genuine healing possible.',
-    reviewer: {
-      name: 'Elena Rostova',
-      role: 'Comparative Literature Scholar',
-      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&q=80',
-    },
-    averageRating: 4.7,
-    ratingCount: 920,
-    likeCount: 680,
-    favoriteCount: 510,
+    "_id": "m-fury",
+    "type": "MOVIE",
+    "title": "Fury",
+    "year": 2014,
+    "genres": [
+      "War",
+      "Action",
+      "Drama"
+    ],
+    "creatorNames": [
+      "David Ayer"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&w=800&q=80",
+    "description": "In April 1945, an American tank sergeant commands a five-man Sherman tank crew on a lethal mission behind enemy lines during the final days of WWII.",
+    "runtime": 134,
+    "averageRating": 4.7,
+    "ratingCount": 1950,
+    "likeCount": 1420,
+    "favoriteCount": 980,
+    "popularity": 93,
+    "director": "David Ayer"
   },
+  {
+    "_id": "m-the-shawshank-redemption",
+    "type": "MOVIE",
+    "title": "The Shawshank Redemption",
+    "year": 1994,
+    "genres": [
+      "Drama",
+      "Crime"
+    ],
+    "creatorNames": [
+      "Frank Darabont"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
+    "description": "Wrongfully convicted banker Andy Dufresne navigates decades of prison life with patience, quiet resilience, and an unwavering belief in ultimate freedom.",
+    "runtime": 142,
+    "averageRating": 4.9,
+    "ratingCount": 4800,
+    "likeCount": 3900,
+    "favoriteCount": 3100,
+    "popularity": 100,
+    "director": "Frank Darabont"
+  },
+  {
+    "_id": "m-a-separation",
+    "type": "MOVIE",
+    "title": "A Separation",
+    "year": 2011,
+    "genres": [
+      "Drama",
+      "Art House"
+    ],
+    "creatorNames": [
+      "Asghar Farhadi"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+    "description": "A married Iranian couple faces a moral, legal, and spiritual crisis after deciding whether to leave Iran or remain to care for a father with Alzheimer’s.",
+    "runtime": 123,
+    "averageRating": 4.8,
+    "ratingCount": 1350,
+    "likeCount": 1050,
+    "favoriteCount": 860,
+    "popularity": 92,
+    "director": "Asghar Farhadi"
+  },
+  {
+    "_id": "m-the-pianist",
+    "type": "MOVIE",
+    "title": "The Pianist",
+    "year": 2002,
+    "genres": [
+      "Biography",
+      "Drama",
+      "War"
+    ],
+    "creatorNames": [
+      "Roman Polanski"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1520523839898-507127053e1a?auto=format&fit=crop&w=800&q=80",
+    "description": "A Polish-Jewish classical pianist struggles to survive the destruction of the Warsaw ghetto during the harrowing German occupation in World War II.",
+    "runtime": 150,
+    "averageRating": 4.9,
+    "ratingCount": 2900,
+    "likeCount": 2250,
+    "favoriteCount": 1780,
+    "popularity": 97,
+    "director": "Roman Polanski"
+  },
+  {
+    "_id": "m-life-is-beautiful",
+    "type": "MOVIE",
+    "title": "Life is Beautiful",
+    "year": 1997,
+    "genres": [
+      "Comedy",
+      "Drama",
+      "War",
+      "Romance"
+    ],
+    "creatorNames": [
+      "Roberto Benigni"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
+    "description": "An open-hearted Jewish Italian father shields his young son from the horror of a Nazi concentration camp using boundless humor, imagination, and grace.",
+    "runtime": 116,
+    "averageRating": 4.9,
+    "ratingCount": 3100,
+    "likeCount": 2500,
+    "favoriteCount": 2100,
+    "popularity": 98,
+    "director": "Roberto Benigni"
+  },
+  {
+    "_id": "m-casino-royale",
+    "type": "MOVIE",
+    "title": "Casino Royale",
+    "year": 2006,
+    "genres": [
+      "Action",
+      "Adventure",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Martin Campbell"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1511193311914-0346f16efe90?auto=format&fit=crop&w=800&q=80",
+    "description": "James Bond embarks on his first mission as 007, entering a high-stakes poker game at Montenegro’s Casino Royale to bankrupt a terrorist financier.",
+    "runtime": 144,
+    "averageRating": 4.7,
+    "ratingCount": 2400,
+    "likeCount": 1750,
+    "favoriteCount": 1200,
+    "popularity": 94,
+    "director": "Martin Campbell"
+  },
+  {
+    "_id": "m-dunkirk",
+    "type": "MOVIE",
+    "title": "Dunkirk",
+    "year": 2017,
+    "genres": [
+      "War",
+      "Action",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1500485035595-cbe6f645feb1?auto=format&fit=crop&w=800&q=80",
+    "description": "Allied soldiers are trapped on the beaches of Dunkirk as civilian vessels, infantry, and aviators orchestrate a miraculous rescue across land, sea, and air.",
+    "runtime": 106,
+    "averageRating": 4.7,
+    "ratingCount": 2200,
+    "likeCount": 1600,
+    "favoriteCount": 1150,
+    "popularity": 95,
+    "director": "Christopher Nolan"
+  },
+  {
+    "_id": "m-lootera",
+    "type": "MOVIE",
+    "title": "Lootera",
+    "year": 2013,
+    "genres": [
+      "Romance",
+      "Drama",
+      "Period"
+    ],
+    "creatorNames": [
+      "Vikramaditya Motwane"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
+    "description": "Loosely inspired by O. Henry’s The Last Leaf, an archaeologist with a clandestine past falls in love with a delicate Bengali aristocrat in 1950s India.",
+    "runtime": 136,
+    "averageRating": 4.6,
+    "ratingCount": 1400,
+    "likeCount": 1100,
+    "favoriteCount": 890,
+    "popularity": 91,
+    "director": "Vikramaditya Motwane"
+  },
+  {
+    "_id": "m-bhaag-milkha-bhaag",
+    "type": "MOVIE",
+    "title": "Bhaag Milkha Bhaag",
+    "year": 2013,
+    "genres": [
+      "Biography",
+      "Drama",
+      "Sport"
+    ],
+    "creatorNames": [
+      "Rakeysh Omprakash Mehra"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80",
+    "description": "The monumental life of Milkha Singh, who overcame the horrors of Partition to become the revered Flying Sikh of world athletics.",
+    "runtime": 186,
+    "averageRating": 4.8,
+    "ratingCount": 2200,
+    "likeCount": 1800,
+    "favoriteCount": 1400,
+    "popularity": 95,
+    "director": "Rakeysh Omprakash Mehra"
+  },
+  {
+    "_id": "m-the-lives-of-others",
+    "type": "MOVIE",
+    "title": "The Lives of Others",
+    "year": 2006,
+    "genres": [
+      "Drama",
+      "Mystery",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Florian Henckel von Donnersmarck"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+    "description": "In 1984 East Berlin, a meticulous Stasi secret police agent monitoring a playwright and his lover finds himself fundamentally transformed by their humanity.",
+    "runtime": 137,
+    "averageRating": 4.9,
+    "ratingCount": 2100,
+    "likeCount": 1720,
+    "favoriteCount": 1390,
+    "popularity": 96,
+    "director": "Florian Henckel von Donnersmarck"
+  },
+  {
+    "_id": "m-cinema-paradiso",
+    "type": "MOVIE",
+    "title": "Cinema Paradiso",
+    "year": 1988,
+    "genres": [
+      "Drama",
+      "Romance",
+      "Art House"
+    ],
+    "creatorNames": [
+      "Giuseppe Tornatore"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=800&q=80",
+    "description": "A celebrated filmmaker looks back on his childhood in a war-torn Sicilian village, where a wise projectionist nurtured his lifelong love of the silver screen.",
+    "runtime": 155,
+    "averageRating": 4.9,
+    "ratingCount": 2400,
+    "likeCount": 1950,
+    "favoriteCount": 1600,
+    "popularity": 97,
+    "director": "Giuseppe Tornatore"
+  },
+  {
+    "_id": "m-border",
+    "type": "MOVIE",
+    "title": "Border",
+    "year": 1997,
+    "genres": [
+      "War",
+      "Action",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "J.P. Dutta"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+    "description": "A historic dramatization of the Battle of Longewala during the 1971 Indo-Pakistani War, where a modest Indian battalion stood firm against overwhelming tank columns.",
+    "runtime": 176,
+    "averageRating": 4.8,
+    "ratingCount": 2600,
+    "likeCount": 2100,
+    "favoriteCount": 1650,
+    "popularity": 96,
+    "director": "J.P. Dutta"
+  },
+  {
+    "_id": "m-loc-kargil",
+    "type": "MOVIE",
+    "title": "LOC: Kargil",
+    "year": 2003,
+    "genres": [
+      "War",
+      "Action",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "J.P. Dutta"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
+    "description": "An epic tribute to the valor of Indian soldiers who fought through grueling Himalayan altitudes to reclaim vital peaks during the 1999 Kargil conflict.",
+    "runtime": 255,
+    "averageRating": 4.5,
+    "ratingCount": 1500,
+    "likeCount": 1180,
+    "favoriteCount": 880,
+    "popularity": 90,
+    "director": "J.P. Dutta"
+  },
+  {
+    "_id": "m-dead-poets-society",
+    "type": "MOVIE",
+    "title": "Dead Poets Society",
+    "year": 1989,
+    "genres": [
+      "Drama",
+      "Comedy"
+    ],
+    "creatorNames": [
+      "Peter Weir"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
+    "description": "An unorthodox English teacher at an austere all-boys boarding school uses poetry to encourage his students to seize the day and make their lives extraordinary.",
+    "runtime": 128,
+    "averageRating": 4.8,
+    "ratingCount": 3100,
+    "likeCount": 2450,
+    "favoriteCount": 1920,
+    "popularity": 98,
+    "director": "Peter Weir"
+  },
+  {
+    "_id": "m-gladiator",
+    "type": "MOVIE",
+    "title": "Gladiator",
+    "year": 2000,
+    "genres": [
+      "Action",
+      "Adventure",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "Ridley Scott"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=800&q=80",
+    "description": "A former Roman general betrayed by the corrupt emperor’s son rises through the gladiator arenas to avenge the murder of his family and honor the empire.",
+    "runtime": 155,
+    "averageRating": 4.8,
+    "ratingCount": 3600,
+    "likeCount": 2850,
+    "favoriteCount": 2150,
+    "popularity": 99,
+    "director": "Ridley Scott"
+  },
+  {
+    "_id": "m-the-godfather",
+    "type": "MOVIE",
+    "title": "The Godfather",
+    "year": 1972,
+    "genres": [
+      "Crime",
+      "Drama"
+    ],
+    "creatorNames": [
+      "Francis Ford Coppola"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+    "description": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant, war-hero youngest son.",
+    "runtime": 175,
+    "averageRating": 4.9,
+    "ratingCount": 4600,
+    "likeCount": 3900,
+    "favoriteCount": 3200,
+    "popularity": 100,
+    "director": "Francis Ford Coppola"
+  },
+  {
+    "_id": "m-schindler-s-list",
+    "type": "MOVIE",
+    "title": "Schindler's List",
+    "year": 1993,
+    "genres": [
+      "Biography",
+      "Drama",
+      "History",
+      "War"
+    ],
+    "creatorNames": [
+      "Steven Spielberg"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+    "description": "In German-occupied Poland during WWII, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
+    "runtime": 195,
+    "averageRating": 4.9,
+    "ratingCount": 4100,
+    "likeCount": 3400,
+    "favoriteCount": 2800,
+    "popularity": 100,
+    "director": "Steven Spielberg"
+  },
+  {
+    "_id": "m-kingdom-of-heaven",
+    "type": "MOVIE",
+    "title": "Kingdom of Heaven",
+    "year": 2005,
+    "genres": [
+      "Action",
+      "Adventure",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "Ridley Scott"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
+    "description": "Balian of Ibelin travels to Jerusalem during the Crusades of the 12th century, where he finds himself as the defender of the city and its people.",
+    "runtime": 144,
+    "averageRating": 4.7,
+    "ratingCount": 1900,
+    "likeCount": 1400,
+    "favoriteCount": 990,
+    "popularity": 92,
+    "director": "Ridley Scott"
+  },
+  {
+    "_id": "m-the-motorcycle-diaries",
+    "type": "MOVIE",
+    "title": "The Motorcycle Diaries",
+    "year": 2004,
+    "genres": [
+      "Adventure",
+      "Biography",
+      "Drama"
+    ],
+    "creatorNames": [
+      "Walter Salles"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
+    "description": "A dramatization of Ernesto \"Che\" Guevara’s formative cross-continental road trip across South America, awakening his social and political conscience.",
+    "runtime": 126,
+    "averageRating": 4.7,
+    "ratingCount": 1600,
+    "likeCount": 1280,
+    "favoriteCount": 970,
+    "popularity": 91,
+    "director": "Walter Salles"
+  },
+  {
+    "_id": "m-lunana-a-yak-in-the-classroom",
+    "type": "MOVIE",
+    "title": "Lunana: A Yak in the Classroom",
+    "year": 2019,
+    "genres": [
+      "Drama",
+      "Family"
+    ],
+    "creatorNames": [
+      "Pawo Choyning Dorji"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    "description": "A reluctant young Bhutanese teacher dreaming of moving to Australia is posted to the most remote school in the world, high in the glacial Himalayas.",
+    "runtime": 110,
+    "averageRating": 4.8,
+    "ratingCount": 1100,
+    "likeCount": 920,
+    "favoriteCount": 780,
+    "popularity": 89,
+    "director": "Pawo Choyning Dorji"
+  },
+  {
+    "_id": "m-la-la-land",
+    "type": "MOVIE",
+    "title": "La La Land",
+    "year": 2016,
+    "genres": [
+      "Comedy",
+      "Drama",
+      "Music",
+      "Romance"
+    ],
+    "creatorNames": [
+      "Damien Chazelle"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "description": "While navigating their careers in Los Angeles, a dedicated jazz pianist and an aspiring actress fall in love while attempting to reconcile dreams with reality.",
+    "runtime": 128,
+    "averageRating": 4.8,
+    "ratingCount": 3500,
+    "likeCount": 2800,
+    "favoriteCount": 2200,
+    "popularity": 99,
+    "director": "Damien Chazelle"
+  },
+  {
+    "_id": "m-letters-from-iwo-jima",
+    "type": "MOVIE",
+    "title": "Letters from Iwo Jima",
+    "year": 2006,
+    "genres": [
+      "Action",
+      "Drama",
+      "History",
+      "War"
+    ],
+    "creatorNames": [
+      "Clint Eastwood"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
+    "description": "The story of the WWII battle of Iwo Jima told from the perspective of Japanese soldiers defending the island against impossible odds.",
+    "runtime": 141,
+    "averageRating": 4.8,
+    "ratingCount": 1850,
+    "likeCount": 1420,
+    "favoriteCount": 1050,
+    "popularity": 93,
+    "director": "Clint Eastwood"
+  },
+  {
+    "_id": "m-five-feet-apart",
+    "type": "MOVIE",
+    "title": "Five Feet Apart",
+    "year": 2019,
+    "genres": [
+      "Drama",
+      "Romance"
+    ],
+    "creatorNames": [
+      "Justin Baldoni"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=800&q=80",
+    "description": "Two teenagers with cystic fibrosis meet in a hospital and fall in love, though their illness mandates that they maintain strict physical distance.",
+    "runtime": 116,
+    "averageRating": 4.5,
+    "ratingCount": 1800,
+    "likeCount": 1350,
+    "favoriteCount": 950,
+    "popularity": 90,
+    "director": "Justin Baldoni"
+  },
+  {
+    "_id": "m-padmaavat",
+    "type": "MOVIE",
+    "title": "Padmaavat",
+    "year": 2018,
+    "genres": [
+      "Action",
+      "Drama",
+      "History",
+      "Romance"
+    ],
+    "creatorNames": [
+      "Sanjay Leela Bhansali"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
+    "description": "Set in medieval India, Sultan Alauddin Khilji embarks on a relentless siege of Chittorgarh, captivated by the legend of Queen Padmavati’s grace and defiance.",
+    "runtime": 164,
+    "averageRating": 4.6,
+    "ratingCount": 2300,
+    "likeCount": 1800,
+    "favoriteCount": 1300,
+    "popularity": 95,
+    "director": "Sanjay Leela Bhansali"
+  },
+  {
+    "_id": "m-dhobi-ghat",
+    "type": "MOVIE",
+    "title": "Dhobi Ghat",
+    "year": 2010,
+    "genres": [
+      "Drama",
+      "Art House"
+    ],
+    "creatorNames": [
+      "Kiran Rao"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+    "description": "The interwoven lives of a painter, a washerman, an NRI photographer, and a mysterious woman recorded on videotapes against the vibrant canvas of Mumbai.",
+    "runtime": 95,
+    "averageRating": 4.6,
+    "ratingCount": 1150,
+    "likeCount": 890,
+    "favoriteCount": 710,
+    "popularity": 88,
+    "director": "Kiran Rao"
+  },
+  {
+    "_id": "m-manchester-by-the-sea",
+    "type": "MOVIE",
+    "title": "Manchester by the Sea",
+    "year": 2016,
+    "genres": [
+      "Drama"
+    ],
+    "creatorNames": [
+      "Kenneth Lonergan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    "description": "A grieving Boston handyman is thrust into the role of guardian to his teenage nephew after his brother’s sudden death, confronting buried trauma.",
+    "runtime": 137,
+    "averageRating": 4.7,
+    "ratingCount": 2100,
+    "likeCount": 1650,
+    "favoriteCount": 1220,
+    "popularity": 93,
+    "director": "Kenneth Lonergan"
+  },
+  {
+    "_id": "m-pather-panchali",
+    "type": "MOVIE",
+    "title": "Pather Panchali",
+    "year": 1955,
+    "genres": [
+      "Drama",
+      "Classics",
+      "Art House"
+    ],
+    "creatorNames": [
+      "Satyajit Ray"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
+    "description": "Satyajit Ray’s poetic debut chronicling young Apu’s childhood in an impoverished rural Bengali hamlet. A towering triumph of world humanist cinema.",
+    "runtime": 125,
+    "averageRating": 4.9,
+    "ratingCount": 2200,
+    "likeCount": 1850,
+    "favoriteCount": 1540,
+    "popularity": 97,
+    "director": "Satyajit Ray"
+  },
+  {
+    "_id": "m-troy",
+    "type": "MOVIE",
+    "title": "Troy",
+    "year": 2004,
+    "genres": [
+      "Action",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "Wolfgang Petersen"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=800&q=80",
+    "description": "An adaptation of Homer’s great epic, following the clash between Achilles, Hector, and the armies of Greece and Troy over the fate of Helen.",
+    "runtime": 163,
+    "averageRating": 4.6,
+    "ratingCount": 2500,
+    "likeCount": 1800,
+    "favoriteCount": 1200,
+    "popularity": 94,
+    "director": "Wolfgang Petersen"
+  },
+  {
+    "_id": "m-the-wind-that-shakes-the-barley",
+    "type": "MOVIE",
+    "title": "The Wind That Shakes the Barley",
+    "year": 2006,
+    "genres": [
+      "Drama",
+      "War",
+      "History"
+    ],
+    "creatorNames": [
+      "Ken Loach"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1500485035595-cbe6f645feb1?auto=format&fit=crop&w=800&q=80",
+    "description": "Against the backdrop of the Irish War of Independence, two brothers join the guerrilla campaign against the British, only to find themselves on opposing sides.",
+    "runtime": 127,
+    "averageRating": 4.7,
+    "ratingCount": 1200,
+    "likeCount": 950,
+    "favoriteCount": 760,
+    "popularity": 90,
+    "director": "Ken Loach"
+  },
+  {
+    "_id": "m-cast-away",
+    "type": "MOVIE",
+    "title": "Cast Away",
+    "year": 2000,
+    "genres": [
+      "Adventure",
+      "Drama"
+    ],
+    "creatorNames": [
+      "Robert Zemeckis"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    "description": "A FedEx systems engineer survives a plane crash over the Pacific and must endure years of physical isolation and mental trials on an uninhabited island.",
+    "runtime": 143,
+    "averageRating": 4.8,
+    "ratingCount": 3300,
+    "likeCount": 2500,
+    "favoriteCount": 1900,
+    "popularity": 97,
+    "director": "Robert Zemeckis"
+  },
+  {
+    "_id": "m-seven-samurai",
+    "type": "MOVIE",
+    "title": "Seven Samurai",
+    "year": 1954,
+    "genres": [
+      "Action",
+      "Drama",
+      "Classics"
+    ],
+    "creatorNames": [
+      "Akira Kurosawa"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+    "description": "Farmers in 16th-century Japan hire seven masterless samurai to protect their village from ruthless bandits in Akira Kurosawa’s monumental masterpiece.",
+    "runtime": 207,
+    "averageRating": 5,
+    "ratingCount": 3900,
+    "likeCount": 3200,
+    "favoriteCount": 2700,
+    "popularity": 100,
+    "director": "Akira Kurosawa"
+  },
+  {
+    "_id": "m-swades",
+    "type": "MOVIE",
+    "title": "Swades",
+    "year": 2004,
+    "genres": [
+      "Drama",
+      "Social"
+    ],
+    "creatorNames": [
+      "Ashutosh Gowariker"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
+    "description": "A brilliant NASA project manager returns to a remote Indian village to find his childhood nanny, leading to a profound rediscovery of grassroots purpose.",
+    "runtime": 189,
+    "averageRating": 4.9,
+    "ratingCount": 3100,
+    "likeCount": 2600,
+    "favoriteCount": 2100,
+    "popularity": 98,
+    "director": "Ashutosh Gowariker"
+  },
+  {
+    "_id": "m-rang-de-basanti",
+    "type": "MOVIE",
+    "title": "Rang De Basanti",
+    "year": 2006,
+    "genres": [
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "Rakeysh Omprakash Mehra"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+    "description": "Six carefree Delhi youths cast in a documentary about Indian freedom fighters find their own political awakening spurred by modern systemic injustice.",
+    "runtime": 167,
+    "averageRating": 4.9,
+    "ratingCount": 3400,
+    "likeCount": 2800,
+    "favoriteCount": 2300,
+    "popularity": 99,
+    "director": "Rakeysh Omprakash Mehra"
+  },
+  {
+    "_id": "m-1917",
+    "type": "MOVIE",
+    "title": "1917",
+    "year": 2019,
+    "genres": [
+      "War",
+      "Action",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "Sam Mendes"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1500485035595-cbe6f645feb1?auto=format&fit=crop&w=800&q=80",
+    "description": "During World War I, two young British lance corporals are assigned an impossible mission: cross enemy territory to deliver a vital message saving 1,600 soldiers.",
+    "runtime": 119,
+    "averageRating": 4.8,
+    "ratingCount": 2900,
+    "likeCount": 2300,
+    "favoriteCount": 1750,
+    "popularity": 97,
+    "director": "Sam Mendes"
+  },
+  {
+    "_id": "m-apocalypse-now",
+    "type": "MOVIE",
+    "title": "Apocalypse Now",
+    "year": 1979,
+    "genres": [
+      "War",
+      "Drama",
+      "Psychological"
+    ],
+    "creatorNames": [
+      "Francis Ford Coppola"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
+    "description": "A U.S. Army officer serving in Vietnam is tasked with assassinating a renegade Special Forces Colonel who sees himself as a god among a local tribe.",
+    "runtime": 147,
+    "averageRating": 4.8,
+    "ratingCount": 3100,
+    "likeCount": 2500,
+    "favoriteCount": 1950,
+    "popularity": 97,
+    "director": "Francis Ford Coppola"
+  },
+  {
+    "_id": "m-12-angry-men",
+    "type": "MOVIE",
+    "title": "12 Angry Men",
+    "year": 1957,
+    "genres": [
+      "Drama",
+      "Crime",
+      "Classics"
+    ],
+    "creatorNames": [
+      "Sidney Lumet"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+    "description": "A dissenting juror in a murder trial slowly manages to convince the others that the case is not as clear-cut as it seems in a tour de force of conscience.",
+    "runtime": 96,
+    "averageRating": 4.9,
+    "ratingCount": 4200,
+    "likeCount": 3500,
+    "favoriteCount": 2800,
+    "popularity": 100,
+    "director": "Sidney Lumet"
+  },
+  {
+    "_id": "m-whiplash",
+    "type": "MOVIE",
+    "title": "Whiplash",
+    "year": 2014,
+    "genres": [
+      "Drama",
+      "Music"
+    ],
+    "creatorNames": [
+      "Damien Chazelle"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "description": "A promising young jazz drummer enrols at a cut-throat music conservatory where his dreams of greatness are pushed to the brink by an abusive instructor.",
+    "runtime": 106,
+    "averageRating": 4.8,
+    "ratingCount": 3300,
+    "likeCount": 2600,
+    "favoriteCount": 2050,
+    "popularity": 98,
+    "director": "Damien Chazelle"
+  },
+  {
+    "_id": "m-parasite",
+    "type": "MOVIE",
+    "title": "Parasite",
+    "year": 2019,
+    "genres": [
+      "Drama",
+      "Thriller",
+      "Comedy"
+    ],
+    "creatorNames": [
+      "Bong Joon-ho"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
+    "description": "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
+    "runtime": 132,
+    "averageRating": 4.9,
+    "ratingCount": 4100,
+    "likeCount": 3400,
+    "favoriteCount": 2750,
+    "popularity": 100,
+    "director": "Bong Joon-ho"
+  },
+  {
+    "_id": "m-the-departed",
+    "type": "MOVIE",
+    "title": "The Departed",
+    "year": 2006,
+    "genres": [
+      "Crime",
+      "Drama",
+      "Thriller"
+    ],
+    "creatorNames": [
+      "Martin Scorsese"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80",
+    "description": "An undercover cop and a mole in the Massachusetts State Police attempt to identify each other while infiltrating an Irish gang in South Boston.",
+    "runtime": 151,
+    "averageRating": 4.8,
+    "ratingCount": 3200,
+    "likeCount": 2500,
+    "favoriteCount": 1950,
+    "popularity": 97,
+    "director": "Martin Scorsese"
+  },
+  {
+    "_id": "m-oppenheimer",
+    "type": "MOVIE",
+    "title": "Oppenheimer",
+    "year": 2023,
+    "genres": [
+      "Biography",
+      "Drama",
+      "History"
+    ],
+    "creatorNames": [
+      "Christopher Nolan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
+    "description": "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during the Manhattan Project.",
+    "runtime": 180,
+    "averageRating": 4.9,
+    "ratingCount": 4200,
+    "likeCount": 3600,
+    "favoriteCount": 2900,
+    "popularity": 100,
+    "director": "Christopher Nolan"
+  },
+  {
+    "_id": "m-in-the-mood-for-love",
+    "type": "MOVIE",
+    "title": "In the Mood for Love",
+    "year": 2000,
+    "genres": [
+      "Romance",
+      "Drama",
+      "Art House"
+    ],
+    "creatorNames": [
+      "Wong Kar-wai"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
+    "description": "Two neighbors form an unspoken bond after suspecting their spouses of an affair in 1962 Hong Kong. A lyrical masterwork of longing and silence.",
+    "runtime": 98,
+    "averageRating": 4.8,
+    "ratingCount": 1800,
+    "likeCount": 1400,
+    "favoriteCount": 1100,
+    "popularity": 94,
+    "director": "Wong Kar-wai"
+  },
+  {
+    "_id": "m-blade-runner-2049",
+    "type": "MOVIE",
+    "title": "Blade Runner 2049",
+    "year": 2017,
+    "genres": [
+      "Sci-Fi",
+      "Neo-Noir",
+      "Mystery"
+    ],
+    "creatorNames": [
+      "Denis Villeneuve"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
+    "description": "A young blade runner unearths a long-buried secret that threatens to plunge what remains of society into chaos, leading him on a quest to find Rick Deckard.",
+    "runtime": 164,
+    "averageRating": 4.7,
+    "ratingCount": 2600,
+    "likeCount": 1950,
+    "favoriteCount": 1450,
+    "popularity": 96,
+    "director": "Denis Villeneuve"
+  },
+  {
+    "_id": "m-hacksaw-ridge",
+    "type": "MOVIE",
+    "title": "Hacksaw Ridge",
+    "year": 2016,
+    "genres": [
+      "Biography",
+      "Drama",
+      "War",
+      "History"
+    ],
+    "creatorNames": [
+      "Mel Gibson"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&w=800&q=80",
+    "description": "World War II American Army medic Desmond T. Doss, who served during the Battle of Okinawa, refuses to kill people and becomes the first conscientious objector to receive the Medal of Honor.",
+    "runtime": 139,
+    "averageRating": 4.8,
+    "ratingCount": 2700,
+    "likeCount": 2100,
+    "favoriteCount": 1600,
+    "popularity": 96,
+    "director": "Mel Gibson"
+  },
+  {
+    "_id": "m-aparajito",
+    "type": "MOVIE",
+    "title": "Aparajito",
+    "year": 1956,
+    "genres": [
+      "Drama",
+      "Classics",
+      "Art House"
+    ],
+    "creatorNames": [
+      "Satyajit Ray"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
+    "description": "The second chapter of Satyajit Ray’s acclaimed Apu Trilogy, following Apu’s schooling in Varanasi and college years in Calcutta as his relationship with his mother deepens.",
+    "runtime": 110,
+    "averageRating": 4.8,
+    "ratingCount": 1400,
+    "likeCount": 1100,
+    "favoriteCount": 890,
+    "popularity": 92,
+    "director": "Satyajit Ray"
+  },
+  {
+    "_id": "m-apur-sansar",
+    "type": "MOVIE",
+    "title": "Apur Sansar",
+    "year": 1959,
+    "genres": [
+      "Drama",
+      "Classics",
+      "Art House"
+    ],
+    "creatorNames": [
+      "Satyajit Ray"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
+    "description": "The climactic final film of the Apu Trilogy, portraying Apu’s adult life, unexpected marriage, tragic grief, and eventual redemption through his young son.",
+    "runtime": 105,
+    "averageRating": 4.9,
+    "ratingCount": 1600,
+    "likeCount": 1300,
+    "favoriteCount": 1050,
+    "popularity": 94,
+    "director": "Satyajit Ray"
+  }
 ];
 
 export const CURATED_BOOKS = [
   {
-    _id: 'b-ficciones',
-    type: 'BOOK',
-    title: 'Ficciones',
-    year: 1944,
-    genres: ['Philosophical Fiction', 'Short Stories', 'Labyrinthine'],
-    authorNames: ['Jorge Luis Borges'],
-    author: 'Jorge Luis Borges',
-    pages: '174 pages',
-    releaseDate: 'August 19, 1944',
-    expertScore: 98,
-    communityScore: 4.9,
-    ratingBreakdown: { 5: 84, 4: 12, 3: 3, 2: 1, 1: 0 },
-    imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=1600&q=85',
-    tagline: 'The universe (which others call the Library) is composed of an indefinite sphere...',
-    quote: 'I have always imagined that Paradise will be a kind of library.',
-    description: 'A labyrinth of metaphysical paradoxes, infinite hexagonal libraries, and imaginary encyclopedias that forever revolutionized world literature and philosophy.',
-    editorialReview: 'Borges does not merely write stories; he constructs conceptual cathedrals. Within fewer than two hundred pages, Ficciones creates infinite labyrinths, forgotten manuscripts, and alternate cosmoses. It is a work of intellectual sorcery that anticipates hypertexts, virtual realities, and modern existential inquiry.',
-    reviewer: {
-      name: 'Elena Rostova',
-      role: 'Comparative Literature Scholar',
-      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&q=80',
-    },
-    averageRating: 4.9,
-    ratingCount: 1420,
-    likeCount: 1180,
-    favoriteCount: 960,
-    featured: true,
+    "_id": "b-godan",
+    "type": "BOOK",
+    "title": "Godan",
+    "year": 1936,
+    "genres": [
+      "Classics",
+      "Indian Literature",
+      "Social Realism"
+    ],
+    "authorNames": [
+      "Munshi Premchand"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+    "description": "Premchand’s towering masterpiece depicting the dignity, agrarian hardships, and socioeconomic exploitation of peasant life in colonial northern India.",
+    "pages": 352,
+    "averageRating": 4.9,
+    "ratingCount": 2200,
+    "likeCount": 1800,
+    "favoriteCount": 1450,
+    "popularity": 98,
+    "author": "Munshi Premchand"
   },
   {
-    _id: 'b-the-secret-history',
-    type: 'BOOK',
-    title: 'The Secret History',
-    year: 1992,
-    genres: ['Psychological Fiction', 'Dark Academia', 'Mystery'],
-    authorNames: ['Donna Tartt'],
-    author: 'Donna Tartt',
-    pages: '559 pages',
-    releaseDate: 'September 16, 1992',
-    expertScore: 91,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 78, 4: 16, 3: 4, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1600&q=85',
-    tagline: 'Beauty is terror. Whatever we call beautiful, we quiver before it.',
-    quote: 'Does such a thing as "the fatal flaw," that daunting gallows platform, really exist outside of literature?',
-    description: 'A cloistered group of eccentric Greek scholars at an elite Vermont college descends irrevocably into obsessive aesthetics, moral detachment, and murder.',
-    editorialReview: 'Tartt’s debut redefined literary suspense, giving birth to the Dark Academia ethos. Wrapped in snow-dusted New England ivies and ancient Greek philosophy, Tartt dissects the terrifying seduction of beauty untethered from morality.',
-    reviewer: {
-      name: 'Julian Vance',
-      role: 'Senior Film & Literary Essayist',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 2450,
-    likeCount: 1890,
-    favoriteCount: 1340,
-    featured: true,
+    "_id": "b-gaban",
+    "type": "BOOK",
+    "title": "Gaban",
+    "year": 1931,
+    "genres": [
+      "Classics",
+      "Indian Literature",
+      "Drama"
+    ],
+    "authorNames": [
+      "Munshi Premchand"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
+    "description": "A penetrating psychological critique of societal pretense, consumerism, and moral compromise through Ramanath’s desperate quest to buy jewelry for his bride.",
+    "pages": 288,
+    "averageRating": 4.7,
+    "ratingCount": 1400,
+    "likeCount": 1100,
+    "favoriteCount": 880,
+    "popularity": 92,
+    "author": "Munshi Premchand"
   },
   {
-    _id: 'b-invisible-cities',
-    type: 'BOOK',
-    title: 'Invisible Cities',
-    year: 1972,
-    genres: ['Poetic Fiction', 'Philosophy', 'Architecture'],
-    authorNames: ['Italo Calvino'],
-    author: 'Italo Calvino',
-    pages: '165 pages',
-    releaseDate: 'November 1, 1972',
-    expertScore: 94,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 79, 4: 16, 3: 4, 2: 1, 1: 0 },
-    imageUrl: 'https://images.unsplash.com/photo-1568454537842-d933259bb258?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=1600&q=85',
-    tagline: 'Fifty-five imaginary cities mapped across the mind of an emperor.',
-    quote: 'You take delight not in a city’s seven or seventy wonders, but in the answer it gives to a question of yours.',
-    description: 'Marco Polo recounts dazzling, impossible descriptions of fifty-five imaginary cities to aging Mongol emperor Kublai Khan.',
-    editorialReview: 'Calvino transforms urban topography into pure poetic music. Each miniature city—built on stilts, suspended over voids, or woven from spiderwebs of memory—is a prism through which human longing, architecture, and semiotics shine with diamond clarity.',
-    reviewer: {
-      name: 'Elena Rostova',
-      role: 'Comparative Literature Scholar',
-      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 1250,
-    likeCount: 980,
-    favoriteCount: 810,
+    "_id": "b-the-diary-of-a-young-girl",
+    "type": "BOOK",
+    "title": "The Diary of a Young Girl",
+    "year": 1947,
+    "genres": [
+      "Biography",
+      "Memoir",
+      "History",
+      "Holocaust"
+    ],
+    "authorNames": [
+      "Anne Frank"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+    "description": "The personal writings of thirteen-year-old Anne Frank hiding from Nazi persecution in an Amsterdam secret annex, glowing with radiant hope and quiet wisdom.",
+    "pages": 283,
+    "averageRating": 4.9,
+    "ratingCount": 3800,
+    "likeCount": 3100,
+    "favoriteCount": 2500,
+    "popularity": 100,
+    "author": "Anne Frank"
   },
   {
-    _id: 'b-dune',
-    type: 'BOOK',
-    title: 'Dune',
-    year: 1965,
-    genres: ['Science Fiction', 'Epic', 'Ecology'],
-    authorNames: ['Frank Herbert'],
-    author: 'Frank Herbert',
-    pages: '688 pages',
-    releaseDate: 'August 1, 1965',
-    expertScore: 93,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 77, 4: 17, 3: 4, 2: 1, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1600&q=85',
-    tagline: 'A beginning is the time for taking the most delicate care...',
-    quote: 'I must not fear. Fear is the mind-killer. Fear is the little-death that brings total obliteration.',
-    description: 'Feudal geopolitics, messianic destiny, and ecology collide on the unforgiving desert planet of Arrakis.',
-    editorialReview: 'Herbert crafted the definitive literary monument of world-building. Dune is far more than a space opera—it is an intricate study of planetary ecology, the weaponization of religion, and the perilous nature of charismatic leaders.',
-    reviewer: {
-      name: 'Marcus Thorne',
-      role: 'Speculative Fiction Analyst',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 3100,
-    likeCount: 2400,
-    favoriteCount: 1650,
+    "_id": "b-1984",
+    "type": "BOOK",
+    "title": "1984",
+    "year": 1949,
+    "genres": [
+      "Dystopian",
+      "Science Fiction",
+      "Political Fiction"
+    ],
+    "authorNames": [
+      "George Orwell"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1507842229458-5779ad26cdd2?auto=format&fit=crop&w=800&q=80",
+    "description": "Winston Smith struggles against the omnipresent surveillance of Big Brother and the Party in a totalitarian regime that rewrites truth and language itself.",
+    "pages": 328,
+    "averageRating": 4.8,
+    "ratingCount": 4200,
+    "likeCount": 3500,
+    "favoriteCount": 2900,
+    "popularity": 100,
+    "author": "George Orwell"
   },
   {
-    _id: 'b-the-master-and-margarita',
-    type: 'BOOK',
-    title: 'The Master and Margarita',
-    year: 1967,
-    genres: ['Satire', 'Magic Realism', 'Russian Classic'],
-    authorNames: ['Mikhail Bulgakov'],
-    author: 'Mikhail Bulgakov',
-    pages: '412 pages',
-    releaseDate: 'May 1, 1967',
-    expertScore: 95,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 80, 4: 15, 3: 4, 2: 1, 1: 0 },
-    imageUrl: 'https://images.unsplash.com/photo-1538681105587-85640961bf8b?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1600&q=85',
-    tagline: 'Manuscripts don\'t burn.',
-    quote: 'Follow me, reader! Who told you that there is no true, faithful, eternal love in this world?',
-    description: 'Satan arrives in atheistic 1930s Moscow accompanied by an entourage including a talking black cat, upending Soviet bureaucracy with magical mayhem.',
-    editorialReview: 'Written in secret under Stalin’s terror, Bulgakov’s masterpiece is a soaring defiant carnival of imagination. Intertwining Pontius Pilate’s guilt in ancient Yershalaim with devils exposing Soviet greed, it stands as proof that art outlives tyrants.',
-    reviewer: {
-      name: 'Elena Rostova',
-      role: 'Comparative Literature Scholar',
-      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 1140,
-    likeCount: 890,
-    favoriteCount: 710,
+    "_id": "b-animal-farm",
+    "type": "BOOK",
+    "title": "Animal Farm",
+    "year": 1945,
+    "genres": [
+      "Satire",
+      "Political Allegory",
+      "Classics"
+    ],
+    "authorNames": [
+      "George Orwell"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+    "description": "A farm of downtrodden animals overthrows their human master only to watch a ruthless cadre of pigs establish a tyranny far more absolute under the banner of equality.",
+    "pages": 112,
+    "averageRating": 4.7,
+    "ratingCount": 3400,
+    "likeCount": 2700,
+    "favoriteCount": 2100,
+    "popularity": 97,
+    "author": "George Orwell"
   },
   {
-    _id: 'b-norwegian-wood',
-    type: 'BOOK',
-    title: 'Norwegian Wood',
-    year: 1987,
-    genres: ['Literary Fiction', 'Memory', 'Tokyo'],
-    authorNames: ['Haruki Murakami'],
-    author: 'Haruki Murakami',
-    pages: '296 pages',
-    releaseDate: 'September 4, 1987',
-    expertScore: 88,
-    communityScore: 4.6,
-    ratingBreakdown: { 5: 68, 4: 22, 3: 7, 2: 2, 1: 1 },
-    imageUrl: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1600&q=85',
-    tagline: 'Death is not the opposite of life, but a part of it.',
-    quote: 'If you only read the books that everyone else is reading, you can only think what everyone else is thinking.',
-    description: 'A Beatles song heard at a German airport sends Toru Watanabe tumbling into memories of college in late-1960s Tokyo and his first tragic love.',
-    editorialReview: 'Murakami sets aside his customary talking cats and magical wells for an achingly nostalgic, acoustic chronicle of youth, grief, and budding sexuality amidst autumn rain and quiet jazz bars.',
-    reviewer: {
-      name: 'Julian Vance',
-      role: 'Senior Film & Literary Essayist',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&q=80',
-    },
-    averageRating: 4.6,
-    ratingCount: 1920,
-    likeCount: 1350,
-    favoriteCount: 920,
+    "_id": "b-white-nights",
+    "type": "BOOK",
+    "title": "White Nights",
+    "year": 1848,
+    "genres": [
+      "Classics",
+      "Literary Fiction",
+      "Romance"
+    ],
+    "authorNames": [
+      "Fyodor Dostoevsky"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
+    "description": "Over four luminous Saint Petersburg summer nights, a lonely dreamer encounters a weeping young woman beside a canal, weaving an aching meditation on unrequited tenderness.",
+    "pages": 96,
+    "averageRating": 4.8,
+    "ratingCount": 1900,
+    "likeCount": 1550,
+    "favoriteCount": 1250,
+    "popularity": 94,
+    "author": "Fyodor Dostoevsky"
   },
   {
-    _id: 'b-the-remains-of-the-day',
-    type: 'BOOK',
-    title: 'The Remains of the Day',
-    year: 1989,
-    genres: ['Literary Fiction', 'English Period', 'Nobel'],
-    authorNames: ['Kazuo Ishiguro'],
-    author: 'Kazuo Ishiguro',
-    pages: '258 pages',
-    releaseDate: 'May 18, 1989',
-    expertScore: 96,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 79, 4: 16, 3: 4, 2: 1, 1: 0 },
-    imageUrl: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1600&q=85',
-    tagline: 'A journey across England. A reckoning with a wasted life.',
-    quote: 'Indeed — why should I not admit it? — at that moment, my heart was breaking.',
-    description: 'Stevens, a consummate English butler, embarks on a motoring trip across the countryside, slowly revealing the tragic cost of unquestioning deference.',
-    editorialReview: 'Nobel laureate Ishiguro crafts one of the greatest unreliable narrators in English letters. Stevens’ impeccable, polite prose becomes a veil that slowly slips, revealing an ocean of suppressed heartbreak and moral blindness with devastating quietude.',
-    reviewer: {
-      name: 'Elena Rostova',
-      role: 'Comparative Literature Scholar',
-      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 1080,
-    likeCount: 840,
-    favoriteCount: 670,
+    "_id": "b-crime-and-punishment",
+    "type": "BOOK",
+    "title": "Crime and Punishment",
+    "year": 1866,
+    "genres": [
+      "Classics",
+      "Psychological Fiction",
+      "Philosophy"
+    ],
+    "authorNames": [
+      "Fyodor Dostoevsky"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    "description": "Impoverished ex-student Raskolnikov tests his theory of extraordinary humans by committing murder, only to fall into an agonizing spiral of guilt, madness, and spiritual redemption.",
+    "pages": 545,
+    "averageRating": 4.9,
+    "ratingCount": 3900,
+    "likeCount": 3200,
+    "favoriteCount": 2600,
+    "popularity": 99,
+    "author": "Fyodor Dostoevsky"
   },
   {
-    _id: 'b-the-dispossessed',
-    type: 'BOOK',
-    title: 'The Dispossessed',
-    year: 1974,
-    genres: ['Science Fiction', 'Utopian Theory', 'Philosophy'],
-    authorNames: ['Ursula K. Le Guin'],
-    author: 'Ursula K. Le Guin',
-    pages: '387 pages',
-    releaseDate: 'May 1, 1974',
-    expertScore: 94,
-    communityScore: 4.8,
-    ratingBreakdown: { 5: 78, 4: 17, 3: 4, 2: 1, 1: 0 },
-    imageUrl: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80',
-    backdropUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=85',
-    tagline: 'An ambiguous utopia.',
-    quote: 'You cannot buy the revolution. You cannot make the revolution. You can only be the revolution.',
-    description: 'A physicist from an arid anarchist moon journeys to its opulent capitalist sister world to finish his revolutionary unified field theory.',
-    editorialReview: 'Le Guin’s political imagination is unparalleled. By treating neither society as a sterile fantasy, she explores the grueling labor of human freedom, mutual aid, and the walls we build in our minds.',
-    reviewer: {
-      name: 'Marcus Thorne',
-      role: 'Speculative Fiction Analyst',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80',
-    },
-    averageRating: 4.8,
-    ratingCount: 940,
-    likeCount: 730,
-    favoriteCount: 590,
+    "_id": "b-war-and-peace",
+    "type": "BOOK",
+    "title": "War and Peace",
+    "year": 1869,
+    "genres": [
+      "Classics",
+      "Historical Fiction",
+      "Philosophy"
+    ],
+    "authorNames": [
+      "Leo Tolstoy"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
+    "description": "An epic panoramic tapestry of Russian society during the Napoleonic Wars, tracing the destinies of five aristocratic families across battlefields and ballrooms.",
+    "pages": 1225,
+    "averageRating": 4.8,
+    "ratingCount": 2800,
+    "likeCount": 2200,
+    "favoriteCount": 1750,
+    "popularity": 96,
+    "author": "Leo Tolstoy"
   },
+  {
+    "_id": "b-the-alchemist",
+    "type": "BOOK",
+    "title": "The Alchemist",
+    "year": 1988,
+    "genres": [
+      "Philosophical Fiction",
+      "Inspirational",
+      "Adventure"
+    ],
+    "authorNames": [
+      "Paulo Coelho"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+    "description": "An Andalusian shepherd boy named Santiago travels from Spain to the Egyptian desert in search of treasure, discovering along the way that the universe conspires to assist true callings.",
+    "pages": 208,
+    "averageRating": 4.7,
+    "ratingCount": 4500,
+    "likeCount": 3700,
+    "favoriteCount": 3000,
+    "popularity": 99,
+    "author": "Paulo Coelho"
+  },
+  {
+    "_id": "b-a-tale-of-two-cities",
+    "type": "BOOK",
+    "title": "A Tale of Two Cities",
+    "year": 1859,
+    "genres": [
+      "Classics",
+      "Historical Fiction"
+    ],
+    "authorNames": [
+      "Charles Dickens"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
+    "description": "Set between London and Paris during the bloody upheaval of the French Revolution, exploring self-sacrifice, rebirth, and the timeless triumph of sacrificial love.",
+    "pages": 448,
+    "averageRating": 4.7,
+    "ratingCount": 2600,
+    "likeCount": 2050,
+    "favoriteCount": 1600,
+    "popularity": 95,
+    "author": "Charles Dickens"
+  },
+  {
+    "_id": "b-gitanjali",
+    "type": "BOOK",
+    "title": "Gitanjali",
+    "year": 1910,
+    "genres": [
+      "Poetry",
+      "Philosophy",
+      "Indian Literature"
+    ],
+    "authorNames": [
+      "Rabindranath Tagore"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+    "description": "Song Offerings that earned Tagore the 1913 Nobel Prize in Literature. Devotional, sublime poems celebrating divine intimacy, nature, and the human spirit.",
+    "pages": 104,
+    "averageRating": 4.9,
+    "ratingCount": 2100,
+    "likeCount": 1850,
+    "favoriteCount": 1520,
+    "popularity": 97,
+    "author": "Rabindranath Tagore"
+  },
+  {
+    "_id": "b-from-heaven-lake",
+    "type": "BOOK",
+    "title": "From Heaven Lake",
+    "year": 1983,
+    "genres": [
+      "Travel",
+      "Memoir",
+      "Literature"
+    ],
+    "authorNames": [
+      "Vikram Seth"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    "description": "A poetic, perceptive travelogue chronicling Vikram Seth’s hitchhiking journey across Xinjiang and Tibet to Nepal, capturing the raw majesty of Central Asia.",
+    "pages": 178,
+    "averageRating": 4.8,
+    "ratingCount": 1300,
+    "likeCount": 1050,
+    "favoriteCount": 840,
+    "popularity": 91,
+    "author": "Vikram Seth"
+  },
+  {
+    "_id": "b-nirmala",
+    "type": "BOOK",
+    "title": "Nirmala",
+    "year": 1927,
+    "genres": [
+      "Classics",
+      "Indian Literature",
+      "Social Realism"
+    ],
+    "authorNames": [
+      "Munshi Premchand"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
+    "description": "A poignant and unflinching narrative revolving around dowry, mismatched marriage, and female vulnerability in early 20th-century Indian society.",
+    "pages": 200,
+    "averageRating": 4.8,
+    "ratingCount": 1600,
+    "likeCount": 1300,
+    "favoriteCount": 1020,
+    "popularity": 93,
+    "author": "Munshi Premchand"
+  },
+  {
+    "_id": "b-the-brothers-karamazov",
+    "type": "BOOK",
+    "title": "The Brothers Karamazov",
+    "year": 1880,
+    "genres": [
+      "Classics",
+      "Philosophical Fiction",
+      "Mystery"
+    ],
+    "authorNames": [
+      "Fyodor Dostoevsky"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+    "description": "Dostoevsky’s crowning achievement delving into faith, patricide, morality, and free will through the tumultuous lives of three distinct brothers.",
+    "pages": 796,
+    "averageRating": 4.9,
+    "ratingCount": 3500,
+    "likeCount": 2900,
+    "favoriteCount": 2400,
+    "popularity": 99,
+    "author": "Fyodor Dostoevsky"
+  },
+  {
+    "_id": "b-the-idiot",
+    "type": "BOOK",
+    "title": "The Idiot",
+    "year": 1869,
+    "genres": [
+      "Classics",
+      "Psychological Fiction"
+    ],
+    "authorNames": [
+      "Fyodor Dostoevsky"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1507842229458-5779ad26cdd2?auto=format&fit=crop&w=800&q=80",
+    "description": "Prince Myshkin, a gentle and unworldly holy fool, returns to the cynical Russian aristocracy only to provoke intrigue, obsession, and disaster.",
+    "pages": 656,
+    "averageRating": 4.7,
+    "ratingCount": 2200,
+    "likeCount": 1750,
+    "favoriteCount": 1350,
+    "popularity": 94,
+    "author": "Fyodor Dostoevsky"
+  },
+  {
+    "_id": "b-anna-karenina",
+    "type": "BOOK",
+    "title": "Anna Karenina",
+    "year": 1877,
+    "genres": [
+      "Classics",
+      "Literary Fiction",
+      "Romance"
+    ],
+    "authorNames": [
+      "Leo Tolstoy"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
+    "description": "A dazzling portrait of imperial Russian high society intertwined with the passionate, doomed romance between Anna Karenina and Count Vronsky.",
+    "pages": 864,
+    "averageRating": 4.8,
+    "ratingCount": 3400,
+    "likeCount": 2750,
+    "favoriteCount": 2200,
+    "popularity": 98,
+    "author": "Leo Tolstoy"
+  },
+  {
+    "_id": "b-the-guide",
+    "type": "BOOK",
+    "title": "The Guide",
+    "year": 1958,
+    "genres": [
+      "Classics",
+      "Indian Literature"
+    ],
+    "authorNames": [
+      "R.K. Narayan"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+    "description": "Set in Malgudi, this Sahitya Akademi winning novel tracks Raju’s journey from charming rogue tour guide to accidental spiritual holy man.",
+    "pages": 224,
+    "averageRating": 4.7,
+    "ratingCount": 1800,
+    "likeCount": 1450,
+    "favoriteCount": 1100,
+    "popularity": 93,
+    "author": "R.K. Narayan"
+  },
+  {
+    "_id": "b-the-shadow-lines",
+    "type": "BOOK",
+    "title": "The Shadow Lines",
+    "year": 1988,
+    "genres": [
+      "Indian Literature",
+      "Historical Fiction"
+    ],
+    "authorNames": [
+      "Amitav Ghosh"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
+    "description": "A luminous novel exploring personal bonds, borderlines, memory, and nationalism linking Calcutta, London, and Dhaka across generations.",
+    "pages": 256,
+    "averageRating": 4.8,
+    "ratingCount": 1500,
+    "likeCount": 1200,
+    "favoriteCount": 950,
+    "popularity": 92,
+    "author": "Amitav Ghosh"
+  },
+  {
+    "_id": "b-a-suitable-boy",
+    "type": "BOOK",
+    "title": "A Suitable Boy",
+    "year": 1993,
+    "genres": [
+      "Indian Literature",
+      "Epic Fiction"
+    ],
+    "authorNames": [
+      "Vikram Seth"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+    "description": "One of the longest novels in the English language, portraying newly independent India through Lata’s courtship and four intertwined families.",
+    "pages": 1349,
+    "averageRating": 4.8,
+    "ratingCount": 2100,
+    "likeCount": 1700,
+    "favoriteCount": 1380,
+    "popularity": 95,
+    "author": "Vikram Seth"
+  },
+  {
+    "_id": "b-man-s-search-for-meaning",
+    "type": "BOOK",
+    "title": "Man's Search for Meaning",
+    "year": 1946,
+    "genres": [
+      "Psychology",
+      "Memoir",
+      "Philosophy"
+    ],
+    "authorNames": [
+      "Viktor E. Frankl"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    "description": "Psychiatrist Viktor Frankl reflects on surviving Auschwitz and outlines logotherapy, demonstrating that purpose and hope can endure any suffering.",
+    "pages": 165,
+    "averageRating": 4.9,
+    "ratingCount": 4100,
+    "likeCount": 3500,
+    "favoriteCount": 2900,
+    "popularity": 100,
+    "author": "Viktor E. Frankl"
+  },
+  {
+    "_id": "b-siddhartha",
+    "type": "BOOK",
+    "title": "Siddhartha",
+    "year": 1922,
+    "genres": [
+      "Philosophical Fiction",
+      "Spiritual",
+      "Classics"
+    ],
+    "authorNames": [
+      "Hermann Hesse"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
+    "description": "A young Brahmin sets out on a spiritual journey of self-discovery during the time of Gautama Buddha, learning wisdom from the river and life itself.",
+    "pages": 152,
+    "averageRating": 4.8,
+    "ratingCount": 3200,
+    "likeCount": 2600,
+    "favoriteCount": 2100,
+    "popularity": 97,
+    "author": "Hermann Hesse"
+  },
+  {
+    "_id": "b-the-metamorphosis",
+    "type": "BOOK",
+    "title": "The Metamorphosis",
+    "year": 1915,
+    "genres": [
+      "Classics",
+      "Existential Fiction"
+    ],
+    "authorNames": [
+      "Franz Kafka"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
+    "description": "Traveling salesman Gregor Samsa awakens one morning to discover he has transformed into a monstrous insect, exposing familial alienation and absurdity.",
+    "pages": 96,
+    "averageRating": 4.7,
+    "ratingCount": 3000,
+    "likeCount": 2400,
+    "favoriteCount": 1850,
+    "popularity": 96,
+    "author": "Franz Kafka"
+  },
+  {
+    "_id": "b-one-hundred-years-of-solitude",
+    "type": "BOOK",
+    "title": "One Hundred Years of Solitude",
+    "year": 1967,
+    "genres": [
+      "Magical Realism",
+      "Classics",
+      "Literary Fiction"
+    ],
+    "authorNames": [
+      "Gabriel García Márquez"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1507842229458-5779ad26cdd2?auto=format&fit=crop&w=800&q=80",
+    "description": "The multi-generational saga of the Buendía family in the mythical town of Macondo, blending history, myth, and magical realism into world literature.",
+    "pages": 417,
+    "averageRating": 4.8,
+    "ratingCount": 3700,
+    "likeCount": 3050,
+    "favoriteCount": 2450,
+    "popularity": 99,
+    "author": "Gabriel García Márquez"
+  },
+  {
+    "_id": "b-the-god-of-small-things",
+    "type": "BOOK",
+    "title": "The God of Small Things",
+    "year": 1997,
+    "genres": [
+      "Indian Literature",
+      "Literary Fiction"
+    ],
+    "authorNames": [
+      "Arundhati Roy"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
+    "description": "A Booker Prize winning tragedy of fraternal twins in Kerala whose childhood world is shattered by caste laws dictating who should be loved, and how.",
+    "pages": 340,
+    "averageRating": 4.7,
+    "ratingCount": 2400,
+    "likeCount": 1900,
+    "favoriteCount": 1500,
+    "popularity": 95,
+    "author": "Arundhati Roy"
+  },
+  {
+    "_id": "b-midnight-s-children",
+    "type": "BOOK",
+    "title": "Midnight's Children",
+    "year": 1981,
+    "genres": [
+      "Indian Literature",
+      "Magical Realism",
+      "Historical Fiction"
+    ],
+    "authorNames": [
+      "Salman Rushdie"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
+    "description": "Born at the stroke of midnight on August 15, 1947, Saleem Sinai discovers that all children born at that hour are telepathically linked with miraculous powers.",
+    "pages": 533,
+    "averageRating": 4.7,
+    "ratingCount": 2200,
+    "likeCount": 1750,
+    "favoriteCount": 1350,
+    "popularity": 94,
+    "author": "Salman Rushdie"
+  },
+  {
+    "_id": "b-fahrenheit-451",
+    "type": "BOOK",
+    "title": "Fahrenheit 451",
+    "year": 1953,
+    "genres": [
+      "Dystopian",
+      "Science Fiction",
+      "Classics"
+    ],
+    "authorNames": [
+      "Ray Bradbury"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
+    "description": "In a future where reading is outlawed and firemen ignite books rather than put out fires, Guy Montag begins questioning the society he enforces.",
+    "pages": 256,
+    "averageRating": 4.7,
+    "ratingCount": 3100,
+    "likeCount": 2450,
+    "favoriteCount": 1900,
+    "popularity": 96,
+    "author": "Ray Bradbury"
+  },
+  {
+    "_id": "b-brave-new-world",
+    "type": "BOOK",
+    "title": "Brave New World",
+    "year": 1932,
+    "genres": [
+      "Dystopian",
+      "Science Fiction",
+      "Classics"
+    ],
+    "authorNames": [
+      "Aldous Huxley"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
+    "description": "A prophecy of a consumerist, genetically engineered world state where sadness and conflict are pacified by conditioning and soma.",
+    "pages": 288,
+    "averageRating": 4.7,
+    "ratingCount": 3200,
+    "likeCount": 2550,
+    "favoriteCount": 1980,
+    "popularity": 97,
+    "author": "Aldous Huxley"
+  },
+  {
+    "_id": "b-the-old-man-and-the-sea",
+    "type": "BOOK",
+    "title": "The Old Man and the Sea",
+    "year": 1952,
+    "genres": [
+      "Classics",
+      "Literary Fiction"
+    ],
+    "authorNames": [
+      "Ernest Hemingway"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+    "description": "An aging Cuban fisherman battles loneliness, nature, and a giant marlin far out in the Gulf Stream in Hemingway’s Nobel Prize winning parable.",
+    "pages": 127,
+    "averageRating": 4.8,
+    "ratingCount": 2900,
+    "likeCount": 2300,
+    "favoriteCount": 1800,
+    "popularity": 96,
+    "author": "Ernest Hemingway"
+  },
+  {
+    "_id": "b-the-stranger",
+    "type": "BOOK",
+    "title": "The Stranger",
+    "year": 1942,
+    "genres": [
+      "Philosophy",
+      "Classics",
+      "Absurdist Fiction"
+    ],
+    "authorNames": [
+      "Albert Camus"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    "description": "Through the indifferent Meursault, Albert Camus delivers an unforgettable exploration of alienation, societal conformity, and absurdist truth.",
+    "pages": 123,
+    "averageRating": 4.7,
+    "ratingCount": 2700,
+    "likeCount": 2150,
+    "favoriteCount": 1650,
+    "popularity": 95,
+    "author": "Albert Camus"
+  },
+  {
+    "_id": "b-great-expectations",
+    "type": "BOOK",
+    "title": "Great Expectations",
+    "year": 1861,
+    "genres": [
+      "Classics",
+      "Coming of Age",
+      "Literary Fiction"
+    ],
+    "authorNames": [
+      "Charles Dickens"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
+    "description": "The orphan Pip receives an unexpected fortune from a mysterious benefactor, navigating ambition, social class, and genuine love.",
+    "pages": 505,
+    "averageRating": 4.7,
+    "ratingCount": 2400,
+    "likeCount": 1850,
+    "favoriteCount": 1400,
+    "popularity": 94,
+    "author": "Charles Dickens"
+  },
+  {
+    "_id": "b-dune",
+    "type": "BOOK",
+    "title": "Dune",
+    "year": 1965,
+    "genres": [
+      "Science Fiction",
+      "Epic",
+      "Philosophy"
+    ],
+    "authorNames": [
+      "Frank Herbert"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
+    "description": "Set on the desert planet Arrakis, Dune tells the story of Paul Atreides, heir to a noble family tasked with ruling an inhospitable world of spice.",
+    "pages": 688,
+    "averageRating": 4.8,
+    "ratingCount": 3500,
+    "likeCount": 2900,
+    "favoriteCount": 2300,
+    "popularity": 99,
+    "author": "Frank Herbert"
+  },
+  {
+    "_id": "b-the-remains-of-the-day",
+    "type": "BOOK",
+    "title": "The Remains of the Day",
+    "year": 1989,
+    "genres": [
+      "Literary Fiction",
+      "Historical"
+    ],
+    "authorNames": [
+      "Kazuo Ishiguro"
+    ],
+    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
+    "description": "An aging English butler embarks on a motoring trip through the West Country in 1956, reflecting on loyalty, personal dignity, and unspoken love.",
+    "pages": 258,
+    "averageRating": 4.8,
+    "ratingCount": 2100,
+    "likeCount": 1700,
+    "favoriteCount": 1350,
+    "popularity": 95,
+    "author": "Kazuo Ishiguro"
+  }
 ];
 
 export function getCuratedItems(type) {

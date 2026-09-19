@@ -1,4 +1,10 @@
-const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+function getBase() {
+  if (process.env.NEXT_PUBLIC_API_URL) return process.env.NEXT_PUBLIC_API_URL;
+  if (typeof window !== 'undefined') {
+    return `${window.location.origin}/api`;
+  }
+  return 'http://localhost:4000/api';
+}
 
 export function getToken() {
   if (typeof window === 'undefined') return null;
@@ -12,6 +18,7 @@ export async function api(path, opts = {}) {
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
+  const base = getBase();
   const res = await fetch(`${base}${path}`, { ...opts, headers, cache: 'no-store' });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
