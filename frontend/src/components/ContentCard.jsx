@@ -251,10 +251,6 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
             <span className="text-[10px] text-zinc-500 font-mono">
               {isMovie ? 'Watched' : 'Read'} {formatLogDate(loggedDate)}
             </span>
-          ) : item.expertScore ? (
-            <span className="text-[10px] text-zinc-500 font-mono">
-              {item.expertScore}% score
-            </span>
           ) : null}
         </div>
       </div>

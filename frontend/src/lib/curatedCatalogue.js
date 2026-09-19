@@ -1,5 +1,5 @@
-// Production Curated Catalog (52 Movies & 32 Books)
-// Replaces all previous placeholder/dummy records with user selections
+// Production Curated Catalog (Exactly 50 Movies & 30 Books)
+// Clean authentic data with zero dummy stats (ratings, reviews, likes, favorites all 0)
 
 export const CURATED_MOVIES = [
   {
@@ -10,20 +10,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "Sci-Fi",
       "Action",
-      "Heist",
       "Thriller"
     ],
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
-    "description": "A thief who steals corporate secrets through dream-sharing technology is tasked with the inverse job: planting an idea into the subconscious mind of a CEO.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg",
+    "description": "Dom Cobb is a skilled thief who steals valuable corporate secrets from deep within the subconscious during the dream state. Offered a chance at redemption, he must pull off the impossible: planting an idea into a target’s mind.",
     "runtime": 148,
-    "averageRating": 4.8,
-    "ratingCount": 3200,
-    "likeCount": 2450,
-    "favoriteCount": 1820,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
   },
   {
@@ -39,14 +38,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=800&q=80",
-    "description": "When Earth faces environmental collapse, an intrepid team of astronauts travels through a newly discovered wormhole near Saturn in search of a new home for humanity.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg",
+    "description": "With Earth facing severe ecological ruin, ex-NASA pilot Cooper joins a perilous interstellar voyage through a newly opened wormhole near Saturn to scout potential habitations across the cosmos for humanity.",
     "runtime": 169,
-    "averageRating": 4.9,
-    "ratingCount": 3800,
-    "likeCount": 2980,
-    "favoriteCount": 2310,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
   },
   {
@@ -62,14 +61,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
-    "description": "Driven by tragedy, Bruce Wayne trains with the League of Shadows before returning to a corrupt Gotham City to forge his crusade as the Dark Knight.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/af/Batman_Begins_Poster.jpg",
+    "description": "Haunted by his parents’ murder, young Bruce Wayne travels across Asia to train with the shadowy League of Shadows before returning to rid Gotham City of systemic corruption and crime as Batman.",
     "runtime": 140,
-    "averageRating": 4.7,
-    "ratingCount": 2100,
-    "likeCount": 1620,
-    "favoriteCount": 1100,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
   },
   {
@@ -86,14 +85,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-    "description": "When the menacing Joker unleashes psychological anarchy on Gotham, Batman must navigate personal sacrifice and moral paradoxes to maintain order.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg",
+    "description": "When the Joker emerges from the criminal underworld to unleash psychological havoc on Gotham, Batman must navigate moral limits, personal tragedy, and public betrayal to stop the chaos.",
     "runtime": 152,
-    "averageRating": 5,
-    "ratingCount": 4500,
-    "likeCount": 3700,
-    "favoriteCount": 2900,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
   },
   {
@@ -109,14 +108,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80",
-    "description": "Eight years after the Joker’s reign of chaos, Batman resurfaces from self-imposed exile to defend Gotham from the brutal revolutionary Bane.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/83/Dark_knight_rises_poster.jpg",
+    "description": "Eight years after taking the blame for Harvey Dent’s crimes, an aging Bruce Wayne must emerge from seclusion to rescue Gotham from the brutal revolutionary leader Bane.",
     "runtime": 165,
-    "averageRating": 4.7,
-    "ratingCount": 2600,
-    "likeCount": 1890,
-    "favoriteCount": 1350,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
   },
   {
@@ -127,20 +126,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "Drama",
       "Mystery",
-      "Sci-Fi",
-      "Thriller"
+      "Sci-Fi"
     ],
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=800&q=80",
-    "description": "In late-Victorian London, two rival illusionists engage in a bitter, escalating battle for trade supremacy that consumes everything and everyone around them.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/d2/Prestige_poster.jpg",
+    "description": "In 1890s Victorian London, two ambitious stage magicians turn from friends into bitter adversaries, engaging in a deadly contest of one-upmanship to execute the ultimate teleportation trick.",
     "runtime": 130,
-    "averageRating": 4.8,
-    "ratingCount": 2400,
-    "likeCount": 1850,
-    "favoriteCount": 1420,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
   },
   {
@@ -151,20 +149,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "Crime",
       "Drama",
-      "Mystery",
-      "Thriller"
+      "Mystery"
     ],
     "creatorNames": [
       "Graham Moore"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=800&q=80",
-    "description": "An expert English cutter operating in 1950s Chicago must outwit a dangerous mob family over one fateful night inside his small tailor shop.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/cc/The_Outfit_%28film%29.jpg",
+    "description": "An expert English tailor operating in 1950s Chicago creates bespoke suits for the city’s most dangerous mobsters. When a gang war erupts, he must rely on intellect and precision to survive the night.",
     "runtime": 105,
-    "averageRating": 4.6,
-    "ratingCount": 980,
-    "likeCount": 720,
-    "favoriteCount": 540,
-    "popularity": 88,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Graham Moore"
   },
   {
@@ -180,14 +177,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "David Ayer"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&w=800&q=80",
-    "description": "In April 1945, an American tank sergeant commands a five-man Sherman tank crew on a lethal mission behind enemy lines during the final days of WWII.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/1/17/Fury_2014_poster.jpg",
+    "description": "During the desperate final weeks of WWII in Germany, battle-hardened army sergeant \"Wardaddy\" leads a five-man Sherman tank crew on a lethal reconnaissance mission deep behind enemy lines.",
     "runtime": 134,
-    "averageRating": 4.7,
-    "ratingCount": 1950,
-    "likeCount": 1420,
-    "favoriteCount": 980,
-    "popularity": 93,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "David Ayer"
   },
   {
@@ -202,14 +199,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Frank Darabont"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
-    "description": "Wrongfully convicted banker Andy Dufresne navigates decades of prison life with patience, quiet resilience, and an unwavering belief in ultimate freedom.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg",
+    "description": "Banker Andy Dufresne is unjustly sentenced to life imprisonment in Maine’s brutal Shawshank prison. Over two decades, his patience, dignity, and deep friendship with fellow inmate Red reveal the enduring resilience of hope.",
     "runtime": 142,
-    "averageRating": 4.9,
-    "ratingCount": 4800,
-    "likeCount": 3900,
-    "favoriteCount": 3100,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Frank Darabont"
   },
   {
@@ -224,14 +221,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Asghar Farhadi"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-    "description": "A married Iranian couple faces a moral, legal, and spiritual crisis after deciding whether to leave Iran or remain to care for a father with Alzheimer’s.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/41/A_Separation_%282011_film_poster%29.png",
+    "description": "A middle-class Iranian married couple faces difficult moral, ethical, and legal choices when deciding whether to emigrate abroad or stay in Tehran to care for a father suffering from Alzheimer’s.",
     "runtime": 123,
-    "averageRating": 4.8,
-    "ratingCount": 1350,
-    "likeCount": 1050,
-    "favoriteCount": 860,
-    "popularity": 92,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Asghar Farhadi"
   },
   {
@@ -247,14 +244,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Roman Polanski"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1520523839898-507127053e1a?auto=format&fit=crop&w=800&q=80",
-    "description": "A Polish-Jewish classical pianist struggles to survive the destruction of the Warsaw ghetto during the harrowing German occupation in World War II.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/a6/The_Pianist_movie.jpg",
+    "description": "Classical pianist Władysław Szpilman survives the horrors, deportations, and destruction of the Warsaw Ghetto through chance, courage, and an unexpected musical bond amidst Nazi occupation.",
     "runtime": 150,
-    "averageRating": 4.9,
-    "ratingCount": 2900,
-    "likeCount": 2250,
-    "favoriteCount": 1780,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Roman Polanski"
   },
   {
@@ -265,20 +262,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "Comedy",
       "Drama",
-      "War",
-      "Romance"
+      "War"
     ],
     "creatorNames": [
       "Roberto Benigni"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
-    "description": "An open-hearted Jewish Italian father shields his young son from the horror of a Nazi concentration camp using boundless humor, imagination, and grace.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/7c/Vitaebella.jpg",
+    "description": "An imaginative Jewish Italian father employs boundless humor, elaborate playfulness, and love to convince his young son that their internment in a concentration camp is merely a grand competitive game.",
     "runtime": 116,
-    "averageRating": 4.9,
-    "ratingCount": 3100,
-    "likeCount": 2500,
-    "favoriteCount": 2100,
-    "popularity": 98,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Roberto Benigni"
   },
   {
@@ -294,14 +290,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Martin Campbell"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1511193311914-0346f16efe90?auto=format&fit=crop&w=800&q=80",
-    "description": "James Bond embarks on his first mission as 007, entering a high-stakes poker game at Montenegro’s Casino Royale to bankrupt a terrorist financier.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/82/Casino_Royale_%282006_film_poster%29.jpg",
+    "description": "On his very first 007 field assignment, James Bond journeys to Montenegro to bankrupt terrorist financier Le Chiffre in a tense, high-stakes Texas Hold’em tournament at the glamorous Casino Royale.",
     "runtime": 144,
-    "averageRating": 4.7,
-    "ratingCount": 2400,
-    "likeCount": 1750,
-    "favoriteCount": 1200,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Martin Campbell"
   },
   {
@@ -312,20 +308,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "War",
       "Action",
-      "Drama",
       "History"
     ],
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1500485035595-cbe6f645feb1?auto=format&fit=crop&w=800&q=80",
-    "description": "Allied soldiers are trapped on the beaches of Dunkirk as civilian vessels, infantry, and aviators orchestrate a miraculous rescue across land, sea, and air.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/1/15/Dunkirk_Film_poster.jpg",
+    "description": "Hundreds of thousands of trapped Allied soldiers face certain annihilation on the beaches of Dunkirk as civilian mariners, ground troops, and RAF fighter pilots mount a desperate evacuation in 1940.",
     "runtime": 106,
-    "averageRating": 4.7,
-    "ratingCount": 2200,
-    "likeCount": 1600,
-    "favoriteCount": 1150,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
   },
   {
@@ -341,14 +336,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Vikramaditya Motwane"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
-    "description": "Loosely inspired by O. Henry’s The Last Leaf, an archaeologist with a clandestine past falls in love with a delicate Bengali aristocrat in 1950s India.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/cc/Lootera_poster.jpg",
+    "description": "In 1950s West Bengal, a gentle zamindar’s daughter falls deeply for a visiting archaeologist who hides a clandestine past, culminating in a poignant story inspired by O. Henry’s The Last Leaf.",
     "runtime": 136,
-    "averageRating": 4.6,
-    "ratingCount": 1400,
-    "likeCount": 1100,
-    "favoriteCount": 890,
-    "popularity": 91,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Vikramaditya Motwane"
   },
   {
@@ -364,14 +359,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Rakeysh Omprakash Mehra"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80",
-    "description": "The monumental life of Milkha Singh, who overcame the horrors of Partition to become the revered Flying Sikh of world athletics.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/42/Bhaag_Milkha_Bhaag_poster.jpg",
+    "description": "The monumental true story of Milkha Singh, who endured the trauma of Partition to rise as an Indian Army soldier and become one of the greatest track champions in international athletics.",
     "runtime": 186,
-    "averageRating": 4.8,
-    "ratingCount": 2200,
-    "likeCount": 1800,
-    "favoriteCount": 1400,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Rakeysh Omprakash Mehra"
   },
   {
@@ -387,14 +382,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Florian Henckel von Donnersmarck"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-    "description": "In 1984 East Berlin, a meticulous Stasi secret police agent monitoring a playwright and his lover finds himself fundamentally transformed by their humanity.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9f/Leben_der_anderen.jpg",
+    "description": "In 1984 East Berlin, a cold and dedicated Stasi captain assigned to wiretap an acclaimed playwright and his actress partner finds his own conscience and humanity irrevocably transformed.",
     "runtime": 137,
-    "averageRating": 4.9,
-    "ratingCount": 2100,
-    "likeCount": 1720,
-    "favoriteCount": 1390,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Florian Henckel von Donnersmarck"
   },
   {
@@ -410,14 +405,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Giuseppe Tornatore"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=800&q=80",
-    "description": "A celebrated filmmaker looks back on his childhood in a war-torn Sicilian village, where a wise projectionist nurtured his lifelong love of the silver screen.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/86/CinemaParadiso.jpg",
+    "description": "A renowned Italian filmmaker returns home to his native Sicilian village upon hearing of the passing of Alfredo, the warm-hearted theater projectionist who sparked his lifelong passion for cinema.",
     "runtime": 155,
-    "averageRating": 4.9,
-    "ratingCount": 2400,
-    "likeCount": 1950,
-    "favoriteCount": 1600,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Giuseppe Tornatore"
   },
   {
@@ -428,20 +423,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "War",
       "Action",
-      "Drama",
       "History"
     ],
     "creatorNames": [
       "J.P. Dutta"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
-    "description": "A historic dramatization of the Battle of Longewala during the 1971 Indo-Pakistani War, where a modest Indian battalion stood firm against overwhelming tank columns.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9c/Border1997.jpg",
+    "description": "A patriotic dramatization of the 1971 Battle of Longewala, where a small battalion of the Indian Army’s Punjab Regiment defended a desert border post against heavily superior enemy armored units.",
     "runtime": 176,
-    "averageRating": 4.8,
-    "ratingCount": 2600,
-    "likeCount": 2100,
-    "favoriteCount": 1650,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "J.P. Dutta"
   },
   {
@@ -452,20 +446,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "War",
       "Action",
-      "Drama",
       "History"
     ],
     "creatorNames": [
       "J.P. Dutta"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
-    "description": "An epic tribute to the valor of Indian soldiers who fought through grueling Himalayan altitudes to reclaim vital peaks during the 1999 Kargil conflict.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/6c/LOC_Kargil_poster.jpg",
+    "description": "An epic historical military chronicle capturing the heroism and sacrifices of Indian soldiers who reclaimed critical mountain ridges and heights during the 1999 Kargil conflict in Kashmir.",
     "runtime": 255,
-    "averageRating": 4.5,
-    "ratingCount": 1500,
-    "likeCount": 1180,
-    "favoriteCount": 880,
-    "popularity": 90,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "J.P. Dutta"
   },
   {
@@ -480,14 +473,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Peter Weir"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80",
-    "description": "An unorthodox English teacher at an austere all-boys boarding school uses poetry to encourage his students to seize the day and make their lives extraordinary.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/86/Dead_poets_society.png",
+    "description": "Unconventional English teacher John Keating inspires pupils at a conservative New England boarding school to seize the day, discover their own unique voices, and embrace the life-affirming power of poetry.",
     "runtime": 128,
-    "averageRating": 4.8,
-    "ratingCount": 3100,
-    "likeCount": 2450,
-    "favoriteCount": 1920,
-    "popularity": 98,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Peter Weir"
   },
   {
@@ -498,20 +491,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "Action",
       "Adventure",
-      "Drama",
-      "History"
+      "Drama"
     ],
     "creatorNames": [
       "Ridley Scott"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=800&q=80",
-    "description": "A former Roman general betrayed by the corrupt emperor’s son rises through the gladiator arenas to avenge the murder of his family and honor the empire.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/f/fb/Gladiator_%282000_film_poster%29.png",
+    "description": "Betrayed and enslaved after the murder of Emperor Marcus Aurelius, Roman general Maximus Decimus Meridius battles through gladiatorial arenas to avenge his murdered family in Rome’s Colosseum.",
     "runtime": 155,
-    "averageRating": 4.8,
-    "ratingCount": 3600,
-    "likeCount": 2850,
-    "favoriteCount": 2150,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Ridley Scott"
   },
   {
@@ -526,14 +518,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Francis Ford Coppola"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
-    "description": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant, war-hero youngest son.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg",
+    "description": "Francis Ford Coppola’s epic chronicle of the Corleone crime family, charting patriarch Don Vito Corleone’s empire and the fateful transformation of his war-hero son Michael into a ruthless mafia don.",
     "runtime": 175,
-    "averageRating": 4.9,
-    "ratingCount": 4600,
-    "likeCount": 3900,
-    "favoriteCount": 3200,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Francis Ford Coppola"
   },
   {
@@ -544,20 +536,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "Biography",
       "Drama",
-      "History",
-      "War"
+      "History"
     ],
     "creatorNames": [
       "Steven Spielberg"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
-    "description": "In German-occupied Poland during WWII, industrialist Oskar Schindler gradually becomes concerned for his Jewish workforce after witnessing their persecution by the Nazis.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/38/Schindler%27s_List_movie.jpg",
+    "description": "In German-occupied Poland during World War II, self-serving industrialist Oskar Schindler risks his fortune and life to save more than a thousand Jewish refugees from the Holocaust.",
     "runtime": 195,
-    "averageRating": 4.9,
-    "ratingCount": 4100,
-    "likeCount": 3400,
-    "favoriteCount": 2800,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Steven Spielberg"
   },
   {
@@ -574,14 +565,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Ridley Scott"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
-    "description": "Balian of Ibelin travels to Jerusalem during the Crusades of the 12th century, where he finds himself as the defender of the city and its people.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9e/KoHposter.jpg",
+    "description": "French blacksmith Balian travels to 12th-century Jerusalem in the Crusades, stepping forward as a noble leader to defend the city’s innocent inhabitants against Saladin’s besieging forces.",
     "runtime": 144,
-    "averageRating": 4.7,
-    "ratingCount": 1900,
-    "likeCount": 1400,
-    "favoriteCount": 990,
-    "popularity": 92,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Ridley Scott"
   },
   {
@@ -597,14 +588,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Walter Salles"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
-    "description": "A dramatization of Ernesto \"Che\" Guevara’s formative cross-continental road trip across South America, awakening his social and political conscience.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9b/The_Motorcycle_Diaries.jpg",
+    "description": "Based on the travel journals of medical student Ernesto Guevara, chronicling his transformative 1952 road trip across South America on an aging motorcycle, witnessing widespread poverty and solidarity.",
     "runtime": 126,
-    "averageRating": 4.7,
-    "ratingCount": 1600,
-    "likeCount": 1280,
-    "favoriteCount": 970,
-    "popularity": 91,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Walter Salles"
   },
   {
@@ -619,14 +610,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Pawo Choyning Dorji"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    "description": "A reluctant young Bhutanese teacher dreaming of moving to Australia is posted to the most remote school in the world, high in the glacial Himalayas.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8c/Lunana_a_yak_in_the_classroom_xlg.jpg",
+    "description": "An aspiring musician and city teacher in Bhutan is sent to complete his service at the most remote Himalayan school in the world, where the warm-hearted villagers change his worldview forever.",
     "runtime": 110,
-    "averageRating": 4.8,
-    "ratingCount": 1100,
-    "likeCount": 920,
-    "favoriteCount": 780,
-    "popularity": 89,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Pawo Choyning Dorji"
   },
   {
@@ -643,14 +634,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Damien Chazelle"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-    "description": "While navigating their careers in Los Angeles, a dedicated jazz pianist and an aspiring actress fall in love while attempting to reconcile dreams with reality.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/ab/La_La_Land_%28film%29.png",
+    "description": "In contemporary Los Angeles, a passionate jazz pianist and an aspiring actress fall in love while pursuing artistic ambitions, eventually forced to reckon with the trade-offs of creative success.",
     "runtime": 128,
-    "averageRating": 4.8,
-    "ratingCount": 3500,
-    "likeCount": 2800,
-    "favoriteCount": 2200,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Damien Chazelle"
   },
   {
@@ -661,20 +652,20 @@ export const CURATED_MOVIES = [
     "genres": [
       "Action",
       "Drama",
-      "History",
-      "War"
+      "War",
+      "History"
     ],
     "creatorNames": [
       "Clint Eastwood"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
-    "description": "The story of the WWII battle of Iwo Jima told from the perspective of Japanese soldiers defending the island against impossible odds.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/87/Letters_from_Iwo_Jima.jpg",
+    "description": "Directed by Clint Eastwood, this portrait of World War II examines the brutal 1945 Battle of Iwo Jima from the perspective of Japanese soldiers defending the island against overwhelming Allied forces.",
     "runtime": 141,
-    "averageRating": 4.8,
-    "ratingCount": 1850,
-    "likeCount": 1420,
-    "favoriteCount": 1050,
-    "popularity": 93,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Clint Eastwood"
   },
   {
@@ -689,14 +680,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Justin Baldoni"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=800&q=80",
-    "description": "Two teenagers with cystic fibrosis meet in a hospital and fall in love, though their illness mandates that they maintain strict physical distance.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/a7/Five_Feet_Apart_%282019_poster%29.png",
+    "description": "Stella and Will, two young hospital patients living with cystic fibrosis, fall deeply in love but must adhere to strict rules preventing them from coming within six feet of each other.",
     "runtime": 116,
-    "averageRating": 4.5,
-    "ratingCount": 1800,
-    "likeCount": 1350,
-    "favoriteCount": 950,
-    "popularity": 90,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Justin Baldoni"
   },
   {
@@ -713,14 +704,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Sanjay Leela Bhansali"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80",
-    "description": "Set in medieval India, Sultan Alauddin Khilji embarks on a relentless siege of Chittorgarh, captivated by the legend of Queen Padmavati’s grace and defiance.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/73/Padmaavat_poster.jpg",
+    "description": "Sanjay Leela Bhansali’s visual spectacle depicting Queen Padmavati of Mewar, her noble husband Maharawal Ratan Singh, and Sultan Alauddin Khilji’s obsessive siege of Chittorgarh.",
     "runtime": 164,
-    "averageRating": 4.6,
-    "ratingCount": 2300,
-    "likeCount": 1800,
-    "favoriteCount": 1300,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Sanjay Leela Bhansali"
   },
   {
@@ -735,14 +726,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Kiran Rao"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-    "description": "The interwoven lives of a painter, a washerman, an NRI photographer, and a mysterious woman recorded on videotapes against the vibrant canvas of Mumbai.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/0/09/Dhobi_Ghat_Movie.jpg",
+    "description": "A lyrical mosaic of modern Mumbai tracing four distinct lives—a reclusive painter, an aspiring actor washerman, an NRI photographer, and a young bride on old video tapes.",
     "runtime": 95,
-    "averageRating": 4.6,
-    "ratingCount": 1150,
-    "likeCount": 890,
-    "favoriteCount": 710,
-    "popularity": 88,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Kiran Rao"
   },
   {
@@ -756,14 +747,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Kenneth Lonergan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-    "description": "A grieving Boston handyman is thrust into the role of guardian to his teenage nephew after his brother’s sudden death, confronting buried trauma.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/de/Manchester_by_the_Sea.jpg",
+    "description": "A quiet Boston handyman is named legal guardian to his teenage nephew after his brother’s sudden death, pulling him back to his coastal hometown where unresolved tragedy awaits him.",
     "runtime": 137,
-    "averageRating": 4.7,
-    "ratingCount": 2100,
-    "likeCount": 1650,
-    "favoriteCount": 1220,
-    "popularity": 93,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Kenneth Lonergan"
   },
   {
@@ -779,14 +770,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Satyajit Ray"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
-    "description": "Satyajit Ray’s poetic debut chronicling young Apu’s childhood in an impoverished rural Bengali hamlet. A towering triumph of world humanist cinema.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/77/Pather_panchali_poster_in_color_1.jpg",
+    "description": "Satyajit Ray’s masterpiece following young Apu growing up in a poor rural Bengali household. A cornerstone of humanist world cinema celebrated for its poetic realism.",
     "runtime": 125,
-    "averageRating": 4.9,
-    "ratingCount": 2200,
-    "likeCount": 1850,
-    "favoriteCount": 1540,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Satyajit Ray"
   },
   {
@@ -802,14 +793,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Wolfgang Petersen"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=800&q=80",
-    "description": "An adaptation of Homer’s great epic, following the clash between Achilles, Hector, and the armies of Greece and Troy over the fate of Helen.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9f/Troy_03500296.png",
+    "description": "An epic adaptation of Homer’s Iliad portraying the ten-year siege of Troy, driven by the passion of Paris and Helen and the fateful battle between Achilles and Hector.",
     "runtime": 163,
-    "averageRating": 4.6,
-    "ratingCount": 2500,
-    "likeCount": 1800,
-    "favoriteCount": 1200,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Wolfgang Petersen"
   },
   {
@@ -825,14 +816,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Ken Loach"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1500485035595-cbe6f645feb1?auto=format&fit=crop&w=800&q=80",
-    "description": "Against the backdrop of the Irish War of Independence, two brothers join the guerrilla campaign against the British, only to find themselves on opposing sides.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/3/3d/The_Wind_That_Shakes_the_Barley_poster.jpg",
+    "description": "Set during the Irish War of Independence and subsequent Civil War, two brothers join the republican guerrilla movement against British forces, only to find their bond shattered by politics.",
     "runtime": 127,
-    "averageRating": 4.7,
-    "ratingCount": 1200,
-    "likeCount": 950,
-    "favoriteCount": 760,
-    "popularity": 90,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Ken Loach"
   },
   {
@@ -847,14 +838,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Robert Zemeckis"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-    "description": "A FedEx systems engineer survives a plane crash over the Pacific and must endure years of physical isolation and mental trials on an uninhabited island.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/a7/Cast_away_film_poster.jpg",
+    "description": "A FedEx systems analyst is stranded alone on a deserted tropical island in the South Pacific after a cargo plane crash, embarking on a harrowing multi-year journey of physical and emotional endurance.",
     "runtime": 143,
-    "averageRating": 4.8,
-    "ratingCount": 3300,
-    "likeCount": 2500,
-    "favoriteCount": 1900,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Robert Zemeckis"
   },
   {
@@ -870,14 +861,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Akira Kurosawa"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
-    "description": "Farmers in 16th-century Japan hire seven masterless samurai to protect their village from ruthless bandits in Akira Kurosawa’s monumental masterpiece.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/c8/Seven_Samurai_Poster.png",
+    "description": "Desperate farmers in 16th-century feudal Japan hire seven masterless samurai to defend their harvest and village from repeated raids by ruthless bandits in Kurosawa’s monumental epic.",
     "runtime": 207,
-    "averageRating": 5,
-    "ratingCount": 3900,
-    "likeCount": 3200,
-    "favoriteCount": 2700,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Akira Kurosawa"
   },
   {
@@ -892,14 +883,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Ashutosh Gowariker"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80",
-    "description": "A brilliant NASA project manager returns to a remote Indian village to find his childhood nanny, leading to a profound rediscovery of grassroots purpose.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/85/Swades_poster.jpg",
+    "description": "A dedicated NASA engineer travels to a rural Indian village to bring his childhood nanny to America, leading to a deep reconnection with his roots and grassroots development.",
     "runtime": 189,
-    "averageRating": 4.9,
-    "ratingCount": 3100,
-    "likeCount": 2600,
-    "favoriteCount": 2100,
-    "popularity": 98,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Ashutosh Gowariker"
   },
   {
@@ -914,14 +905,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Rakeysh Omprakash Mehra"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
-    "description": "Six carefree Delhi youths cast in a documentary about Indian freedom fighters find their own political awakening spurred by modern systemic injustice.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/0/08/Rang_De_Basanti_poster.jpg",
+    "description": "A young British filmmaker casts a group of carefree college graduates in a documentary about Indian freedom fighters, sparking a profound real-life political and social awakening.",
     "runtime": 167,
-    "averageRating": 4.9,
-    "ratingCount": 3400,
-    "likeCount": 2800,
-    "favoriteCount": 2300,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Rakeysh Omprakash Mehra"
   },
   {
@@ -932,20 +923,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "War",
       "Action",
-      "Drama",
-      "History"
+      "Drama"
     ],
     "creatorNames": [
       "Sam Mendes"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1500485035595-cbe6f645feb1?auto=format&fit=crop&w=800&q=80",
-    "description": "During World War I, two young British lance corporals are assigned an impossible mission: cross enemy territory to deliver a vital message saving 1,600 soldiers.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/f/fe/1917_%282019%29_Film_Poster.jpeg",
+    "description": "During World War I in northern France, two British lance corporals are tasked with delivering an urgent message through enemy territory to halt a doomed attack and save 1,600 comrades.",
     "runtime": 119,
-    "averageRating": 4.8,
-    "ratingCount": 2900,
-    "likeCount": 2300,
-    "favoriteCount": 1750,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Sam Mendes"
   },
   {
@@ -961,14 +951,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Francis Ford Coppola"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
-    "description": "A U.S. Army officer serving in Vietnam is tasked with assassinating a renegade Special Forces Colonel who sees himself as a god among a local tribe.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/c2/Apocalypse_Now_poster.jpg",
+    "description": "Captain Willard leads a patrol boat up a Cambodian river during the Vietnam War on an unauthorized mission to terminate rogue Special Forces Colonel Kurtz, descending into the heart of darkness.",
     "runtime": 147,
-    "averageRating": 4.8,
-    "ratingCount": 3100,
-    "likeCount": 2500,
-    "favoriteCount": 1950,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Francis Ford Coppola"
   },
   {
@@ -984,14 +974,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Sidney Lumet"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
-    "description": "A dissenting juror in a murder trial slowly manages to convince the others that the case is not as clear-cut as it seems in a tour de force of conscience.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b5/12_Angry_Men_%281957_film_poster%29.jpg",
+    "description": "A single juror in a New York murder trial holds out against eleven peers convinced of a defendant’s guilt, forcing careful re-examination of prejudice, reasonable doubt, and justice.",
     "runtime": 96,
-    "averageRating": 4.9,
-    "ratingCount": 4200,
-    "likeCount": 3500,
-    "favoriteCount": 2800,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Sidney Lumet"
   },
   {
@@ -1006,14 +996,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Damien Chazelle"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-    "description": "A promising young jazz drummer enrols at a cut-throat music conservatory where his dreams of greatness are pushed to the brink by an abusive instructor.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg",
+    "description": "An ambitious 19-year-old jazz drummer at a competitive Manhattan music conservatory is pushed to the limits of physical ability and sanity by a relentlessly demanding instructor.",
     "runtime": 106,
-    "averageRating": 4.8,
-    "ratingCount": 3300,
-    "likeCount": 2600,
-    "favoriteCount": 2050,
-    "popularity": 98,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Damien Chazelle"
   },
   {
@@ -1029,14 +1019,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Bong Joon-ho"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=80",
-    "description": "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/5/53/Parasite_%282019_film%29.png",
+    "description": "The destitute Kim family schemes to become employed by the wealthy Park household one by one, sparking an uncontrollable clash of social classes inside an opulent Seoul home.",
     "runtime": 132,
-    "averageRating": 4.9,
-    "ratingCount": 4100,
-    "likeCount": 3400,
-    "favoriteCount": 2750,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Bong Joon-ho"
   },
   {
@@ -1052,14 +1042,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Martin Scorsese"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1514306191717-452ec28c7814?auto=format&fit=crop&w=800&q=80",
-    "description": "An undercover cop and a mole in the Massachusetts State Police attempt to identify each other while infiltrating an Irish gang in South Boston.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/5/50/Departed234.jpg",
+    "description": "In Boston, an undercover state trooper infiltrates an Irish mob gang while a syndicate mole rises within the police department, racing to unmask each other before their covers are blown.",
     "runtime": 151,
-    "averageRating": 4.8,
-    "ratingCount": 3200,
-    "likeCount": 2500,
-    "favoriteCount": 1950,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Martin Scorsese"
   },
   {
@@ -1075,61 +1065,15 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Christopher Nolan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
-    "description": "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during the Manhattan Project.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg",
+    "description": "Christopher Nolan’s biographical epic tracking theoretical physicist J. Robert Oppenheimer’s leadership of the Manhattan Project in Los Alamos and the subsequent political fallout in Cold War America.",
     "runtime": 180,
-    "averageRating": 4.9,
-    "ratingCount": 4200,
-    "likeCount": 3600,
-    "favoriteCount": 2900,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Christopher Nolan"
-  },
-  {
-    "_id": "m-in-the-mood-for-love",
-    "type": "MOVIE",
-    "title": "In the Mood for Love",
-    "year": 2000,
-    "genres": [
-      "Romance",
-      "Drama",
-      "Art House"
-    ],
-    "creatorNames": [
-      "Wong Kar-wai"
-    ],
-    "imageUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
-    "description": "Two neighbors form an unspoken bond after suspecting their spouses of an affair in 1962 Hong Kong. A lyrical masterwork of longing and silence.",
-    "runtime": 98,
-    "averageRating": 4.8,
-    "ratingCount": 1800,
-    "likeCount": 1400,
-    "favoriteCount": 1100,
-    "popularity": 94,
-    "director": "Wong Kar-wai"
-  },
-  {
-    "_id": "m-blade-runner-2049",
-    "type": "MOVIE",
-    "title": "Blade Runner 2049",
-    "year": 2017,
-    "genres": [
-      "Sci-Fi",
-      "Neo-Noir",
-      "Mystery"
-    ],
-    "creatorNames": [
-      "Denis Villeneuve"
-    ],
-    "imageUrl": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80",
-    "description": "A young blade runner unearths a long-buried secret that threatens to plunge what remains of society into chaos, leading him on a quest to find Rick Deckard.",
-    "runtime": 164,
-    "averageRating": 4.7,
-    "ratingCount": 2600,
-    "likeCount": 1950,
-    "favoriteCount": 1450,
-    "popularity": 96,
-    "director": "Denis Villeneuve"
   },
   {
     "_id": "m-hacksaw-ridge",
@@ -1139,20 +1083,19 @@ export const CURATED_MOVIES = [
     "genres": [
       "Biography",
       "Drama",
-      "War",
-      "History"
+      "War"
     ],
     "creatorNames": [
       "Mel Gibson"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1579829366248-204fe8413f31?auto=format&fit=crop&w=800&q=80",
-    "description": "World War II American Army medic Desmond T. Doss, who served during the Battle of Okinawa, refuses to kill people and becomes the first conscientious objector to receive the Medal of Honor.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/8/8a/Hacksaw_Ridge_poster.png",
+    "description": "World War II combat medic Desmond Doss, a conscientious objector who refused to bear arms on religious grounds, heroically saves 75 wounded soldiers during the Battle of Okinawa.",
     "runtime": 139,
-    "averageRating": 4.8,
-    "ratingCount": 2700,
-    "likeCount": 2100,
-    "favoriteCount": 1600,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Mel Gibson"
   },
   {
@@ -1168,14 +1111,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Satyajit Ray"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80",
-    "description": "The second chapter of Satyajit Ray’s acclaimed Apu Trilogy, following Apu’s schooling in Varanasi and college years in Calcutta as his relationship with his mother deepens.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/4a/Aparajito_poster.jpg",
+    "description": "The second installment of Satyajit Ray’s acclaimed Apu Trilogy chronicles Apu’s youth in Varanasi and Calcutta, balancing intellectual education with deep filial devotion to his widowed mother.",
     "runtime": 110,
-    "averageRating": 4.8,
-    "ratingCount": 1400,
-    "likeCount": 1100,
-    "favoriteCount": 890,
-    "popularity": 92,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Satyajit Ray"
   },
   {
@@ -1191,14 +1134,14 @@ export const CURATED_MOVIES = [
     "creatorNames": [
       "Satyajit Ray"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
-    "description": "The climactic final film of the Apu Trilogy, portraying Apu’s adult life, unexpected marriage, tragic grief, and eventual redemption through his young son.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/d2/Apur_Sansar_Poster.jpg",
+    "description": "The final chapter of Satyajit Ray’s Apu Trilogy depicts adult Apu embarking on unexpected marriage, enduring profound grief, and finding eventual redemption through the love of his young son.",
     "runtime": 105,
-    "averageRating": 4.9,
-    "ratingCount": 1600,
-    "likeCount": 1300,
-    "favoriteCount": 1050,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "director": "Satyajit Ray"
   }
 ];
@@ -1217,14 +1160,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Munshi Premchand"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
-    "description": "Premchand’s towering masterpiece depicting the dignity, agrarian hardships, and socioeconomic exploitation of peasant life in colonial northern India.",
+    "imageUrl": "https://covers.openlibrary.org/b/id/8314482-L.jpg",
+    "description": "Premchand’s towering masterpiece revolving around Hori, a poor farmer in colonial northern India whose lifelong desire to own a cow symbolizes the economic struggles and dignity of peasant life.",
     "pages": 352,
-    "averageRating": 4.9,
-    "ratingCount": 2200,
-    "likeCount": 1800,
-    "favoriteCount": 1450,
-    "popularity": 98,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Munshi Premchand"
   },
   {
@@ -1240,14 +1183,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Munshi Premchand"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
-    "description": "A penetrating psychological critique of societal pretense, consumerism, and moral compromise through Ramanath’s desperate quest to buy jewelry for his bride.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/c5/Gaban_%28novel%29.jpg",
+    "description": "Premchand’s classic novel exploring the social pressures of status and consumerism through Ramanath, a young man whose compulsion to buy jewelry for his wife leads him down a path of embezzlement and moral redemption.",
     "pages": 288,
-    "averageRating": 4.7,
-    "ratingCount": 1400,
-    "likeCount": 1100,
-    "favoriteCount": 880,
-    "popularity": 92,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Munshi Premchand"
   },
   {
@@ -1258,20 +1201,19 @@ export const CURATED_BOOKS = [
     "genres": [
       "Biography",
       "Memoir",
-      "History",
-      "Holocaust"
+      "History"
     ],
     "authorNames": [
       "Anne Frank"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
-    "description": "The personal writings of thirteen-year-old Anne Frank hiding from Nazi persecution in an Amsterdam secret annex, glowing with radiant hope and quiet wisdom.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/47/Het_Achterhuis_%28Diary_of_Anne_Frank%29_-_front_cover%2C_first_edition.jpg",
+    "description": "The personal writings of young Anne Frank, penned while hiding for two years in an Amsterdam attic during the Nazi occupation of the Netherlands, radiating unwavering insight and humanity.",
     "pages": 283,
-    "averageRating": 4.9,
-    "ratingCount": 3800,
-    "likeCount": 3100,
-    "favoriteCount": 2500,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Anne Frank"
   },
   {
@@ -1282,19 +1224,19 @@ export const CURATED_BOOKS = [
     "genres": [
       "Dystopian",
       "Science Fiction",
-      "Political Fiction"
+      "Classics"
     ],
     "authorNames": [
       "George Orwell"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1507842229458-5779ad26cdd2?auto=format&fit=crop&w=800&q=80",
-    "description": "Winston Smith struggles against the omnipresent surveillance of Big Brother and the Party in a totalitarian regime that rewrites truth and language itself.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/5/51/1984_first_edition_cover.jpg",
+    "description": "George Orwell’s chilling prophecy of a totalitarian superstate ruled by Big Brother, where constant surveillance, historical manipulation, and Newspeak erase individual autonomy and thought.",
     "pages": 328,
-    "averageRating": 4.8,
-    "ratingCount": 4200,
-    "likeCount": 3500,
-    "favoriteCount": 2900,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "George Orwell"
   },
   {
@@ -1310,14 +1252,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "George Orwell"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
-    "description": "A farm of downtrodden animals overthrows their human master only to watch a ruthless cadre of pigs establish a tyranny far more absolute under the banner of equality.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fb/Animal_Farm_-_1st_edition.jpg",
+    "description": "A brilliant satirical fable about barnyard animals who revolt against human ownership to create an equal society, only to succumb to betrayal and tyranny under autocratic pig leadership.",
     "pages": 112,
-    "averageRating": 4.7,
-    "ratingCount": 3400,
-    "likeCount": 2700,
-    "favoriteCount": 2100,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "George Orwell"
   },
   {
@@ -1333,14 +1275,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Fyodor Dostoevsky"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
-    "description": "Over four luminous Saint Petersburg summer nights, a lonely dreamer encounters a weeping young woman beside a canal, weaving an aching meditation on unrequited tenderness.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/6/68/Dostoyevski_-_White_Nights_%281865%29.jpg",
+    "description": "Set during luminous Saint Petersburg summer nights, a lonely dreamer encounters a distressed young woman on a canal bridge, weaving a delicate, unrequited romance across four nights.",
     "pages": 96,
-    "averageRating": 4.8,
-    "ratingCount": 1900,
-    "likeCount": 1550,
-    "favoriteCount": 1250,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Fyodor Dostoevsky"
   },
   {
@@ -1350,20 +1292,19 @@ export const CURATED_BOOKS = [
     "year": 1866,
     "genres": [
       "Classics",
-      "Psychological Fiction",
-      "Philosophy"
+      "Psychological Fiction"
     ],
     "authorNames": [
       "Fyodor Dostoevsky"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    "description": "Impoverished ex-student Raskolnikov tests his theory of extraordinary humans by committing murder, only to fall into an agonizing spiral of guilt, madness, and spiritual redemption.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/4/4b/Crimeandpunishmentcover.png",
+    "description": "Impoverished Saint Petersburg student Rodion Raskolnikov rationalizes the murder of an elderly pawnbroker, only to suffer agonizing psychological guilt and moral torment that leads to confession.",
     "pages": 545,
-    "averageRating": 4.9,
-    "ratingCount": 3900,
-    "likeCount": 3200,
-    "favoriteCount": 2600,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Fyodor Dostoevsky"
   },
   {
@@ -1373,20 +1314,19 @@ export const CURATED_BOOKS = [
     "year": 1869,
     "genres": [
       "Classics",
-      "Historical Fiction",
-      "Philosophy"
+      "Historical Fiction"
     ],
     "authorNames": [
       "Leo Tolstoy"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
-    "description": "An epic panoramic tapestry of Russian society during the Napoleonic Wars, tracing the destinies of five aristocratic families across battlefields and ballrooms.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/af/Tolstoy_-_War_and_Peace_-_first_edition%2C_1869.jpg",
+    "description": "Tolstoy’s panoramic masterpiece detailing the impact of the Napoleonic invasion on Russian aristocracy through the intertwined lives of the Bezukhov, Bolkonsky, and Rostov families.",
     "pages": 1225,
-    "averageRating": 4.8,
-    "ratingCount": 2800,
-    "likeCount": 2200,
-    "favoriteCount": 1750,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Leo Tolstoy"
   },
   {
@@ -1396,20 +1336,19 @@ export const CURATED_BOOKS = [
     "year": 1988,
     "genres": [
       "Philosophical Fiction",
-      "Inspirational",
-      "Adventure"
+      "Inspirational"
     ],
     "authorNames": [
       "Paulo Coelho"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
-    "description": "An Andalusian shepherd boy named Santiago travels from Spain to the Egyptian desert in search of treasure, discovering along the way that the universe conspires to assist true callings.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c4/TheAlchemist.jpg",
+    "description": "Santiago, an Andalusian shepherd boy, travels across North Africa toward the Egyptian pyramids in pursuit of his recurring dream of treasure, learning to listen to his heart and the language of the world.",
     "pages": 208,
-    "averageRating": 4.7,
-    "ratingCount": 4500,
-    "likeCount": 3700,
-    "favoriteCount": 3000,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Paulo Coelho"
   },
   {
@@ -1424,14 +1363,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Charles Dickens"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
-    "description": "Set between London and Paris during the bloody upheaval of the French Revolution, exploring self-sacrifice, rebirth, and the timeless triumph of sacrificial love.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Tales_serial.jpg",
+    "description": "Set between London and revolutionary Paris during the Reign of Terror, Charles Dickens captures themes of resurrection, social upheaval, and the supreme sacrifice of Sydney Carton.",
     "pages": 448,
-    "averageRating": 4.7,
-    "ratingCount": 2600,
-    "likeCount": 2050,
-    "favoriteCount": 1600,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Charles Dickens"
   },
   {
@@ -1447,14 +1386,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Rabindranath Tagore"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
-    "description": "Song Offerings that earned Tagore the 1913 Nobel Prize in Literature. Devotional, sublime poems celebrating divine intimacy, nature, and the human spirit.",
+    "imageUrl": "https://covers.openlibrary.org/b/id/8231856-L.jpg",
+    "description": "The Nobel Prize-winning collection of spiritual and devotional songs by Rabindranath Tagore, exploring humanity’s relationship with the divine, nature, and the universal soul.",
     "pages": 104,
-    "averageRating": 4.9,
-    "ratingCount": 2100,
-    "likeCount": 1850,
-    "favoriteCount": 1520,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Rabindranath Tagore"
   },
   {
@@ -1470,14 +1409,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Vikram Seth"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    "description": "A poetic, perceptive travelogue chronicling Vikram Seth’s hitchhiking journey across Xinjiang and Tibet to Nepal, capturing the raw majesty of Central Asia.",
+    "imageUrl": "https://covers.openlibrary.org/b/id/296716-L.jpg",
+    "description": "Vikram Seth’s captivating travelogue recounting his overland journey from Nanjing through Xinjiang, Tibet, and across the Himalayas to Nepal, rendered with sharp observation and lyrical warmth.",
     "pages": 178,
-    "averageRating": 4.8,
-    "ratingCount": 1300,
-    "likeCount": 1050,
-    "favoriteCount": 840,
-    "popularity": 91,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Vikram Seth"
   },
   {
@@ -1493,14 +1432,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Munshi Premchand"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
-    "description": "A poignant and unflinching narrative revolving around dowry, mismatched marriage, and female vulnerability in early 20th-century Indian society.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/7/70/Nirmala_novel_cover.jpg",
+    "description": "Premchand’s unflinching critique of dowry and child marriage in India, recounting the tragic life of a young woman married to a widowed lawyer with sons older than her.",
     "pages": 200,
-    "averageRating": 4.8,
-    "ratingCount": 1600,
-    "likeCount": 1300,
-    "favoriteCount": 1020,
-    "popularity": 93,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Munshi Premchand"
   },
   {
@@ -1510,20 +1449,20 @@ export const CURATED_BOOKS = [
     "year": 1880,
     "genres": [
       "Classics",
-      "Philosophical Fiction",
-      "Mystery"
+      "Philosophy",
+      "Psychological Fiction"
     ],
     "authorNames": [
       "Fyodor Dostoevsky"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
-    "description": "Dostoevsky’s crowning achievement delving into faith, patricide, morality, and free will through the tumultuous lives of three distinct brothers.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Dostoevsky-Brothers_Karamazov.jpg",
+    "description": "Dostoevsky’s philosophical tour de force centered around the murder of a tyrannical father and the spiritual, sensual, and rationalist struggles of his three disparate sons.",
     "pages": 796,
-    "averageRating": 4.9,
-    "ratingCount": 3500,
-    "likeCount": 2900,
-    "favoriteCount": 2400,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Fyodor Dostoevsky"
   },
   {
@@ -1538,14 +1477,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Fyodor Dostoevsky"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1507842229458-5779ad26cdd2?auto=format&fit=crop&w=800&q=80",
-    "description": "Prince Myshkin, a gentle and unworldly holy fool, returns to the cynical Russian aristocracy only to provoke intrigue, obsession, and disaster.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Fyodor_Dostoyevsky_manuscript_and_drawing_06.jpg",
+    "description": "Prince Myshkin, a gentle and transparently innocent man, returns to cynical Saint Petersburg society, where his moral purity provokes jealousy, fascination, and heartbreak.",
     "pages": 656,
-    "averageRating": 4.7,
-    "ratingCount": 2200,
-    "likeCount": 1750,
-    "favoriteCount": 1350,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Fyodor Dostoevsky"
   },
   {
@@ -1561,14 +1500,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Leo Tolstoy"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
-    "description": "A dazzling portrait of imperial Russian high society intertwined with the passionate, doomed romance between Anna Karenina and Count Vronsky.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c7/AnnaKareninaTitle.jpg",
+    "description": "Tolstoy’s tragedy of love and society following high-society aristocrat Anna Karenina’s scandalous affair with Count Vronsky, contrasted against Levin’s agrarian search for purpose.",
     "pages": 864,
-    "averageRating": 4.8,
-    "ratingCount": 3400,
-    "likeCount": 2750,
-    "favoriteCount": 2200,
-    "popularity": 98,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Leo Tolstoy"
   },
   {
@@ -1583,14 +1522,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "R.K. Narayan"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
-    "description": "Set in Malgudi, this Sahitya Akademi winning novel tracks Raju’s journey from charming rogue tour guide to accidental spiritual holy man.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/a4/TheGuide.jpg",
+    "description": "Set in fictional Malgudi, this Sahitya Akademi Award-winning novel tracks Raju, a charismatic tour guide who becomes entangled with a dancer and is later revered as a spiritual holy man.",
     "pages": 224,
-    "averageRating": 4.7,
-    "ratingCount": 1800,
-    "likeCount": 1450,
-    "favoriteCount": 1100,
-    "popularity": 93,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "R.K. Narayan"
   },
   {
@@ -1605,14 +1544,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Amitav Ghosh"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
-    "description": "A luminous novel exploring personal bonds, borderlines, memory, and nationalism linking Calcutta, London, and Dhaka across generations.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/a4/The_Shadow-lines.jpg",
+    "description": "A rich narrative exploring historical memory, communal riots, and the artificiality of international borders linking families in Calcutta, Dhaka, and London across generations.",
     "pages": 256,
-    "averageRating": 4.8,
-    "ratingCount": 1500,
-    "likeCount": 1200,
-    "favoriteCount": 950,
-    "popularity": 92,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Amitav Ghosh"
   },
   {
@@ -1627,14 +1566,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Vikram Seth"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
-    "description": "One of the longest novels in the English language, portraying newly independent India through Lata’s courtship and four intertwined families.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/f/f6/Asuitableboy.jpg",
+    "description": "Set in post-independence India, this vast family saga follows Mrs. Rupa Mehra’s efforts to arrange a suitable match for her spirited university daughter Lata amid religious and political upheaval.",
     "pages": 1349,
-    "averageRating": 4.8,
-    "ratingCount": 2100,
-    "likeCount": 1700,
-    "favoriteCount": 1380,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Vikram Seth"
   },
   {
@@ -1650,14 +1589,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Viktor E. Frankl"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    "description": "Psychiatrist Viktor Frankl reflects on surviving Auschwitz and outlines logotherapy, demonstrating that purpose and hope can endure any suffering.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/c/cf/Trotzdem_Ja_zum_Leben_sagen_%28Viktor_Frankl_novel%29_cover.jpg",
+    "description": "Psychiatrist Viktor Frankl chronicles his survival in Nazi death camps, explaining his logotherapy doctrine that finding purpose and meaning enables humans to endure any ordeal.",
     "pages": 165,
-    "averageRating": 4.9,
-    "ratingCount": 4100,
-    "likeCount": 3500,
-    "favoriteCount": 2900,
-    "popularity": 100,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Viktor E. Frankl"
   },
   {
@@ -1673,14 +1612,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Hermann Hesse"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
-    "description": "A young Brahmin sets out on a spiritual journey of self-discovery during the time of Gautama Buddha, learning wisdom from the river and life itself.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3e/Vorzugsausgabe_der_Erstauflage_von_1922%2C_Originalverlagseinband.JPG",
+    "description": "Hermann Hesse’s poetic novel depicting a young Brahmin man named Siddhartha who abandons comfort to seek enlightenment through asceticism, sensual indulgence, and harmony beside a river.",
     "pages": 152,
-    "averageRating": 4.8,
-    "ratingCount": 3200,
-    "likeCount": 2600,
-    "favoriteCount": 2100,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Hermann Hesse"
   },
   {
@@ -1695,14 +1634,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Franz Kafka"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
-    "description": "Traveling salesman Gregor Samsa awakens one morning to discover he has transformed into a monstrous insect, exposing familial alienation and absurdity.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Franz_Kafka_Die_Verwandlung_1916_Orig.-Pappband.jpg",
+    "description": "Gregor Samsa awakens one morning transformed into a monstrous insect, examining alienation, family duty, and the existential absurdity of modern human existence.",
     "pages": 96,
-    "averageRating": 4.7,
-    "ratingCount": 3000,
-    "likeCount": 2400,
-    "favoriteCount": 1850,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Franz Kafka"
   },
   {
@@ -1712,20 +1651,19 @@ export const CURATED_BOOKS = [
     "year": 1967,
     "genres": [
       "Magical Realism",
-      "Classics",
-      "Literary Fiction"
+      "Classics"
     ],
     "authorNames": [
       "Gabriel García Márquez"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1507842229458-5779ad26cdd2?auto=format&fit=crop&w=800&q=80",
-    "description": "The multi-generational saga of the Buendía family in the mythical town of Macondo, blending history, myth, and magical realism into world literature.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/a/a0/Cien_a%C3%B1os_de_soledad_%28book_cover%2C_1967%29.jpg",
+    "description": "The monumental saga of the Buendía family across seven generations in the mythical Colombian town of Macondo, weaving myth, historical struggle, and magical realism.",
     "pages": 417,
-    "averageRating": 4.8,
-    "ratingCount": 3700,
-    "likeCount": 3050,
-    "favoriteCount": 2450,
-    "popularity": 99,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Gabriel García Márquez"
   },
   {
@@ -1740,14 +1678,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Arundhati Roy"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
-    "description": "A Booker Prize winning tragedy of fraternal twins in Kerala whose childhood world is shattered by caste laws dictating who should be loved, and how.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/1/1e/Thegodofsmallthings.jpg",
+    "description": "Arundhati Roy’s Booker Prize-winning novel chronicling the childhood experiences of fraternal twins Rahel and Estha in Kerala, whose lives are shattered by rigid caste and familial boundaries.",
     "pages": 340,
-    "averageRating": 4.7,
-    "ratingCount": 2400,
-    "likeCount": 1900,
-    "favoriteCount": 1500,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Arundhati Roy"
   },
   {
@@ -1757,20 +1695,19 @@ export const CURATED_BOOKS = [
     "year": 1981,
     "genres": [
       "Indian Literature",
-      "Magical Realism",
-      "Historical Fiction"
+      "Magical Realism"
     ],
     "authorNames": [
       "Salman Rushdie"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80",
-    "description": "Born at the stroke of midnight on August 15, 1947, Saleem Sinai discovers that all children born at that hour are telepathically linked with miraculous powers.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/9/9d/MidnightsChildren.jpg",
+    "description": "Born at the midnight moment of India’s independence, Saleem Sinai and 1,000 other children discover they possess telepathic powers mirroring the destiny of the young nation.",
     "pages": 533,
-    "averageRating": 4.7,
-    "ratingCount": 2200,
-    "likeCount": 1750,
-    "favoriteCount": 1350,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Salman Rushdie"
   },
   {
@@ -1786,14 +1723,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Ray Bradbury"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
-    "description": "In a future where reading is outlawed and firemen ignite books rather than put out fires, Guy Montag begins questioning the society he enforces.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/d/db/Fahrenheit_451_1st_ed_cover.jpg",
+    "description": "In a dystopian society where critical thought is suppressed and books are banned, fireman Guy Montag is tasked with incinerating literature until an encounter awakens his conscience.",
     "pages": 256,
-    "averageRating": 4.7,
-    "ratingCount": 3100,
-    "likeCount": 2450,
-    "favoriteCount": 1900,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Ray Bradbury"
   },
   {
@@ -1809,14 +1746,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Aldous Huxley"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80",
-    "description": "A prophecy of a consumerist, genetically engineered world state where sadness and conflict are pacified by conditioning and soma.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/en/6/62/BraveNewWorld_FirstEdition.jpg",
+    "description": "Aldous Huxley’s vision of a technologically advanced society where citizens are genetically engineered into castes and pacified with drugs, confronting a natural-born outsider.",
     "pages": 288,
-    "averageRating": 4.7,
-    "ratingCount": 3200,
-    "likeCount": 2550,
-    "favoriteCount": 1980,
-    "popularity": 97,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Aldous Huxley"
   },
   {
@@ -1831,14 +1768,14 @@ export const CURATED_BOOKS = [
     "authorNames": [
       "Ernest Hemingway"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-    "description": "An aging Cuban fisherman battles loneliness, nature, and a giant marlin far out in the Gulf Stream in Hemingway’s Nobel Prize winning parable.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/0/00/The_Old_Man_and_the_Sea_%281952%29_front_cover%2C_first_edition.jpg",
+    "description": "An aging Cuban fisherman named Santiago endures an epic, solitary struggle against a giant marlin far in the Gulf Stream, embodying human pride, honor, and resilience.",
     "pages": 127,
-    "averageRating": 4.8,
-    "ratingCount": 2900,
-    "likeCount": 2300,
-    "favoriteCount": 1800,
-    "popularity": 96,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Ernest Hemingway"
   },
   {
@@ -1848,20 +1785,19 @@ export const CURATED_BOOKS = [
     "year": 1942,
     "genres": [
       "Philosophy",
-      "Classics",
-      "Absurdist Fiction"
+      "Classics"
     ],
     "authorNames": [
       "Albert Camus"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    "description": "Through the indifferent Meursault, Albert Camus delivers an unforgettable exploration of alienation, societal conformity, and absurdist truth.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/9/97/L%27%C3%89tranger_-_Albert_Camus.jpg",
+    "description": "Through the detached character of Meursault in colonial Algiers, Albert Camus explores emotional authenticity, societal conformity, and the philosophy of the absurd.",
     "pages": 123,
-    "averageRating": 4.7,
-    "ratingCount": 2700,
-    "likeCount": 2150,
-    "favoriteCount": 1650,
-    "popularity": 95,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Albert Camus"
   },
   {
@@ -1871,71 +1807,27 @@ export const CURATED_BOOKS = [
     "year": 1861,
     "genres": [
       "Classics",
-      "Coming of Age",
-      "Literary Fiction"
+      "Coming of Age"
     ],
     "authorNames": [
       "Charles Dickens"
     ],
-    "imageUrl": "https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80",
-    "description": "The orphan Pip receives an unexpected fortune from a mysterious benefactor, navigating ambition, social class, and genuine love.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/8/8d/Greatexpectations_vol1.jpg",
+    "description": "Dickens’ Victorian story of orphan Pip, who rises from a blacksmith’s apprentice to a gentleman of fortune under the patronage of a secret benefactor, discovering the true meaning of loyalty.",
     "pages": 505,
-    "averageRating": 4.7,
-    "ratingCount": 2400,
-    "likeCount": 1850,
-    "favoriteCount": 1400,
-    "popularity": 94,
+    "averageRating": 0,
+    "ratingCount": 0,
+    "likeCount": 0,
+    "favoriteCount": 0,
+    "popularity": 0,
     "author": "Charles Dickens"
-  },
-  {
-    "_id": "b-dune",
-    "type": "BOOK",
-    "title": "Dune",
-    "year": 1965,
-    "genres": [
-      "Science Fiction",
-      "Epic",
-      "Philosophy"
-    ],
-    "authorNames": [
-      "Frank Herbert"
-    ],
-    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    "description": "Set on the desert planet Arrakis, Dune tells the story of Paul Atreides, heir to a noble family tasked with ruling an inhospitable world of spice.",
-    "pages": 688,
-    "averageRating": 4.8,
-    "ratingCount": 3500,
-    "likeCount": 2900,
-    "favoriteCount": 2300,
-    "popularity": 99,
-    "author": "Frank Herbert"
-  },
-  {
-    "_id": "b-the-remains-of-the-day",
-    "type": "BOOK",
-    "title": "The Remains of the Day",
-    "year": 1989,
-    "genres": [
-      "Literary Fiction",
-      "Historical"
-    ],
-    "authorNames": [
-      "Kazuo Ishiguro"
-    ],
-    "imageUrl": "https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80",
-    "description": "An aging English butler embarks on a motoring trip through the West Country in 1956, reflecting on loyalty, personal dignity, and unspoken love.",
-    "pages": 258,
-    "averageRating": 4.8,
-    "ratingCount": 2100,
-    "likeCount": 1700,
-    "favoriteCount": 1350,
-    "popularity": 95,
-    "author": "Kazuo Ishiguro"
   }
 ];
 
 export function getCuratedItems(type) {
-  return type === 'MOVIE' ? CURATED_MOVIES : CURATED_BOOKS;
+  if (type === 'MOVIE') return CURATED_MOVIES;
+  if (type === 'BOOK') return CURATED_BOOKS;
+  return [...CURATED_MOVIES, ...CURATED_BOOKS];
 }
 
 export function getAllCuratedItems() {

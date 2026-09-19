@@ -35,56 +35,25 @@ export function getRelativeDayLabel(dateInput) {
   }
 }
 
-// Default initial activities
-const DEFAULT_ACTIVITIES = [
-  {
-    id: 'act-1',
-    type: 'RATED',
-    title: 'In the Mood for Love',
-    contentType: 'MOVIE',
-    contentId: 'm-in-the-mood-for-love',
-    creator: 'Wong Kar-wai',
-    score: 4.9,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'act-2',
-    type: 'LIKED',
-    title: 'Stalker',
-    contentType: 'MOVIE',
-    contentId: 'm-stalker',
-    creator: 'Andrei Tarkovsky',
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: 'act-3',
-    type: 'FAVORITED',
-    title: 'Ficciones',
-    contentType: 'BOOK',
-    contentId: 'b-ficciones',
-    creator: 'Jorge Luis Borges',
-    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: 'act-4',
-    type: 'WATCHED',
-    title: 'Paris, Texas',
-    contentType: 'MOVIE',
-    contentId: 'm-paris-texas',
-    creator: 'Wim Wenders',
-    createdAt: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: 'act-5',
-    type: 'REVIEWED',
-    title: 'Persona',
-    contentType: 'MOVIE',
-    contentId: 'm-persona',
-    creator: 'Ingmar Bergman',
-    reviewSnippet: 'A haunting psychological exploration of identity and silence.',
-    createdAt: new Date(Date.now() - 28 * 60 * 60 * 1000).toISOString(),
-  },
-];
+// Default initial activities - clean with zero dummy data
+const DEFAULT_ACTIVITIES = [];
+
+const LEGACY_DUMMY_IDS = new Set([
+  'm-in-the-mood-for-love',
+  'm-stalker',
+  'b-ficciones',
+  'm-paris-texas',
+  'm-persona',
+  'b-the-secret-history',
+  'b-invisible-cities',
+  'm-drive-my-car',
+  'm-yi-yi',
+  'act-1',
+  'act-2',
+  'act-3',
+  'act-4',
+  'act-5',
+]);
 
 export function getActivities(type) {
   let all = DEFAULT_ACTIVITIES;
@@ -94,7 +63,10 @@ export function getActivities(type) {
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          all = parsed;
+          // Filter out any legacy dummy records
+          all = parsed.filter(
+            (a) => !LEGACY_DUMMY_IDS.has(a.id) && !LEGACY_DUMMY_IDS.has(a.contentId)
+          );
         }
       }
     } catch {}

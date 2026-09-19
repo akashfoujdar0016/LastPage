@@ -223,19 +223,12 @@ export default function Detail({ type, params }) {
   const isWatched = loggedStatus === 'WATCHED' || loggedStatus === 'READ';
   const isWatchlist = loggedStatus === 'WATCHLIST' || loggedStatus === 'WANT_TO_READ';
   const activeRating = hoverRating || rating;
-
-  // Rating distribution breakdown bars
-  const ratingDistribution = c?.ratingBreakdown || {
-    5: 75,
-    4: 18,
-    3: 5,
-    2: 1,
-    1: 1,
-  };
-
-  const expertScore = c?.expertScore || 92;
-  const communityScore = c?.communityScore || c?.averageRating || 4.8;
-  const runtimeOrPages = isMovie ? (c?.runtime || '132 min') : (c?.pages || '380 pages');
+  const ratingVal = Number(c?.averageRating || 0);
+  const ratingCount = Number(c?.ratingCount || 0);
+  const runtimeOrPages = isMovie
+    ? (c?.runtime ? `${c.runtime} min` : '—')
+    : (c?.pages ? `${c.pages} pages` : '—');
+  const ratingDistribution = c?.ratingBreakdown || null;
 
   return (
     <div className="min-h-screen bg-[#000000] text-[#E0E0E0] pb-32 relative overflow-hidden">
@@ -375,7 +368,7 @@ export default function Detail({ type, params }) {
                 </span>
               </div>
 
-              {/* Dual-Media Stats: Runtime / Pages & Expert Score */}
+              {/* Dual-Media Stats: Runtime / Pages & Rating */}
               <div className="grid grid-cols-2 gap-3 py-1">
                 <div className="bg-bg-surface-raised border border-theme-border-subtle rounded-xl p-3 flex flex-col">
                   <span className="text-[11px] text-text-secondary flex items-center gap-1.5 mb-1">
@@ -389,11 +382,11 @@ export default function Detail({ type, params }) {
 
                 <div className="bg-bg-surface-raised border border-theme-border-subtle rounded-xl p-3 flex flex-col">
                   <span className="text-[11px] text-text-secondary flex items-center gap-1.5 mb-1">
-                    <Award size={12} className="text-theme-accent" />
-                    <span>Critic Acclaim</span>
+                    <Star size={12} className="text-theme-accent" />
+                    <span>Average Rating</span>
                   </span>
                   <span className="font-serif text-lg text-theme-accent font-medium">
-                    {expertScore}% Score
+                    {ratingVal > 0 ? `★ ${ratingVal.toFixed(1)}` : 'Unrated'}
                   </span>
                 </div>
               </div>
@@ -403,8 +396,8 @@ export default function Detail({ type, params }) {
                 {[
                   { label: 'Medium', value: isMovie ? 'Cinematic Film' : 'Literary Work' },
                   { label: isMovie ? 'Director' : 'Author', value: creator },
-                  { label: 'Release Date', value: c?.releaseDate || `${c?.year}` },
-                  { label: 'Community Rating', value: `★ ${Number(communityScore).toFixed(1)} / 5.0`, highlight: true },
+                  { label: 'Release Year', value: c?.year ? `${c.year}` : '—' },
+                  { label: 'Community Rating', value: ratingVal > 0 ? `★ ${ratingVal.toFixed(1)} / 5.0` : 'Unrated', highlight: ratingVal > 0 },
                 ].map((row) => (
                   <div key={row.label} className="flex justify-between items-baseline gap-4">
                     <span className="text-text-secondary">{row.label}</span>
@@ -416,42 +409,48 @@ export default function Detail({ type, params }) {
               </div>
             </div>
 
-            {/* ── DYNAMIC RATING BREAKDOWN BARS ── */}
+            {/* ── RATING BREAKDOWN ── */}
             <div className="bg-bg-surface/90 backdrop-blur-md border border-theme-border rounded-2xl p-6 flex flex-col gap-3 shadow-luxury">
               <div className="flex items-baseline justify-between mb-1">
                 <span className="font-serif text-sm text-text-primary font-semibold">
                   Rating Breakdown
                 </span>
                 <span className="text-[11px] text-theme-accent font-mono">
-                  {c?.ratingCount || '1,840'} ratings
+                  {ratingCount > 0 ? `${ratingCount} ratings` : '0 ratings'}
                 </span>
               </div>
 
-              <div className="flex flex-col gap-2 pt-1">
-                {[5, 4, 3, 2, 1].map((starVal) => {
-                  const percentage = ratingDistribution[starVal] || 0;
-                  return (
-                    <div key={starVal} className="flex items-center gap-3 text-xs">
-                      <div className="flex items-center gap-1 w-8 text-text-secondary font-mono text-[11px]">
-                        <span>{starVal}</span>
-                        <Star size={10} className="fill-theme-accent stroke-theme-accent" />
-                      </div>
+              {ratingCount > 0 && ratingDistribution ? (
+                <div className="flex flex-col gap-2 pt-1">
+                  {[5, 4, 3, 2, 1].map((starVal) => {
+                    const percentage = ratingDistribution[starVal] || 0;
+                    return (
+                      <div key={starVal} className="flex items-center gap-3 text-xs">
+                        <div className="flex items-center gap-1 w-8 text-text-secondary font-mono text-[11px]">
+                          <span>{starVal}</span>
+                          <Star size={10} className="fill-theme-accent stroke-theme-accent" />
+                        </div>
 
-                      {/* Progress Bar Track */}
-                      <div className="flex-1 h-2 bg-bg-surface-raised rounded-full overflow-hidden relative border border-theme-border-subtle">
-                        <div
-                          className="h-full bg-theme-accent rounded-full transition-all duration-700 ease-out"
-                          style={{ width: `${percentage}%` }}
-                        />
-                      </div>
+                        {/* Progress Bar Track */}
+                        <div className="flex-1 h-2 bg-bg-surface-raised rounded-full overflow-hidden relative border border-theme-border-subtle">
+                          <div
+                            className="h-full bg-theme-accent rounded-full transition-all duration-700 ease-out"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
 
-                      <span className="w-9 text-right font-mono text-[11px] text-text-secondary">
-                        {percentage}%
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                        <span className="w-9 text-right font-mono text-[11px] text-text-secondary">
+                          {percentage}%
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-text-muted py-2">
+                  No community ratings recorded yet. Log your personal rating above.
+                </p>
+              )}
             </div>
 
           </div>

@@ -14,7 +14,7 @@ router.all('/seed', async (_req, res, next) => {
   try {
     await db();
     const count = await seedCatalog();
-    res.json({ ok: true, message: `Production catalog seeded with ${count} entries (52 movies, 32 books).` });
+    res.json({ ok: true, message: `Production catalog seeded with ${count} entries (50 movies, 30 books).` });
   } catch (err) {
     next(err);
   }
@@ -25,7 +25,7 @@ router.get('/', auth(false), async (req, res, next) => {
   try {
     await db();
     const count = await Content.countDocuments({ deletedAt: null });
-    if (count < 84) {
+    if (count < 80) {
       await seedCatalog();
     }
     const query = z.object({
