@@ -46,7 +46,65 @@ export default function Detail({ type, params }) {
   async function load() {
     try {
       const data = await api(`/content/${id}`);
-      if (data?.content) setD(data);
+      if (data?.content) {
+        setD(data);
+        // Sync server-authoritative states across devices
+        if (data.content.myRating) {
+          setRating(Number(data.content.myRating));
+          try {
+            localStorage.setItem(`rating_${id}`, String(data.content.myRating));
+          } catch {}
+        }
+        if (data.content.status) {
+          setLoggedStatus(data.content.status);
+          try {
+            localStorage.setItem(`status_${id}`, data.content.status);
+          } catch {}
+        }
+        if (data.content.liked !== undefined) {
+          setLiked(Boolean(data.content.liked));
+          try {
+            localStorage.setItem(`like_${id}`, String(data.content.liked));
+          } catch {}
+        }
+        if (data.content.favorited !== undefined) {
+          setFavorited(Boolean(data.content.favorited));
+          try {
+            localStorage.setItem(`fav_${id}`, String(data.content.favorited));
+          } catch {}
+        }
+
+        // Cache any user review for offline/profile display
+        let currentUser = null;
+        try {
+          const raw = localStorage.getItem('currentUser');
+          if (raw) currentUser = JSON.parse(raw);
+        } catch {}
+
+        if (Array.isArray(data.reviews)) {
+          const myRev = data.reviews.find(
+            (r) =>
+              r.isSelf ||
+              (currentUser &&
+                (r.userId?._id === currentUser.id ||
+                  r.userId?._id === currentUser._id ||
+                  r.userId?.username === currentUser.username))
+          );
+          if (myRev) {
+            try {
+              localStorage.setItem(
+                `review_${id}`,
+                JSON.stringify({
+                  title: myRev.title,
+                  body: myRev.body,
+                  rating: myRev.rating || data.content.myRating,
+                  createdAt: myRev.createdAt,
+                })
+              );
+            } catch {}
+          }
+        }
+      }
     } catch {}
   }
 
@@ -236,38 +294,85 @@ export default function Detail({ type, params }) {
   const handlePublishReview = async (e) => {
     e.preventDefault();
     if (!reviewText.trim()) return;
+
+    const targetRating = rating > 0 ? rating : undefined;
+    const targetTitle = reviewTitle.trim() || undefined;
+    const targetBody = reviewText.trim();
+    const createdAtIso = new Date().toISOString();
+
+    let currentUser = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      if (raw) currentUser = JSON.parse(raw);
+    } catch {}
+
     const newRev = {
       _id: 'rev-' + Date.now(),
-      title: reviewTitle.trim() || undefined,
-      body: reviewText.trim(),
-      rating: rating > 0 ? rating : undefined,
-      userId: { displayName: 'You' },
-      createdAt: new Date().toISOString(),
+      title: targetTitle,
+      body: targetBody,
+      rating: targetRating,
+      userId: {
+        displayName: currentUser?.displayName || currentUser?.username || 'You',
+        username: currentUser?.username || 'curator',
+        avatarUrl: currentUser?.avatarUrl || '',
+      },
+      createdAt: createdAtIso,
       isSelf: true,
     };
+
     setD((prev) => (prev ? { ...prev, reviews: [newRev, ...(prev.reviews || [])] } : prev));
+
     try {
+      localStorage.setItem(
+        `review_${id}`,
+        JSON.stringify({
+          title: targetTitle,
+          body: targetBody,
+          rating: targetRating,
+          createdAt: createdAtIso,
+        })
+      );
       recordActivity({
         type: 'REVIEWED',
         contentId: id,
         contentType: isMovie ? 'MOVIE' : 'BOOK',
         title: c?.title || 'Unknown',
         creator,
-        reviewSnippet: reviewText.trim().slice(0, 100),
+        reviewSnippet: targetBody.slice(0, 100),
       });
       window.dispatchEvent(new CustomEvent('activityUpdated'));
     } catch {}
+
     setReviewTitle('');
     setReviewText('');
     showToast('Review published to your journal');
+
     try {
       const targetId = c?._id || id;
-      await api(`/content/${targetId}/reviews`, {
+      const res = await api(`/content/${targetId}/reviews`, {
         method: 'POST',
-        body: JSON.stringify({ body: reviewText, spoiler: false }),
+        body: JSON.stringify({
+          title: targetTitle,
+          rating: targetRating,
+          body: targetBody,
+          spoiler: false,
+        }),
       });
-      load();
-    } catch {}
+
+      if (res?.review) {
+        setD((prev) => {
+          if (!prev) return prev;
+          const filtered = (prev.reviews || []).filter((r) => r._id !== newRev._id);
+          return {
+            ...prev,
+            reviews: [{ ...res.review, isSelf: true }, ...filtered],
+          };
+        });
+      }
+      await load();
+    } catch (err) {
+      console.error('Error publishing review:', err);
+    }
   };
 
   if (!d && !curatedFallback) {

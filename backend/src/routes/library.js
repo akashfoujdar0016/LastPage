@@ -2,9 +2,77 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db/mongoose.js';
 import { auth } from '../middleware/core.js';
-import { Content, Status, List, ListItem } from '../models/index.js';
+import { Content, Status, List, ListItem, Review, Rating, Favorite, Like, User } from '../models/index.js';
 
 const router = Router();
+
+// GET /api/me/reviews - Cross-device user reviews
+router.get('/reviews', auth(false), async (req, res, next) => {
+  try {
+    await db();
+    let userId = req.user?.sub;
+    if (!userId) {
+      const anyUser = await User.findOne();
+      if (anyUser) userId = anyUser._id;
+    }
+    if (!userId) return res.json({ reviews: [] });
+
+    const reviews = await Review.find({ userId, deletedAt: null })
+      .populate('contentId', 'title slug type imageUrl creatorNames authorNames year averageRating')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({ reviews });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/me/library - Full cross-device synced journal
+router.get('/library', auth(false), async (req, res, next) => {
+  try {
+    await db();
+    let userId = req.user?.sub;
+    if (!userId) {
+      const anyUser = await User.findOne();
+      if (anyUser) userId = anyUser._id;
+    }
+    if (!userId) {
+      return res.json({ watched: [], watchlist: [], favorites: [], ratings: [], reviews: [] });
+    }
+
+    const [statuses, favorites, ratings, reviews] = await Promise.all([
+      Status.find({ userId }).populate('contentId').lean(),
+      Favorite.find({ userId }).populate('contentId').lean(),
+      Rating.find({ userId }).populate('contentId').lean(),
+      Review.find({ userId, deletedAt: null }).populate('contentId').lean(),
+    ]);
+
+    const watched = statuses
+      .filter(s => (s.status === 'WATCHED' || s.status === 'READ') && s.contentId)
+      .map(s => ({ ...s.contentId, loggedDate: s.updatedAt, status: s.status }));
+
+    const watchlist = statuses
+      .filter(s => (s.status === 'WATCHLIST' || s.status === 'WANT_TO_READ') && s.contentId)
+      .map(s => ({ ...s.contentId, status: s.status }));
+
+    res.json({
+      watched,
+      watchlist,
+      favorites: favorites.filter(f => f.contentId).map(f => f.contentId),
+      ratings: ratings.filter(r => r.contentId).map(r => ({ ...r.contentId, userRating: r.score })),
+      reviews: reviews.filter(rv => rv.contentId).map(rv => ({
+        ...rv.contentId,
+        reviewBody: rv.body,
+        reviewTitle: rv.title,
+        rating: rv.rating,
+        createdAt: rv.createdAt,
+      })),
+    });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // GET /api/me - Get user's logged library content
 router.get('/', auth(), async (req, res, next) => {

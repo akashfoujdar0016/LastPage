@@ -61,6 +61,8 @@ export default function Profile() {
   const [friendsFeed, setFriendsFeed] = useState([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  const [cloudLibrary, setCloudLibrary] = useState(null);
+
   // Load user data and live authentic collections
   useEffect(() => {
     try {
@@ -75,6 +77,13 @@ export default function Profile() {
         if (x?.user) {
           setU((prev) => ({ ...prev, ...x.user }));
         }
+      })
+      .catch(() => {});
+
+    // Fetch cross-device journal from cloud database
+    api('/me/library')
+      .then((data) => {
+        if (data) setCloudLibrary(data);
       })
       .catch(() => {});
 
@@ -111,18 +120,57 @@ export default function Profile() {
     setRefreshTrigger((p) => p + 1);
   };
 
-  // Real, authentic user collections (Zero dummy data)
-  const watchedMovies = useMemo(() => getUserWatched('MOVIE'), [refreshTrigger]);
-  const watchedBooks = useMemo(() => getUserWatched('BOOK'), [refreshTrigger]);
-  const allWatched = useMemo(() => [...watchedMovies, ...watchedBooks], [watchedMovies, watchedBooks]);
+  // Helper to merge local items with cloud items (deduplicated by slug or _id)
+  const mergeItems = (localItems = [], cloudItems = []) => {
+    const map = new Map();
+    for (const it of cloudItems || []) {
+      if (it && (it.slug || it._id)) {
+        const key = String(it.slug || it._id).toLowerCase().replace(/^[mb]-/, '');
+        map.set(key, it);
+      }
+    }
+    for (const it of localItems || []) {
+      if (it && (it.slug || it._id)) {
+        const key = String(it.slug || it._id).toLowerCase().replace(/^[mb]-/, '');
+        map.set(key, { ...map.get(key), ...it });
+      }
+    }
+    return Array.from(map.values());
+  };
 
-  const favourites = useMemo(() => getUserFavourites(), [refreshTrigger]);
-  const watchlistMovies = useMemo(() => getUserWatchlist('MOVIE'), [refreshTrigger]);
-  const watchlistBooks = useMemo(() => getUserWatchlist('BOOK'), [refreshTrigger]);
-  const allWatchlist = useMemo(() => [...watchlistMovies, ...watchlistBooks], [watchlistMovies, watchlistBooks]);
+  // Real, authentic user collections synchronized across all devices
+  const allWatched = useMemo(() => {
+    const local = [...getUserWatched('MOVIE'), ...getUserWatched('BOOK')];
+    const cloud = cloudLibrary?.watched || [];
+    return mergeItems(local, cloud);
+  }, [cloudLibrary, refreshTrigger]);
 
-  const userRatings = useMemo(() => getUserRatings(), [refreshTrigger]);
-  const userReviews = useMemo(() => getUserReviews(), [refreshTrigger]);
+  const watchedMovies = useMemo(() => allWatched.filter((it) => it.type === 'MOVIE'), [allWatched]);
+  const watchedBooks = useMemo(() => allWatched.filter((it) => it.type === 'BOOK'), [allWatched]);
+
+  const favourites = useMemo(() => {
+    const local = getUserFavourites();
+    const cloud = cloudLibrary?.favorites || [];
+    return mergeItems(local, cloud);
+  }, [cloudLibrary, refreshTrigger]);
+
+  const allWatchlist = useMemo(() => {
+    const local = [...getUserWatchlist('MOVIE'), ...getUserWatchlist('BOOK')];
+    const cloud = cloudLibrary?.watchlist || [];
+    return mergeItems(local, cloud);
+  }, [cloudLibrary, refreshTrigger]);
+
+  const userRatings = useMemo(() => {
+    const local = getUserRatings();
+    const cloud = cloudLibrary?.ratings || [];
+    return mergeItems(local, cloud);
+  }, [cloudLibrary, refreshTrigger]);
+
+  const userReviews = useMemo(() => {
+    const local = getUserReviews();
+    const cloud = cloudLibrary?.reviews || [];
+    return mergeItems(local, cloud);
+  }, [cloudLibrary, refreshTrigger]);
 
   // Filter items by media type: ALL | CINEMA | LIBRARY
   const filterByMedia = (items = []) => {
@@ -136,6 +184,7 @@ export default function Profile() {
   const displayedFavourites = useMemo(() => filterByMedia(favourites), [favourites, activeMediaFilter]);
   const displayedWatchlist = useMemo(() => filterByMedia(allWatchlist), [allWatchlist, activeMediaFilter]);
   const displayedReviews = useMemo(() => filterByMedia(userReviews), [userReviews, activeMediaFilter]);
+
 
   const searchedFriends = useMemo(() => {
     return searchUsers(friendSearch, u?.username || '');

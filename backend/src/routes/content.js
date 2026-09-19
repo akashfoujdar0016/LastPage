@@ -267,6 +267,8 @@ router.post('/:id/reviews', auth(false), async (req, res, next) => {
     }
 
     const reviewData = z.object({
+      title: z.string().max(200).optional(),
+      rating: z.number().min(0.5).max(5).optional(),
       body: z.string().min(1).max(10000),
       spoiler: z.boolean().default(false),
     }).parse(req.body);
@@ -275,13 +277,39 @@ router.post('/:id/reviews', auth(false), async (req, res, next) => {
     const review = await Review.create({
       userId,
       contentId: content._id,
-      ...reviewData,
+      title: reviewData.title || '',
+      rating: reviewData.rating || undefined,
+      body: reviewData.body,
+      spoiler: reviewData.spoiler || false,
     });
+
+    // If rating was supplied, also update or create the Rating record
+    if (reviewData.rating) {
+      await Rating.findOneAndUpdate(
+        { userId, contentId: content._id },
+        { $set: { score: reviewData.rating } },
+        { upsert: true, new: true }
+      );
+      await recalcRating(content._id);
+    }
+
+    // Automatically set status to WATCHED or READ if not already logged
+    const defaultStatus = content.type === 'MOVIE' ? 'WATCHED' : 'READ';
+    await Status.findOneAndUpdate(
+      { userId, contentId: content._id },
+      { $setOnInsert: { status: defaultStatus } },
+      { upsert: true }
+    );
 
     if (req.user?.sub) {
       await activity(req.user.sub, 'REVIEWED', content._id, review._id);
     }
-    res.status(201).json({ review });
+
+    const populated = await Review.findById(review._id)
+      .populate('userId', 'username displayName avatarUrl')
+      .lean();
+
+    res.status(201).json({ review: populated });
   } catch (err) {
     next(err);
   }

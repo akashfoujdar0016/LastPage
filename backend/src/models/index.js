@@ -75,8 +75,10 @@ const ReviewSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
     contentId: { type: Schema.Types.ObjectId, ref: 'Content', index: true },
+    title: { type: String, default: '' },
+    rating: { type: Number, min: 0.5, max: 5 },
     body: { type: String, minlength: 1, maxlength: 10000 },
-    spoiler: Boolean,
+    spoiler: { type: Boolean, default: false },
     likeCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },
     deletedAt: Date,
