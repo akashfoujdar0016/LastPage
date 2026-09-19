@@ -41,7 +41,7 @@ app.use((err, _req, res, _next) => {
   const message = err?.message;
   res.status(status).json({
     error: err?.name === 'ZodError' ? 'Invalid request data' : 'Internal server error',
-    details: env.NODE_ENV === 'production' ? undefined : message,
+    details: message || String(err),
   });
 });
 
