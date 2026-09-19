@@ -7,10 +7,16 @@ export const security = [
   helmet(),
   cors({
     origin: (origin, callback) => {
-      if (!origin || origins.includes(origin)) {
+      if (
+        !origin ||
+        origins.includes('*') ||
+        origins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        origin.startsWith('http://localhost:')
+      ) {
         return callback(null, true);
       }
-      callback(new Error('CORS blocked'));
+      callback(new Error(`CORS blocked for origin: ${origin}`));
     },
     credentials: true,
   }),

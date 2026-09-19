@@ -9,6 +9,11 @@ const router = Router();
 router.get('/home', auth(false), async (_req, res, next) => {
   try {
     await db();
+    const count = await Content.countDocuments({ deletedAt: null });
+    if (count === 0) {
+      const { seedCatalog } = await import('../services/seeder.js');
+      await seedCatalog();
+    }
     const [trending, popular, topRated, movies, books] = await Promise.all([
       Content.find({ deletedAt: null }).sort({ popularity: -1 }).limit(12).lean(),
       Content.find({ deletedAt: null }).sort({ likeCount: -1 }).limit(12).lean(),

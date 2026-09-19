@@ -5,8 +5,20 @@ import { db } from '../db/mongoose.js';
 import { auth } from '../middleware/core.js';
 import { enrich, recalcRating } from '../services/content.js';
 import { activity } from '../services/social.js';
+import { seedCatalog } from '../services/seeder.js';
 
 const router = Router();
+
+// POST /api/content/seed - Explicitly trigger production catalog seed
+router.post('/seed', async (_req, res, next) => {
+  try {
+    await db();
+    const count = await seedCatalog();
+    res.json({ ok: true, message: `Production catalog seeded with ${count} entries.` });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // GET /api/content - List/search content
 router.get('/', auth(false), async (req, res, next) => {

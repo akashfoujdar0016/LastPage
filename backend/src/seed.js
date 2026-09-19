@@ -1,7 +1,9 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { db } from './db/mongoose.js';
-import { User, Content } from './models/index.js';
+import { User } from './models/index.js';
+import { seedCatalog } from './services/seeder.js';
+import { catalog } from './data/catalog.js';
 
 await db();
 
@@ -16,250 +18,16 @@ await User.updateOne(
       passwordHash,
       displayName: 'Editorial Curator',
       bio: 'Private cultural journal documenting cinema retrospectives and literary canons.',
-    }
+    },
   },
   { upsert: true }
 );
 
-// Curated Masterpieces Dataset (Criterion, MUBI, Literary Classics)
-const curatedContent = [
-  // ── CINEMA ──
-  {
-    type: 'MOVIE',
-    title: 'In the Mood for Love',
-    year: 2000,
-    genres: ['Romance', 'Drama', 'Art House'],
-    creatorNames: ['Wong Kar-wai'],
-    imageUrl: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80',
-    description: 'Two neighbors form a delicate, unspoken bond after suspecting their spouses of an extramarital affair in 1962 Hong Kong. A masterwork of color, rhythm, and longing.',
-    averageRating: 4.8,
-    ratingCount: 1420,
-    likeCount: 980,
-    favoriteCount: 650,
-    popularity: 98,
-  },
-  {
-    type: 'MOVIE',
-    title: 'Stalker',
-    year: 1979,
-    genres: ['Sci-Fi', 'Philosophy', 'Art House'],
-    creatorNames: ['Andrei Tarkovsky'],
-    imageUrl: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80',
-    description: 'A guide leads two men into the mysterious hazardous Zone, where a room is rumored to grant one’s deepest, most subconscious desires.',
-    averageRating: 4.7,
-    ratingCount: 890,
-    likeCount: 540,
-    favoriteCount: 420,
-    popularity: 92,
-  },
-  {
-    type: 'MOVIE',
-    title: 'Persona',
-    year: 1966,
-    genres: ['Psychological Drama', 'Mystery'],
-    creatorNames: ['Ingmar Bergman'],
-    imageUrl: 'https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?auto=format&fit=crop&w=800&q=80',
-    description: 'An actress falls mute during a performance and retreats to a remote seaside cottage with a nurse, where their psyches begin to merge and collide.',
-    averageRating: 4.6,
-    ratingCount: 710,
-    likeCount: 430,
-    favoriteCount: 310,
-    popularity: 88,
-  },
-  {
-    type: 'MOVIE',
-    title: 'Blade Runner 2049',
-    year: 2017,
-    genres: ['Sci-Fi', 'Neo-Noir', 'Mystery'],
-    creatorNames: ['Denis Villeneuve'],
-    imageUrl: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80',
-    description: 'A young blade runner unearths a long-buried secret that threatens to plunge what remains of society into chaos, leading him on a quest to find Rick Deckard.',
-    averageRating: 4.7,
-    ratingCount: 2100,
-    likeCount: 1400,
-    favoriteCount: 890,
-    popularity: 95,
-  },
-  {
-    type: 'MOVIE',
-    title: 'Paris, Texas',
-    year: 1984,
-    genres: ['Drama', 'Road Movie'],
-    creatorNames: ['Wim Wenders'],
-    imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80',
-    description: 'A disheveled man wanders out of the desert after four years of absence, attempting to reconnect with his son and track down his missing wife.',
-    averageRating: 4.8,
-    ratingCount: 950,
-    likeCount: 720,
-    favoriteCount: 560,
-    popularity: 91,
-  },
-  {
-    type: 'MOVIE',
-    title: 'The Grand Budapest Hotel',
-    year: 2014,
-    genres: ['Comedy', 'Drama', 'Period'],
-    creatorNames: ['Wes Anderson'],
-    imageUrl: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
-    description: 'The adventures of Gustave H, a legendary concierge at a famous European hotel between the wars, and Zero Moustafa, the lobby boy who becomes his trusted friend.',
-    averageRating: 4.6,
-    ratingCount: 1800,
-    likeCount: 1200,
-    favoriteCount: 740,
-    popularity: 93,
-  },
-  {
-    type: 'MOVIE',
-    title: 'Drive My Car',
-    year: 2021,
-    genres: ['Drama'],
-    creatorNames: ['Ryusuke Hamaguchi'],
-    imageUrl: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?auto=format&fit=crop&w=800&q=80',
-    description: 'An aging theater director grappling with the sudden loss of his wife directs a multilingual production of Uncle Vanya while bonding with his reticent young chauffeur.',
-    averageRating: 4.7,
-    ratingCount: 640,
-    likeCount: 480,
-    favoriteCount: 390,
-    popularity: 87,
-  },
-  {
-    type: 'MOVIE',
-    title: 'Yi Yi',
-    year: 2000,
-    genres: ['Drama', 'Family'],
-    creatorNames: ['Edward Yang'],
-    imageUrl: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=800&q=80',
-    description: 'A multi-generational portrait of a contemporary Taipei family navigating everyday triumphs, philosophical doubts, and poignant heartbreaks.',
-    averageRating: 4.9,
-    ratingCount: 820,
-    likeCount: 640,
-    favoriteCount: 510,
-    popularity: 90,
-  },
+const count = await seedCatalog();
+const movies = catalog.filter((c) => c.type === 'MOVIE').length;
+const books = catalog.filter((c) => c.type === 'BOOK').length;
 
-  // ── BOOKS ──
-  {
-    type: 'BOOK',
-    title: 'Ficciones',
-    year: 1944,
-    genres: ['Philosophical Fiction', 'Short Stories', 'Magical Realism'],
-    authorNames: ['Jorge Luis Borges'],
-    imageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
-    description: 'Labyrinths, infinite libraries, imaginary encyclopedias, and metaphysical mirrors. A seminal collection that reshaped 20th-century world literature.',
-    averageRating: 4.9,
-    ratingCount: 1100,
-    likeCount: 890,
-    favoriteCount: 720,
-    popularity: 96,
-  },
-  {
-    type: 'BOOK',
-    title: 'Invisible Cities',
-    year: 1972,
-    genres: ['Poetic Fiction', 'Philosophy'],
-    authorNames: ['Italo Calvino'],
-    imageUrl: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=800&q=80',
-    description: 'Marco Polo conjures hypnotic tales of marvelous, impossible cities across the Mongol empire for the aging sovereign Kublai Khan.',
-    averageRating: 4.8,
-    ratingCount: 940,
-    likeCount: 780,
-    favoriteCount: 610,
-    popularity: 94,
-  },
-  {
-    type: 'BOOK',
-    title: 'The Secret History',
-    year: 1992,
-    genres: ['Psychological Fiction', 'Dark Academia', 'Mystery'],
-    authorNames: ['Donna Tartt'],
-    imageUrl: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80',
-    description: 'Under the influence of their charismatic classics professor, a group of clever, eccentric misfits at an elite New England college discover a way of thinking and living that is a world away from the humdrum existence of their contemporaries.',
-    averageRating: 4.7,
-    ratingCount: 1650,
-    likeCount: 1300,
-    favoriteCount: 920,
-    popularity: 97,
-  },
-  {
-    type: 'BOOK',
-    title: 'Dune',
-    year: 1965,
-    genres: ['Science Fiction', 'Epic', 'Philosophy'],
-    authorNames: ['Frank Herbert'],
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80',
-    description: 'Set on the desert planet Arrakis, Dune tells the story of Paul Atreides, heir to a noble family tasked with ruling an inhospitable world where the only thing of value is the "spice" melange.',
-    averageRating: 4.8,
-    ratingCount: 2300,
-    likeCount: 1700,
-    favoriteCount: 1150,
-    popularity: 99,
-  },
-  {
-    type: 'BOOK',
-    title: 'The Master and Margarita',
-    year: 1967,
-    genres: ['Satire', 'Fantasy', 'Classics'],
-    authorNames: ['Mikhail Bulgakov'],
-    imageUrl: 'https://images.unsplash.com/photo-1463320726281-696a485928c7?auto=format&fit=crop&w=800&q=80',
-    description: 'The Devil visits 1930s Soviet Moscow accompanied by a mischievous entourage including a talking black cat with a penchant for vodka and chess.',
-    averageRating: 4.8,
-    ratingCount: 880,
-    likeCount: 650,
-    favoriteCount: 540,
-    popularity: 91,
-  },
-  {
-    type: 'BOOK',
-    title: 'Norwegian Wood',
-    year: 1987,
-    genres: ['Literary Fiction', 'Coming of Age'],
-    authorNames: ['Haruki Murakami'],
-    imageUrl: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80',
-    description: 'A nostalgic look back on college days in Tokyo during late-1960s civil unrest, intertwined with loss, music, and unresolved memory.',
-    averageRating: 4.6,
-    ratingCount: 1400,
-    likeCount: 980,
-    favoriteCount: 670,
-    popularity: 93,
-  },
-  {
-    type: 'BOOK',
-    title: 'The Remains of the Day',
-    year: 1989,
-    genres: ['Literary Fiction', 'Historical'],
-    authorNames: ['Kazuo Ishiguro'],
-    imageUrl: 'https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&w=800&q=80',
-    description: 'An aging English butler embarks on a motoring trip through the West Country in 1956, reflecting on loyalty, personal dignity, and unspoken love.',
-    averageRating: 4.7,
-    ratingCount: 760,
-    likeCount: 590,
-    favoriteCount: 480,
-    popularity: 89,
-  },
-  {
-    type: 'BOOK',
-    title: 'The Dispossessed',
-    year: 1974,
-    genres: ['Science Fiction', 'Utopian / Dystopian'],
-    authorNames: ['Ursula K. Le Guin'],
-    imageUrl: 'https://images.unsplash.com/photo-1507842229458-5779ad26cdd2?auto=format&fit=crop&w=800&q=80',
-    description: 'A brilliant physicist from an anarchist moon society travels to the capitalist mother planet, attempting to dismantle walls of isolation and theory.',
-    averageRating: 4.8,
-    ratingCount: 680,
-    likeCount: 520,
-    favoriteCount: 430,
-    popularity: 88,
-  }
-];
-
-for (const item of curatedContent) {
-  const slug = String(item.title).toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  await Content.updateOne(
-    { type: item.type, title: item.title },
-    { $set: { ...item, slug } },
-    { upsert: true }
-  );
-}
-
-console.log(`Seeding complete: ${curatedContent.length} cultural entries catalogued.`);
+console.log(
+  `Seeding complete: ${count} cultural entries catalogued (${movies} movies, ${books} books) in database.`
+);
 process.exit(0);

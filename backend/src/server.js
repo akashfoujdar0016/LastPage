@@ -7,6 +7,9 @@ import contentRouter from './routes/content.js';
 import socialRouter from './routes/social.js';
 import libraryRouter from './routes/library.js';
 import discoveryRouter from './routes/discovery.js';
+import { Content } from './models/index.js';
+import { catalog } from './data/catalog.js';
+import { seedCatalog } from './services/seeder.js';
 
 const app = express();
 
@@ -43,8 +46,19 @@ app.use((err, _req, res, _next) => {
 });
 
 if (process.env.VERCEL !== '1') {
-  app.listen(env.PORT, () => {
+  app.listen(env.PORT, async () => {
     console.log(`LastPage API listening on port ${env.PORT}`);
+    try {
+      await db();
+      const currentCount = await Content.countDocuments({ deletedAt: null });
+      if (currentCount < catalog.length) {
+        console.log(`[Database Init] Seeding production catalog (${catalog.length} items)...`);
+        await seedCatalog();
+        console.log('[Database Init] Production catalog seeded successfully.');
+      }
+    } catch (err) {
+      console.error('[Database Init Error]:', err?.message || err);
+    }
   });
 }
 
