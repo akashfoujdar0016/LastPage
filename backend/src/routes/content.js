@@ -31,17 +31,12 @@ async function findContent(param) {
 
 // Helper to get or create guest user for unauthenticated interactions
 async function getEffectiveUserId(req) {
-  if (req.user?.sub) return req.user.sub;
-  let guestUser = await User.findOne({ username: 'guest_reviewer' });
-  if (!guestUser) {
-    guestUser = await User.create({
-      username: 'guest_reviewer',
-      displayName: 'Journal Reader',
-      email: 'guest@lastpage.app',
-      role: 'MEMBER',
-    });
+  if (req.user?.sub && mongoose.isValidObjectId(req.user.sub)) {
+    return req.user.sub;
   }
-  return guestUser._id;
+  const anyUser = await User.findOne();
+  if (anyUser) return anyUser._id;
+  return new mongoose.Types.ObjectId();
 }
 
 // GET & POST /api/content/seed - Explicitly trigger production catalog seed
@@ -211,7 +206,9 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
 
     const { averageRating, ratingCount, breakdown } = await recalcRating(content._id);
     if (req.user?.sub) {
-      await activity(req.user.sub, 'RATED', content._id);
+      try {
+        await activity(req.user.sub, 'RATED', content._id);
+      } catch {}
     }
 
     res.json({

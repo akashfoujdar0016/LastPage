@@ -28,11 +28,15 @@ export async function enrich(content, userId) {
 export async function getRatingBreakdown(contentId) {
   const ratings = await Rating.find({ contentId }).lean();
   const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  let sum = 0;
   for (const r of ratings) {
-    const star = Math.min(5, Math.max(1, Math.round(r.score)));
+    const s = Number(r.score) || 0;
+    sum += s;
+    const star = Math.min(5, Math.max(1, Math.round(s)));
     counts[star] = (counts[star] || 0) + 1;
   }
   const total = ratings.length;
+  const avg = total > 0 ? Math.round((sum / total) * 10) / 10 : 0;
   const percentages = {
     5: total > 0 ? Math.round((counts[5] / total) * 100) : 0,
     4: total > 0 ? Math.round((counts[4] / total) * 100) : 0,
@@ -40,36 +44,25 @@ export async function getRatingBreakdown(contentId) {
     2: total > 0 ? Math.round((counts[2] / total) * 100) : 0,
     1: total > 0 ? Math.round((counts[1] / total) * 100) : 0,
   };
-  return { counts, percentages, total };
+  return { counts, percentages, total, avg };
 }
 
 export async function recalcRating(contentId) {
-  const aggregateResult = await Rating.aggregate([
-    { $match: { contentId } },
-    {
-      $group: {
-        _id: null,
-        avg: { $avg: '$score' },
-        count: { $sum: 1 },
-      },
-    },
-  ]);
-
-  const avgScore = aggregateResult[0]?.avg
-    ? Math.round(aggregateResult[0].avg * 10) / 10
-    : 0;
-  const ratingCount = aggregateResult[0]?.count || 0;
+  const breakdown = await getRatingBreakdown(contentId);
 
   await Content.updateOne(
     { _id: contentId },
     {
       $set: {
-        averageRating: avgScore,
-        ratingCount,
+        averageRating: breakdown.avg,
+        ratingCount: breakdown.total,
       },
     }
   );
 
-  const breakdown = await getRatingBreakdown(contentId);
-  return { averageRating: avgScore, ratingCount, breakdown };
+  return {
+    averageRating: breakdown.avg,
+    ratingCount: breakdown.total,
+    breakdown,
+  };
 }
