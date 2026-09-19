@@ -2,9 +2,32 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db/mongoose.js';
 import { auth } from '../middleware/core.js';
-import { Content, Status, List, ListItem, Review, Rating, Favorite, Like, User } from '../models/index.js';
+import { Content, Status, List, ListItem, Review, Rating, Favorite, Like, User, Activity } from '../models/index.js';
 
 const router = Router();
+
+// GET /api/me/activity - Cross-device activity timeline
+router.get('/activity', auth(false), async (req, res, next) => {
+  try {
+    await db();
+    let userId = req.user?.sub;
+    if (!userId) {
+      const anyUser = await User.findOne();
+      if (anyUser) userId = anyUser._id;
+    }
+    if (!userId) return res.json({ items: [] });
+
+    const activities = await Activity.find({ userId })
+      .populate('contentId', 'title slug type imageUrl creatorNames authorNames year averageRating')
+      .sort({ createdAt: -1 })
+      .limit(100)
+      .lean();
+
+    res.json({ items: activities });
+  } catch (err) {
+    next(err);
+  }
+});
 
 // GET /api/me/reviews - Cross-device user reviews
 router.get('/reviews', auth(false), async (req, res, next) => {
