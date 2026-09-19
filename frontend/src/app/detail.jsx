@@ -156,8 +156,16 @@ export default function Detail({ type, params }) {
 
   const handleSetStarRating = async (score) => {
     setRating(score);
+    const dateStr = new Date().toISOString();
     try {
       localStorage.setItem(`rating_${id}`, String(score));
+      if (!loggedStatus) {
+        const autoStatus = isMovie ? 'WATCHED' : 'READ';
+        localStorage.setItem(`status_${id}`, autoStatus);
+        localStorage.setItem(`logged_date_${id}`, dateStr);
+        setLoggedStatus(autoStatus);
+        setLoggedDate(dateStr);
+      }
       recordActivity({
         type: 'RATED',
         contentId: id,
@@ -166,12 +174,61 @@ export default function Detail({ type, params }) {
         creator,
         score,
       });
+      window.dispatchEvent(new CustomEvent('activityUpdated'));
     } catch {}
+
     showToast(`Rated ★ ${score.toFixed(1)}`);
+
+    // Immediate reactive local state update
+    setD((prev) => {
+      const base = prev?.content || c || curatedFallback;
+      if (!base) return prev;
+      const prevCount = base.ratingCount || 0;
+      const prevAvg = base.averageRating || 0;
+      const isNewRating = !rating || rating === 0;
+      const newCount = isNewRating ? prevCount + 1 : Math.max(1, prevCount);
+      const newAvg = isNewRating && prevCount > 0
+        ? Math.round(((prevAvg * prevCount + score) / newCount) * 10) / 10
+        : prevCount > 1
+        ? Math.round(((prevAvg * prevCount - (rating || score) + score) / prevCount) * 10) / 10
+        : score;
+
+      const starBucket = Math.min(5, Math.max(1, Math.round(score)));
+      const newBreakdown = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+      newBreakdown[starBucket] = 100;
+
+      return {
+        ...(prev || {}),
+        content: {
+          ...base,
+          averageRating: newAvg,
+          ratingCount: newCount,
+          ratingBreakdown: newBreakdown,
+        },
+        reviews: prev?.reviews || [],
+      };
+    });
+
+    // Send to server API
     try {
-      if (getToken()) {
-        await api(`/content/${id}/rating`, { method: 'POST', body: JSON.stringify({ score }) });
-        load();
+      const targetId = c?._id || id;
+      const res = await api(`/content/${targetId}/rating`, {
+        method: 'POST',
+        body: JSON.stringify({ score }),
+      });
+      if (res?.ok && res?.averageRating !== undefined) {
+        setD((prev) => {
+          if (!prev?.content) return prev;
+          return {
+            ...prev,
+            content: {
+              ...prev.content,
+              averageRating: res.averageRating,
+              ratingCount: res.ratingCount,
+              ratingBreakdown: res.ratingBreakdown,
+            },
+          };
+        });
       }
     } catch {}
   };
@@ -186,6 +243,7 @@ export default function Detail({ type, params }) {
       rating: rating > 0 ? rating : undefined,
       userId: { displayName: 'You' },
       createdAt: new Date().toISOString(),
+      isSelf: true,
     };
     setD((prev) => (prev ? { ...prev, reviews: [newRev, ...(prev.reviews || [])] } : prev));
     try {
@@ -197,18 +255,18 @@ export default function Detail({ type, params }) {
         creator,
         reviewSnippet: reviewText.trim().slice(0, 100),
       });
+      window.dispatchEvent(new CustomEvent('activityUpdated'));
     } catch {}
     setReviewTitle('');
     setReviewText('');
     showToast('Review published to your journal');
     try {
-      if (getToken()) {
-        await api(`/content/${id}/reviews`, {
-          method: 'POST',
-          body: JSON.stringify({ body: reviewText, spoiler: false }),
-        });
-        load();
-      }
+      const targetId = c?._id || id;
+      await api(`/content/${targetId}/reviews`, {
+        method: 'POST',
+        body: JSON.stringify({ body: reviewText, spoiler: false }),
+      });
+      load();
     } catch {}
   };
 
@@ -223,12 +281,21 @@ export default function Detail({ type, params }) {
   const isWatched = loggedStatus === 'WATCHED' || loggedStatus === 'READ';
   const isWatchlist = loggedStatus === 'WATCHLIST' || loggedStatus === 'WANT_TO_READ';
   const activeRating = hoverRating || rating;
-  const ratingVal = Number(c?.averageRating || 0);
-  const ratingCount = Number(c?.ratingCount || 0);
+  const ratingVal = Number(c?.averageRating || rating || 0);
+  const ratingCount = Number(c?.ratingCount || (rating > 0 ? 1 : 0));
   const runtimeOrPages = isMovie
     ? (c?.runtime ? `${c.runtime} min` : '—')
     : (c?.pages ? `${c.pages} pages` : '—');
-  const ratingDistribution = c?.ratingBreakdown || null;
+
+  // Dynamic breakdown: use server breakdown if available; otherwise show user's rating distribution
+  const userStarBucket = rating > 0 ? Math.min(5, Math.max(1, Math.round(rating))) : null;
+  const ratingDistribution = c?.ratingBreakdown || (userStarBucket ? {
+    5: userStarBucket === 5 ? 100 : 0,
+    4: userStarBucket === 4 ? 100 : 0,
+    3: userStarBucket === 3 ? 100 : 0,
+    2: userStarBucket === 2 ? 100 : 0,
+    1: userStarBucket === 1 ? 100 : 0,
+  } : null);
 
   return (
     <div className="min-h-screen bg-[#000000] text-[#E0E0E0] pb-32 relative overflow-hidden">
@@ -675,11 +742,38 @@ export default function Detail({ type, params }) {
             {/* ── COMMUNITY & JOURNAL REVIEWS STREAM ── */}
             <section className="flex flex-col gap-4">
               <h3 className="font-serif text-2xl font-normal text-text-primary">
-                Member Reviews
+                Member Reviews &amp; Ratings
               </h3>
 
               <div className="flex flex-col gap-4">
-                {d.reviews && d.reviews.length > 0 ? (
+                {/* User's logged rating entry (displayed immediately when user rates, even without text review) */}
+                {rating > 0 && !(d?.reviews && d.reviews.some((r) => r.isSelf || r.userId?.displayName === 'You')) && (
+                  <div className="bg-bg-surface/90 border border-theme-accent/40 rounded-2xl p-6 transition-all shadow-md">
+                    <div className="flex justify-between items-baseline mb-2">
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-serif text-base text-text-primary font-medium">
+                          You
+                        </span>
+                        <span className="text-xs font-semibold text-theme-accent px-2.5 py-0.5 rounded-full bg-theme-accent-dim border border-theme-accent/20">
+                          ★ {Number(rating).toFixed(1)}
+                        </span>
+                      </div>
+                      <span className="text-[11px] text-text-muted font-mono">
+                        {formatLogDate(loggedDate || new Date())}
+                      </span>
+                    </div>
+                    <p className="font-sans text-xs text-text-secondary leading-relaxed">
+                      You logged a rating of ★ {Number(rating).toFixed(1)} for this {isMovie ? 'film' : 'book'}.
+                      {!reviewText && (
+                        <span className="text-text-muted ml-1 italic">
+                          (Write your reflection above to attach written review notes).
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
+
+                {d?.reviews && d.reviews.length > 0 ? (
                   d.reviews.map((r) => (
                     <div
                       key={r._id}
@@ -712,9 +806,9 @@ export default function Detail({ type, params }) {
                       </p>
                     </div>
                   ))
-                ) : (
+                ) : rating > 0 ? null : (
                   <div className="bg-bg-surface/50 border border-dashed border-theme-border rounded-2xl p-8 text-center text-xs text-text-muted">
-                    No community reviews recorded yet. Write your thoughts above.
+                    No community reviews recorded yet. Log your rating or write your thoughts above.
                   </div>
                 )}
               </div>

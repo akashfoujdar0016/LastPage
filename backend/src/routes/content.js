@@ -1,13 +1,48 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { Content, Rating, Like, Favorite, Status, Review } from '../models/index.js';
+import mongoose from 'mongoose';
+import { Content, Rating, Like, Favorite, Status, Review, User } from '../models/index.js';
 import { db } from '../db/mongoose.js';
 import { auth } from '../middleware/core.js';
-import { enrich, recalcRating } from '../services/content.js';
+import { enrich, recalcRating, getRatingBreakdown } from '../services/content.js';
 import { activity } from '../services/social.js';
 import { seedCatalog } from '../services/seeder.js';
 
 const router = Router();
+
+// Helper to find content by ObjectId, slug, or sanitized title
+async function findContent(param) {
+  if (!param) return null;
+  if (mongoose.isValidObjectId(param)) {
+    const doc = await Content.findOne({ _id: param, deletedAt: null });
+    if (doc) return doc;
+  }
+  const clean = String(param).toLowerCase().replace(/^[mb]-/, '');
+  return await Content.findOne({
+    $or: [
+      { slug: param },
+      { slug: clean },
+      { title: new RegExp('^' + param.replace(/[-_]/g, ' ') + '$', 'i') },
+      { title: new RegExp('^' + clean.replace(/[-_]/g, ' ') + '$', 'i') },
+    ],
+    deletedAt: null,
+  });
+}
+
+// Helper to get or create guest user for unauthenticated interactions
+async function getEffectiveUserId(req) {
+  if (req.user?.sub) return req.user.sub;
+  let guestUser = await User.findOne({ username: 'guest_reviewer' });
+  if (!guestUser) {
+    guestUser = await User.create({
+      username: 'guest_reviewer',
+      displayName: 'Journal Reader',
+      email: 'guest@lastpage.app',
+      role: 'MEMBER',
+    });
+  }
+  return guestUser._id;
+}
 
 // GET & POST /api/content/seed - Explicitly trigger production catalog seed
 router.all('/seed', async (_req, res, next) => {
@@ -76,23 +111,31 @@ router.get('/', auth(false), async (req, res, next) => {
   }
 });
 
-// GET /api/content/:id - Single item with reviews
+// GET /api/content/:id - Single item with reviews & rating breakdown
 router.get('/:id', auth(false), async (req, res, next) => {
   try {
     await db();
-    const content = await Content.findOne({ _id: req.params.id, deletedAt: null }).lean();
+    const content = await findContent(req.params.id);
     if (!content) {
       return res.status(404).json({ error: 'Content not found' });
     }
 
-    const reviews = await Review.find({ contentId: content._id, deletedAt: null })
-      .sort({ createdAt: -1 })
-      .limit(30)
-      .populate('userId', 'username displayName avatarUrl')
-      .lean();
+    const [reviews, breakdown] = await Promise.all([
+      Review.find({ contentId: content._id, deletedAt: null })
+        .sort({ createdAt: -1 })
+        .limit(30)
+        .populate('userId', 'username displayName avatarUrl')
+        .lean(),
+      getRatingBreakdown(content._id),
+    ]);
+
+    const enriched = await enrich(content.toObject ? content.toObject() : content, req.user?.sub);
+    enriched.ratingBreakdown = breakdown.percentages;
+    enriched.ratingCounts = breakdown.counts;
+    enriched.ratingCount = breakdown.total;
 
     res.json({
-      content: await enrich(content, req.user?.sub),
+      content: enriched,
       reviews,
     });
   } catch (err) {
@@ -101,10 +144,10 @@ router.get('/:id', auth(false), async (req, res, next) => {
 });
 
 // POST /api/content/:id/status - Update watch/reading status
-router.post('/:id/status', auth(), async (req, res, next) => {
+router.post('/:id/status', auth(false), async (req, res, next) => {
   try {
     await db();
-    const content = await Content.findById(req.params.id);
+    const content = await findContent(req.params.id);
     if (!content) {
       return res.status(404).json({ error: 'Content not found' });
     }
@@ -122,9 +165,10 @@ router.post('/:id/status', auth(), async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid status for content type' });
     }
 
+    const userId = await getEffectiveUserId(req);
     const isCompleted = schema.status === 'WATCHED' || schema.status === 'READ';
     const updatedStatus = await Status.findOneAndUpdate(
-      { userId: req.user?.sub, contentId: content._id },
+      { userId, contentId: content._id },
       {
         $set: {
           status: schema.status,
@@ -135,7 +179,9 @@ router.post('/:id/status', auth(), async (req, res, next) => {
       { upsert: true, new: true }
     );
 
-    await activity(req.user?.sub, schema.status, content._id);
+    if (req.user?.sub) {
+      await activity(req.user.sub, schema.status, content._id);
+    }
     res.json({ status: updatedStatus });
   } catch (err) {
     next(err);
@@ -143,10 +189,10 @@ router.post('/:id/status', auth(), async (req, res, next) => {
 });
 
 // POST /api/content/:id/rating - Rate content (0.5 to 5.0)
-router.post('/:id/rating', auth(), async (req, res, next) => {
+router.post('/:id/rating', auth(false), async (req, res, next) => {
   try {
     await db();
-    const content = await Content.findById(req.params.id);
+    const content = await findContent(req.params.id);
     if (!content) {
       return res.status(404).json({ error: 'Content not found' });
     }
@@ -155,15 +201,27 @@ router.post('/:id/rating', auth(), async (req, res, next) => {
       score: z.number().min(0.5).max(5),
     }).parse(req.body);
 
+    const userId = await getEffectiveUserId(req);
+
     const updatedRating = await Rating.findOneAndUpdate(
-      { userId: req.user?.sub, contentId: content._id },
+      { userId, contentId: content._id },
       { $set: { score } },
       { upsert: true, new: true }
     );
 
-    await recalcRating(content._id);
-    await activity(req.user?.sub, 'RATED', content._id);
-    res.json({ rating: updatedRating });
+    const { averageRating, ratingCount, breakdown } = await recalcRating(content._id);
+    if (req.user?.sub) {
+      await activity(req.user.sub, 'RATED', content._id);
+    }
+
+    res.json({
+      ok: true,
+      rating: updatedRating,
+      averageRating,
+      ratingCount,
+      ratingBreakdown: breakdown.percentages,
+      ratingCounts: breakdown.counts,
+    });
   } catch (err) {
     next(err);
   }
@@ -171,39 +229,42 @@ router.post('/:id/rating', auth(), async (req, res, next) => {
 
 // Helper for toggle operations (like / favorite)
 async function toggleInteraction(Model, field, actionType, req, res) {
-  const content = await Content.findById(req.params.id);
+  const content = await findContent(req.params.id);
   if (!content) {
     return res.status(404).json({ error: 'Content not found' });
   }
 
-  const existing = await Model.findOne({ userId: req.user?.sub, contentId: content._id });
+  const userId = await getEffectiveUserId(req);
+  const existing = await Model.findOne({ userId, contentId: content._id });
   if (existing) {
     await Model.deleteOne({ _id: existing._id });
     await Content.updateOne({ _id: content._id }, { $inc: { [field]: -1 } });
     return res.json({ active: false });
   }
 
-  await Model.create({ userId: req.user?.sub, contentId: content._id });
+  await Model.create({ userId, contentId: content._id });
   await Content.updateOne({ _id: content._id }, { $inc: { [field]: 1 } });
-  await activity(req.user?.sub, actionType, content._id);
+  if (req.user?.sub) {
+    await activity(req.user.sub, actionType, content._id);
+  }
   res.json({ active: true });
 }
 
 // POST /api/content/:id/like
-router.post('/:id/like', auth(), (req, res, next) =>
+router.post('/:id/like', auth(false), (req, res, next) =>
   toggleInteraction(Like, 'likeCount', 'LIKED', req, res).catch(next)
 );
 
 // POST /api/content/:id/favorite
-router.post('/:id/favorite', auth(), (req, res, next) =>
+router.post('/:id/favorite', auth(false), (req, res, next) =>
   toggleInteraction(Favorite, 'favoriteCount', 'FAVORITED', req, res).catch(next)
 );
 
 // POST /api/content/:id/reviews - Create review
-router.post('/:id/reviews', auth(), async (req, res, next) => {
+router.post('/:id/reviews', auth(false), async (req, res, next) => {
   try {
     await db();
-    const content = await Content.findById(req.params.id);
+    const content = await findContent(req.params.id);
     if (!content) {
       return res.status(404).json({ error: 'Content not found' });
     }
@@ -213,13 +274,16 @@ router.post('/:id/reviews', auth(), async (req, res, next) => {
       spoiler: z.boolean().default(false),
     }).parse(req.body);
 
+    const userId = await getEffectiveUserId(req);
     const review = await Review.create({
-      userId: req.user?.sub,
+      userId,
       contentId: content._id,
       ...reviewData,
     });
 
-    await activity(req.user?.sub, 'REVIEWED', content._id, review._id);
+    if (req.user?.sub) {
+      await activity(req.user.sub, 'REVIEWED', content._id, review._id);
+    }
     res.status(201).json({ review });
   } catch (err) {
     next(err);
