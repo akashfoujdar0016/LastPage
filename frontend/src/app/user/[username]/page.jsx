@@ -86,14 +86,14 @@ export default function UserProfilePage({ params }) {
 
   if (!user) {
     return (
-      <div className="min-h-[calc(100vh-52px)] bg-page text-ink flex flex-col items-center justify-center p-6 text-center">
-        <h1 className="font-serif text-3xl text-white mb-2">Member not found</h1>
-        <p className="text-xs text-zinc-400 mb-6">
+      <div className="min-h-[calc(100vh-60px)] bg-base text-primary flex flex-col items-center justify-center p-6 text-center">
+        <h1 className="font-serif text-3xl text-text-primary mb-2">Member not found</h1>
+        <p className="text-xs text-text-secondary mb-6">
           The requested profile @{username} does not exist in the journal archive.
         </p>
         <Link
           href="/hub"
-          className="px-5 py-2 rounded-full bg-white text-zinc-950 text-xs font-semibold hover:bg-zinc-200 transition-colors"
+          className="px-6 py-2.5 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors shadow-md"
         >
           Back to Hub
         </Link>
@@ -102,48 +102,48 @@ export default function UserProfilePage({ params }) {
   }
 
   return (
-    <div className="min-h-[calc(100vh-52px)] bg-page text-ink pb-24 selection:bg-ember/30 selection:text-ink relative overflow-hidden">
+    <div className="min-h-[calc(100vh-60px)] bg-[#000000] text-[#E0E0E0] pb-24 relative overflow-hidden">
       {/* Ambient background glows */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/[0.035] via-transparent to-transparent pointer-events-none" />
-      <div className="fixed top-12 left-1/4 w-96 h-96 rounded-full bg-radial from-ember/[0.05] to-transparent blur-3xl pointer-events-none" />
-      <div className="fixed bottom-12 right-1/4 w-96 h-96 rounded-full bg-radial from-gold/[0.03] to-transparent blur-3xl pointer-events-none" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-theme-accent/4 via-transparent to-transparent pointer-events-none" />
+      <div className="fixed top-12 left-1/4 w-96 h-96 rounded-full bg-radial from-theme-accent/4 to-transparent blur-3xl pointer-events-none" />
+      <div className="fixed bottom-12 right-1/4 w-96 h-96 rounded-full bg-radial from-theme-accent/4 to-transparent blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
 
         {/* ── Top Back Navigation ── */}
-        <div className="pt-8 pb-4 border-b border-white/[0.08] flex items-center justify-between mb-8">
+        <div className="pt-8 pb-4 border-b border-theme-border flex items-center justify-between mb-8">
           <Link
             href="/hub"
-            className="inline-flex items-center gap-2 text-xs text-zinc-400 hover:text-white transition-colors"
+            className="inline-flex items-center gap-2 text-xs text-text-secondary hover:text-text-primary transition-colors"
           >
             <ArrowLeft size={13} />
             <span>Back to collection</span>
           </Link>
 
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#F87171]">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-theme-accent font-sans">
             {user.isSelf ? 'Your Journal' : 'Peer Journal'}
           </span>
         </div>
 
         {/* ── 1. Profile Header: Social Stats & Follow Actions ── */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-white/[0.08] mb-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-theme-border mb-8">
           <div className="flex items-start sm:items-center gap-5">
             {/* Avatar */}
-            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-ember/15 border-2 border-ember/30 text-ember flex items-center justify-center font-serif text-2xl sm:text-3xl font-medium shadow-2xl shrink-0">
+            <div className="w-16 sm:w-20 h-16 sm:h-20 rounded-full bg-theme-accent-dim border-2 border-theme-accent text-theme-accent flex items-center justify-center font-serif text-2xl sm:text-3xl font-medium shadow-luxury shrink-0">
               {user.initial || user.username.charAt(0).toUpperCase()}
             </div>
 
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="font-serif text-2xl sm:text-3xl font-normal text-zinc-100 leading-tight">
+                <h1 className="font-serif text-2xl sm:text-3xl font-normal text-text-primary leading-tight">
                   {user.displayName}
                 </h1>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-text-secondary font-mono">
                   @{user.username}
                 </span>
               </div>
 
-              <p className="text-xs text-zinc-300 max-w-lg mt-1 leading-relaxed">
+              <p className="text-xs text-text-secondary max-w-lg mt-1 leading-relaxed">
                 {user.bio}
               </p>
 
@@ -151,30 +151,30 @@ export default function UserProfilePage({ params }) {
               <div className="flex items-center gap-5 mt-3 text-xs">
                 <button
                   onClick={() => setModalState({ isOpen: true, type: 'FOLLOWING' })}
-                  className="text-zinc-400 hover:text-white transition-colors flex items-baseline gap-1"
+                  className="text-text-secondary hover:text-text-primary transition-colors flex items-baseline gap-1"
                 >
-                  <span className="font-mono text-sm font-semibold text-zinc-100">
+                  <span className="font-mono text-sm font-semibold text-text-primary">
                     {user.followingCount}
                   </span>
                   <span>Following</span>
                 </button>
 
-                <span className="text-zinc-600">•</span>
+                <span className="text-text-muted">•</span>
 
                 <button
                   onClick={() => setModalState({ isOpen: true, type: 'FOLLOWERS' })}
-                  className="text-zinc-400 hover:text-white transition-colors flex items-baseline gap-1"
+                  className="text-text-secondary hover:text-text-primary transition-colors flex items-baseline gap-1"
                 >
-                  <span className="font-mono text-sm font-semibold text-zinc-100">
+                  <span className="font-mono text-sm font-semibold text-text-primary">
                     {user.followersCount}
                   </span>
                   <span>Followers</span>
                 </button>
 
-                <span className="text-zinc-600">•</span>
+                <span className="text-text-muted">•</span>
 
-                <span className="text-zinc-400 flex items-baseline gap-1">
-                  <span className="font-mono text-sm font-semibold text-zinc-100">
+                <span className="text-text-secondary flex items-baseline gap-1">
+                  <span className="font-mono text-sm font-semibold text-text-primary">
                     {user.watched?.length || 0}
                   </span>
                   <span>Logged</span>
@@ -188,7 +188,7 @@ export default function UserProfilePage({ params }) {
             {user.isSelf ? (
               <Link
                 href="/profile"
-                className="px-5 py-2 rounded-full border border-white/20 text-xs font-medium text-zinc-300 hover:text-white hover:border-white/40 transition-all shadow-sm"
+                className="px-5 py-2 rounded-full border border-theme-border text-xs font-medium text-text-secondary hover:text-text-primary hover:border-theme-border-strong transition-all shadow-sm"
               >
                 Edit Profile
               </Link>
@@ -199,8 +199,8 @@ export default function UserProfilePage({ params }) {
                 onMouseLeave={() => setFollowHovered(false)}
                 className={`px-5 py-2 rounded-full text-xs font-semibold transition-all duration-200 shadow-md ${
                   isFollowing
-                    ? 'border border-white/20 text-zinc-300 hover:border-red-500/50 hover:text-red-400 hover:bg-red-500/10'
-                    : 'bg-[#F4F4F5] text-[#121216] hover:bg-white active:scale-[0.99]'
+                    ? 'border border-theme-border text-text-secondary hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/10'
+                    : 'bg-theme-accent text-bg-base hover:bg-theme-accent-hover active:scale-[0.99]'
                 }`}
               >
                 {isFollowing ? (followHovered ? 'Unfollow' : 'Following') : 'Follow'}
@@ -210,9 +210,9 @@ export default function UserProfilePage({ params }) {
         </div>
 
         {/* ── 2. Segmented Media Switcher & Collection Filters ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-white/[0.08]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8 border-b border-theme-border">
           {/* Media Switcher: All | Cinema | Library */}
-          <div className="flex items-center p-1 rounded-full bg-surface border border-white/[0.08] shrink-0 self-start">
+          <div className="flex items-center p-1 rounded-full bg-bg-surface border border-theme-border shrink-0 self-start">
             {[
               { id: 'ALL', label: 'All Media' },
               { id: 'CINEMA', label: 'Cinema', Icon: Film },
@@ -223,8 +223,8 @@ export default function UserProfilePage({ params }) {
                 onClick={() => setActiveMedia(tab.id)}
                 className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
                   activeMedia === tab.id
-                    ? 'bg-white/15 text-white shadow-sm'
-                    : 'text-zinc-400 hover:text-white'
+                    ? 'bg-theme-accent text-bg-base font-semibold shadow-md'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 {tab.Icon && <tab.Icon size={12} />}
@@ -249,8 +249,8 @@ export default function UserProfilePage({ params }) {
                   onClick={() => setActiveCollection(filter.id)}
                   className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all ${
                     active
-                      ? 'bg-white/10 text-white border border-white/20 shadow-sm'
-                      : 'text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent'
+                      ? 'bg-theme-accent text-bg-base font-semibold shadow-md'
+                      : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface-subtle border border-transparent'
                   }`}
                 >
                   {filter.label}
@@ -264,7 +264,7 @@ export default function UserProfilePage({ params }) {
         {activeCollection === 'ACTIVITY' ? (
           /* ── Friend Activity Stream ── */
           displayedActivities.length === 0 ? (
-            <div className="py-24 text-center text-xs text-zinc-400">
+            <div className="py-24 text-center text-xs text-text-secondary">
               No journal activity logged by @{user.username} yet.
             </div>
           ) : (
@@ -274,11 +274,11 @@ export default function UserProfilePage({ params }) {
                 return (
                   <div
                     key={act.id}
-                    className="p-5 sm:p-6 rounded-2xl bg-surface/80 border border-white/10 shadow-xl backdrop-blur-md flex flex-col gap-3.5"
+                    className="p-5 sm:p-6 rounded-2xl bg-bg-surface border border-theme-border shadow-luxury backdrop-blur-md flex flex-col gap-3.5 hover:border-theme-accent-border transition-all"
                   >
                     <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-2 text-xs text-zinc-400">
-                        <span className="font-medium text-white">{user.displayName}</span>
+                      <div className="flex items-center gap-2 text-xs text-text-secondary">
+                        <span className="font-medium text-text-primary">{user.displayName}</span>
                         <span>
                           {act.type === 'REVIEWED' && 'reviewed'}
                           {act.type === 'READ' && 'read'}
@@ -288,41 +288,41 @@ export default function UserProfilePage({ params }) {
                         </span>
                         <Link
                           href={`/${act.contentType === 'MOVIE' ? 'movies' : 'books'}/${act.contentId}`}
-                          className="font-serif text-sm text-white hover:text-ember transition-colors truncate"
+                          className="font-serif text-sm text-text-primary hover:text-theme-accent transition-colors truncate"
                         >
                           {act.title}
                         </Link>
                       </div>
 
                       {act.score && (
-                        <span className="text-xs font-semibold text-gold bg-gold/10 px-2 py-0.5 rounded-full border border-gold/20 shrink-0">
+                        <span className="text-xs font-semibold text-theme-accent bg-theme-accent-dim px-2 py-0.5 rounded-full border border-theme-accent-border shrink-0">
                           ★ {Number(act.score).toFixed(1)}
                         </span>
                       )}
                     </div>
 
                     {act.reviewSnippet && (
-                      <div className="pl-3.5 border-l-2 border-ember/60 my-1">
-                        <p className="font-serif italic text-sm text-zinc-300 leading-relaxed">
+                      <div className="pl-3.5 border-l-2 border-theme-accent my-1">
+                        <p className="font-serif italic text-sm text-text-primary leading-relaxed">
                           "{act.reviewSnippet}"
                         </p>
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 border-t border-white/5 text-[11px] text-zinc-500">
+                    <div className="flex items-center justify-between pt-2 border-t border-theme-border text-[11px] text-text-muted">
                       <span>{formatLogDate(act.createdAt)}</span>
 
                       <button
                         onClick={() => toggleActivityLike(act.id)}
                         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full transition-colors ${
                           isLiked
-                            ? 'text-ember bg-ember/10'
-                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            ? 'text-theme-accent bg-theme-accent-dim border border-theme-accent-border'
+                            : 'text-text-secondary hover:text-text-primary hover:bg-bg-surface-raised'
                         }`}
                       >
                         <Heart
                           size={12}
-                          className={isLiked ? 'fill-ember stroke-ember' : 'stroke-current'}
+                          className={isLiked ? 'fill-theme-accent stroke-theme-accent' : 'stroke-current'}
                         />
                         <span>{(act.likesCount || 0) + (isLiked ? 1 : 0)}</span>
                       </button>
@@ -335,7 +335,7 @@ export default function UserProfilePage({ params }) {
         ) : (
           /* ── Friend Media Grid ── */
           displayedItems.length === 0 ? (
-            <div className="py-24 text-center text-xs text-zinc-400">
+            <div className="py-24 text-center text-xs text-text-secondary">
               No titles in {user.displayName}'s {activeCollection.toLowerCase()} list.
             </div>
           ) : (
@@ -349,8 +349,8 @@ export default function UserProfilePage({ params }) {
                   <div key={item._id} className="group relative flex flex-col">
                     {/* Poster container with read-only overlay */}
                     <div
-                      className={`relative w-full aspect-[2/3] overflow-hidden bg-surface-raised border border-white/10 group-hover:border-white/20 transition-all duration-300 shadow-xl ${
-                        isMovie ? 'rounded-lg' : 'rounded-xl shadow-[2px_4px_16px_rgba(0,0,0,0.5)]'
+                      className={`relative w-full aspect-[2/3] overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all duration-300 shadow-luxury ${
+                        isMovie ? 'rounded-lg' : 'rounded-xl shadow-book-spine'
                       }`}
                     >
                       <Link href={href} className="block w-full h-full relative">
@@ -361,13 +361,13 @@ export default function UserProfilePage({ params }) {
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="w-full h-full flex flex-col justify-end p-4 bg-surface">
-                            <div className="font-serif text-sm text-white truncate">{item.title}</div>
+                          <div className="w-full h-full flex flex-col justify-end p-4 bg-bg-surface">
+                            <div className="font-serif text-sm text-text-primary truncate">{item.title}</div>
                           </div>
                         )}
 
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                          <span className="text-[10px] font-medium bg-white/90 text-zinc-950 px-2 py-1 rounded-full flex items-center gap-1 shadow-md">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                          <span className="text-[10px] font-semibold bg-white text-[#121212] px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
                             <span>View details</span>
                             <ArrowUpRight size={10} />
                           </span>
@@ -379,26 +379,26 @@ export default function UserProfilePage({ params }) {
                     <div className="mt-3 flex flex-col">
                       <Link
                         href={href}
-                        className="font-serif text-[17px] text-white font-normal truncate hover:text-ember transition-colors leading-tight mb-0.5"
+                        className="font-serif text-[17px] text-text-primary font-normal truncate hover:text-theme-accent transition-colors leading-tight mb-0.5"
                       >
                         {item.title}
                       </Link>
 
                       {creator && (
-                        <div className="text-xs text-zinc-400 truncate mb-1">
+                        <div className="text-xs text-text-secondary truncate mb-1">
                           {creator}
                         </div>
                       )}
 
                       <div className="flex items-center gap-2 flex-wrap text-xs">
                         {item.userRating && (
-                          <div className="inline-flex items-center gap-1 font-semibold text-gold text-xs">
-                            <Star size={11} className="fill-gold stroke-gold" />
+                          <div className="inline-flex items-center gap-1 font-semibold text-theme-accent text-xs">
+                            <Star size={11} className="fill-theme-accent stroke-theme-accent" />
                             <span>{Number(item.userRating).toFixed(1)}</span>
                           </div>
                         )}
                         {item.loggedDate && (
-                          <span className="text-[10px] text-zinc-500">
+                          <span className="text-[10px] text-text-muted font-mono">
                             {formatLogDate(item.loggedDate)}
                           </span>
                         )}

@@ -1,80 +1,88 @@
 'use client';
 
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ArrowRight } from 'lucide-react';
 import AuthCard from '../components/AuthCard';
 
-export default function Home() {
+export default function LandingPage() {
+  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    setMounted(true);
+    try {
+      const stored = localStorage.getItem('currentUser');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setUser(parsed);
+        // Automatically redirect to Choose Page (/hub) if already logged in
+        router.push('/hub');
+      }
+    } catch {}
+  }, [router]);
+
   return (
-    <main className="h-screen overflow-hidden flex items-center justify-center px-8 md:px-16 bg-page text-ink relative selection:bg-ember/30 selection:text-ink">
-      {/* Subtle ambient lighting cones */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/[0.04] via-transparent to-transparent pointer-events-none" />
-      <div className="fixed -top-24 left-1/4 w-[36rem] h-[36rem] rounded-full bg-radial from-ember/[0.05] to-transparent blur-3xl pointer-events-none" />
-      <div className="fixed -bottom-24 right-1/4 w-[30rem] h-[30rem] rounded-full bg-radial from-gold/[0.035] to-transparent blur-3xl pointer-events-none" />
+    <div className="min-h-screen bg-[#000000] text-[#E0E0E0] flex flex-col justify-center items-center px-6 py-12 relative overflow-hidden selection:bg-white/15 selection:text-white">
+      {/* Subtle vignette */}
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/[0.02] via-transparent to-transparent pointer-events-none" />
 
-      {/* Symmetrical Two-Column Container */}
-      <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 items-center relative z-10">
+      {/* Main Grid: Platform Vision (Left) + Auth Card (Right) */}
+      <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center relative z-10">
 
-        {/* ── Left Column: Editorial Statement & Gateways (7 cols) ── */}
-        <div className="md:col-span-7 flex flex-col justify-center space-y-8">
-          
-          {/* 1. Hero Typography Block */}
-          <div className="space-y-4">
-            <p className="tracking-[0.2em] text-xs font-semibold uppercase text-[#F87171]">
-              CURATED PERSONAL JOURNAL
-            </p>
-            <h1 className="text-6xl md:text-7xl font-serif tracking-tight leading-none text-zinc-100">
-              LastPage
-            </h1>
-            <p className="text-xl font-serif italic text-zinc-300 max-w-lg leading-relaxed pt-1">
-              A quiet, personal journal for the films that stayed with you and the books that changed how you think.
+        {/* ── Left Column: Platform Vision Statement ── */}
+        <div className="lg:col-span-7 flex flex-col gap-6 text-left">
+          {/* Brand Tagline */}
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-white/60" />
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#888888] font-sans">
+              LASTPAGE JOURNAL
             </p>
           </div>
 
-          {/* 2. Redesigned Portal Gateway Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-            <Link
-              href="/movies"
-              className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/20 p-5 rounded-2xl transition duration-300 group cursor-pointer shadow-lg backdrop-blur-sm flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="font-serif text-xl text-zinc-100 font-normal group-hover:text-ember transition-colors">
-                  Cinema
-                </span>
-                <span className="text-sm text-zinc-400 group-hover:text-ember group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200">
-                  ↗
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors font-sans">
-                Films that stayed.
-              </p>
-            </Link>
+          {/* Vision Heading */}
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#FFFFFF] tracking-tight leading-[1.12]">
+            A sanctuary for <br />
+            <span className="italic text-[#E0E0E0]">
+              cinema &amp; literature.
+            </span>
+          </h1>
 
-            <Link
-              href="/books"
-              className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/20 p-5 rounded-2xl transition duration-300 group cursor-pointer shadow-lg backdrop-blur-sm flex flex-col justify-between"
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="font-serif text-xl text-zinc-100 font-normal group-hover:text-ember transition-colors">
-                  Library
-                </span>
-                <span className="text-sm text-zinc-400 group-hover:text-ember group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200">
-                  ↗
-                </span>
-              </div>
-              <p className="text-xs text-zinc-400 group-hover:text-zinc-300 transition-colors font-sans">
-                Books that changed you.
-              </p>
-            </Link>
-          </div>
+          {/* Description */}
+          <p className="text-sm sm:text-base text-[#D4D4D8] leading-relaxed max-w-xl font-normal">
+            Where the films that moved you and the books that stayed with you become a lifelong personal journal. Reflect, rate, curate your private canon, and connect with peers of refined taste.
+          </p>
 
+          {/* Already logged in shortcut banner */}
+          {user && (
+            <div className="mt-2 p-3.5 rounded-xl bg-white/[0.04] border border-[#222222] flex items-center justify-between">
+              <div className="text-xs text-[#888888]">
+                Logged in as <span className="font-semibold text-[#FFFFFF]">@{user.username}</span>
+              </div>
+              <button
+                onClick={() => router.push('/hub')}
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white text-[#000000] font-semibold text-xs hover:bg-[#E0E0E0] transition-all"
+              >
+                <span>Enter Collection</span>
+                <ArrowRight size={12} />
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* ── Right Column: Streamlined Auth Card (5 cols) ── */}
-        <div className="md:col-span-5 w-full max-w-sm md:ml-auto md:mr-0 mx-auto md:translate-x-6 flex items-center justify-end">
+        {/* ── Right Column: Sleek Auth Card (Sign In / Register) ── */}
+        <div className="lg:col-span-5 w-full max-w-md mx-auto relative">
           <AuthCard />
         </div>
 
       </div>
-    </main>
+
+      {/* Footer Branding */}
+      <div className="w-full max-w-6xl mx-auto pt-16 flex items-center justify-between text-[11px] text-[#555555] border-t border-[#222222] relative z-10 mt-12">
+        <span>© LastPage · The Literary & Cinematic Journal</span>
+        <span className="font-mono text-[10px]">v2.0 · Ultra-Clean Edition</span>
+      </div>
+    </div>
   );
 }

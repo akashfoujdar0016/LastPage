@@ -191,7 +191,7 @@ export const PEER_USERS = [
     _id: 'user-sophia-r',
     username: 'sophia_r',
     displayName: 'Sophia Ren',
-    bio: 'Cinematographer based in London. Chasing golden hour and quiet domestic dramas.',
+    bio: 'Cinematographer based in London. Chasing magic hour and quiet domestic dramas.',
     avatarUrl: '',
     initial: 'S',
     followersCount: 890,

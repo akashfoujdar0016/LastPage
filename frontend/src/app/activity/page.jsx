@@ -51,11 +51,11 @@ export default function ActivityPage() {
   const renderActionIcon = (type) => {
     switch (type) {
       case 'RATED':
-        return <Star size={13} className="text-gold fill-gold" />;
+        return <Star size={13} className="text-white fill-white" />;
       case 'LIKED':
-        return <Heart size={13} className="text-ember fill-ember" />;
+        return <Heart size={13} className="text-white fill-white" />;
       case 'FAVORITED':
-        return <Star size={13} className="text-gold fill-gold" />;
+        return <Star size={13} className="text-white fill-white" />;
       case 'WATCHED':
       case 'READ':
         return <Check size={13} className="text-ink" />;
@@ -73,11 +73,11 @@ export default function ActivityPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-52px)] bg-page text-ink pb-24 selection:bg-ember/30 selection:text-ink relative overflow-hidden">
+    <div className="min-h-[calc(100vh-60px)] bg-[#000000] text-[#E0E0E0] pb-24 selection:bg-white/15 selection:text-white relative overflow-hidden">
       {/* Ambient background glow */}
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/[0.035] via-transparent to-transparent pointer-events-none" />
-      <div className="fixed top-12 left-1/3 w-96 h-96 rounded-full bg-radial from-ember/[0.05] to-transparent blur-3xl pointer-events-none" />
-      <div className="fixed bottom-12 right-1/4 w-96 h-96 rounded-full bg-radial from-gold/[0.03] to-transparent blur-3xl pointer-events-none" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/[0.02] via-transparent to-transparent pointer-events-none" />
+      <div className="fixed top-12 left-1/3 w-96 h-96 rounded-full bg-radial from-white/[0.015] to-transparent blur-3xl pointer-events-none" />
+      <div className="fixed bottom-12 right-1/4 w-96 h-96 rounded-full bg-radial from-white/[0.015] to-transparent blur-3xl pointer-events-none" />
 
       <div className="max-w-3xl mx-auto px-6 md:px-10 relative z-10">
 
@@ -91,27 +91,27 @@ export default function ActivityPage() {
             <span>Back to collection</span>
           </Link>
 
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#F87171]">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#888888]">
             Timeline Feed
           </span>
         </div>
 
         {/* ── Header: Title & Feed Switcher (Friends Activity vs Your Journal) ── */}
         <div className="pb-6 border-b border-white/[0.08] mb-8">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#F87171] mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#888888] mb-2">
             COMMUNITY & JOURNAL
           </p>
-          <h1 className="font-serif text-3xl sm:text-4xl font-normal text-zinc-100 tracking-tight mb-6">
+          <h1 className="font-serif text-3xl sm:text-4xl font-normal text-white tracking-tight mb-6">
             Activity Stream
           </h1>
 
           {/* Top-Level Mode Segmented Pill Switcher */}
-          <div className="flex items-center gap-3 p-1 rounded-full bg-surface border border-white/[0.08] w-fit">
+          <div className="flex items-center gap-2 p-1 rounded-full bg-[#111111] border border-[#222222] w-fit">
             <button
               onClick={() => setFeedMode('FRIENDS')}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-2 ${
                 feedMode === 'FRIENDS'
-                  ? 'bg-[#F4F4F5] text-[#121216] shadow-sm'
+                  ? 'bg-white text-black shadow-[0_0_18px_rgba(255,255,255,0.22)]'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
@@ -123,7 +123,7 @@ export default function ActivityPage() {
               onClick={() => setFeedMode('PERSONAL')}
               className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-2 ${
                 feedMode === 'PERSONAL'
-                  ? 'bg-[#F4F4F5] text-[#121216] shadow-sm'
+                  ? 'bg-white text-black shadow-[0_0_18px_rgba(255,255,255,0.22)]'
                   : 'text-zinc-400 hover:text-white'
               }`}
             >
@@ -146,7 +146,7 @@ export default function ActivityPage() {
               </p>
               <Link
                 href="/profile"
-                className="px-5 py-2 rounded-full bg-[#F4F4F5] text-[#121216] text-xs font-semibold hover:bg-white transition-colors shadow-md"
+                className="btn-highlight inline-flex items-center px-5 py-2 rounded-full text-xs font-semibold"
               >
                 Discover Curators →
               </Link>
@@ -161,14 +161,14 @@ export default function ActivityPage() {
                 return (
                   <div
                     key={act.id}
-                    className="p-6 rounded-2xl bg-surface border border-white/[0.08] shadow-2xl backdrop-blur-md flex flex-col gap-4 hover:border-white/[0.16] transition-all"
+                    className="p-6 rounded-2xl bg-[#111111] border border-[#222222] shadow-2xl backdrop-blur-md flex flex-col gap-4 hover:border-white/[0.16] transition-all"
                   >
                     {/* Header: User avatar + Action line */}
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex items-center gap-3">
                         <Link
                           href={`/user/${act.user.username}`}
-                          className="w-10 h-10 rounded-full bg-ember/15 border border-ember/30 text-ember flex items-center justify-center font-serif text-base font-medium shrink-0 hover:border-ember transition-colors"
+                          className="w-10 h-10 rounded-full bg-white/[0.08] border border-white/20 text-white flex items-center justify-center font-serif text-base font-medium shrink-0 hover:border-white transition-colors"
                         >
                           {act.user.initial || act.user.username.charAt(0).toUpperCase()}
                         </Link>
@@ -177,7 +177,7 @@ export default function ActivityPage() {
                           <div className="flex items-baseline gap-1.5 flex-wrap text-xs">
                             <Link
                               href={`/user/${act.user.username}`}
-                              className="font-medium text-white hover:text-ember transition-colors"
+                              className="font-medium text-white hover:text-[#E0E0E0] transition-colors"
                             >
                               {act.user.displayName}
                             </Link>
@@ -198,7 +198,7 @@ export default function ActivityPage() {
                       </div>
 
                       {act.score && (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-gold bg-gold/10 px-2.5 py-1 rounded-full border border-gold/25 shrink-0">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-white/[0.08] px-2.5 py-1 rounded-full border border-white/[0.14] shrink-0">
                           ★ {Number(act.score).toFixed(1)}
                         </span>
                       )}
@@ -222,7 +222,7 @@ export default function ActivityPage() {
                       <div className="flex-1 min-w-0">
                         <Link
                           href={targetUrl}
-                          className="font-serif text-lg text-white font-normal hover:text-ember transition-colors truncate block mb-0.5"
+                          className="font-serif text-lg text-white font-normal hover:text-[#E0E0E0] transition-colors truncate block mb-0.5"
                         >
                           {act.title}
                         </Link>
@@ -231,7 +231,7 @@ export default function ActivityPage() {
                         </div>
 
                         {act.reviewSnippet && (
-                          <div className="pl-3 border-l-2 border-ember/60 my-1">
+                          <div className="pl-3 border-l-2 border-white/40 my-1">
                             <p className="font-serif italic text-xs sm:text-sm text-zinc-300 leading-relaxed">
                               "{act.reviewSnippet}"
                             </p>
@@ -250,13 +250,13 @@ export default function ActivityPage() {
                         onClick={() => toggleActivityLike(act.id)}
                         className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                           isLiked
-                            ? 'text-ember bg-ember/15 border border-ember/30'
+                            ? 'text-white bg-white/10 border border-white/20'
                             : 'text-zinc-400 hover:text-white hover:bg-white/5 border border-transparent'
                         }`}
                       >
                         <Heart
                           size={13}
-                          className={isLiked ? 'fill-ember stroke-ember' : 'stroke-current'}
+                          className={isLiked ? 'fill-white stroke-white' : 'stroke-current'}
                         />
                         <span>{(act.likesCount || 0) + (isLiked ? 1 : 0)}</span>
                       </button>
@@ -324,12 +324,12 @@ export default function ActivityPage() {
                                 <span>You {act.type.toLowerCase()}</span>
                                 <Link
                                   href={`/${act.contentType === 'MOVIE' ? 'movies' : 'books'}/${act.contentId}`}
-                                  className="font-serif text-lg text-white hover:text-ember transition-colors"
+                                  className="font-serif text-lg text-white hover:text-[#E0E0E0] transition-colors"
                                 >
                                   {act.title}
                                 </Link>
                                 {act.score && (
-                                  <span className="inline-flex items-center gap-1 font-semibold text-gold text-xs">
+                                  <span className="inline-flex items-center gap-1 font-semibold text-white text-xs">
                                     ★ {Number(act.score).toFixed(1)}
                                   </span>
                                 )}

@@ -73,10 +73,10 @@ export default function AuthCard({ onClose }) {
     setCurrentUser(null);
   };
 
-  // Guard against hydration mismatch from browser autofill extensions (e.g. fdprocessedid)
+  // Guard against hydration mismatch
   if (!mounted) {
     return (
-      <div className="w-full bg-[#1C1C22] border border-white/[0.08] rounded-2xl p-6 sm:p-7 shadow-2xl min-h-[380px] flex items-center justify-center">
+      <div className="w-full bg-[#121212] border border-[#212121] rounded-2xl p-6 sm:p-7 shadow-2xl min-h-[380px] flex items-center justify-center">
         <div className="w-5 h-5 rounded-full border-2 border-white/10 border-t-white/40 animate-spin" />
       </div>
     );
@@ -85,9 +85,9 @@ export default function AuthCard({ onClose }) {
   // ── Logged In State ──
   if (currentUser) {
     return (
-      <div className="w-full bg-[#1C1C22] border border-white/[0.08] hover:border-white/[0.14] rounded-2xl p-6 sm:p-7 shadow-2xl text-ink transition-all">
+      <div className="w-full bg-[#111111] border border-[#222222] hover:border-white/[0.16] rounded-2xl p-6 sm:p-7 shadow-2xl text-[#E0E0E0] transition-all duration-200">
         <div className="flex items-center gap-3.5 mb-4">
-          <div className="w-10 h-10 rounded-full bg-ember/15 border border-ember/30 text-ember flex items-center justify-center font-serif text-lg font-medium">
+          <div className="w-10 h-10 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center font-serif text-lg font-medium">
             {(currentUser.username || 'M').charAt(0).toUpperCase()}
           </div>
           <div>
@@ -108,7 +108,7 @@ export default function AuthCard({ onClose }) {
           type="button"
           suppressHydrationWarning
           onClick={() => router.push('/hub')}
-          className="w-full py-2.5 rounded-full bg-[#F4F4F5] text-[#121216] hover:bg-white font-semibold text-xs flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-white/10 active:scale-[0.99]"
+          className="w-full py-2.5 rounded-full bg-white text-[#000000] hover:bg-[#E0E0E0] font-semibold text-xs flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.99]"
         >
           <span>Go to collection</span>
           <ArrowRight size={13} />
@@ -118,7 +118,7 @@ export default function AuthCard({ onClose }) {
           type="button"
           suppressHydrationWarning
           onClick={handleSignOut}
-          className="mt-3 w-full text-center text-xs text-zinc-400 hover:text-white transition-colors"
+          className="mt-3 w-full text-center text-xs text-[#555555] hover:text-white transition-colors"
         >
           Sign out
         </button>
@@ -126,10 +126,10 @@ export default function AuthCard({ onClose }) {
     );
   }
 
-  // ── Mode: Sign In (Focused & Frictionless) ──
+  // ── Mode: Sign In ──
   if (mode === 'login') {
     return (
-      <div className="w-full bg-[#1C1C22] border border-white/[0.08] hover:border-white/[0.14] rounded-2xl p-6 sm:p-7 shadow-2xl relative text-ink transition-all">
+      <div className="w-full bg-[#111111] border border-[#222222] hover:border-white/[0.16] rounded-2xl p-6 sm:p-7 shadow-2xl relative text-[#E0E0E0] transition-all duration-200">
         {onClose && (
           <button
             type="button"
@@ -152,7 +152,7 @@ export default function AuthCard({ onClose }) {
         </div>
 
         {error && (
-          <div className="mb-3.5 px-3 py-2 rounded-lg bg-ember/15 border border-ember/30 text-ember text-xs leading-tight">
+          <div className="mb-3.5 px-3 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-red-300 text-xs leading-tight">
             {error}
           </div>
         )}
@@ -169,7 +169,7 @@ export default function AuthCard({ onClose }) {
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full bg-[#1A1A20] border border-white/10 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:border-white/25 focus:ring-1 focus:ring-white/20 focus:bg-[#202028]"
+              className="w-full bg-[#0A0A0A] border border-[#222222] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-[#555555] outline-none transition-all duration-200 focus:border-white/30 focus:ring-1 focus:ring-white/15"
             />
           </div>
 
@@ -185,7 +185,7 @@ export default function AuthCard({ onClose }) {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full bg-[#1A1A20] border border-white/10 rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:border-white/25 focus:ring-1 focus:ring-white/20 focus:bg-[#202028]"
+                className="w-full bg-[#0A0A0A] border border-[#222222] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-white placeholder-[#555555] outline-none transition-all duration-200 focus:border-white/30 focus:ring-1 focus:ring-white/15"
               />
               <button
                 type="button"
@@ -203,20 +203,20 @@ export default function AuthCard({ onClose }) {
             type="submit"
             disabled={loading}
             suppressHydrationWarning
-            className="mt-1 w-full py-2.5 rounded-full bg-[#F4F4F5] text-[#121216] hover:bg-white font-semibold text-xs flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-white/10 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-highlight mt-1 w-full py-2.5 rounded-full font-semibold text-xs flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {loading && <Loader2 size={13} className="animate-spin" />}
             <span>{loading ? 'Signing in…' : 'Sign in →'}</span>
           </button>
         </form>
 
-        <div className="mt-5 pt-4 border-t border-white/10 text-center text-xs text-zinc-400">
+        <div className="mt-5 pt-4 border-t border-[#222222] text-center text-xs text-[#888888]">
           Need an account?{' '}
           <button
             type="button"
             suppressHydrationWarning
             onClick={() => { setMode('register'); setError(''); }}
-            className="text-white font-medium hover:text-ember transition-colors ml-1"
+            className="text-white font-medium hover:text-[#E0E0E0] transition-colors ml-1"
           >
             Sign up
           </button>
@@ -225,9 +225,9 @@ export default function AuthCard({ onClose }) {
     );
   }
 
-  // ── Mode: Create Account (Streamlined & Pure) ──
+  // ── Mode: Create Account ──
   return (
-    <div className="w-full bg-[#1C1C22] border border-white/[0.08] hover:border-white/[0.14] rounded-2xl p-6 sm:p-7 shadow-2xl relative text-ink transition-all">
+    <div className="w-full bg-[#111111] border border-[#222222] hover:border-white/[0.16] rounded-2xl p-6 sm:p-7 shadow-2xl relative text-[#E0E0E0] transition-all duration-200">
       {onClose && (
         <button
           type="button"
@@ -244,18 +244,18 @@ export default function AuthCard({ onClose }) {
         <h3 className="font-serif text-2xl font-normal text-white leading-tight mb-1">
           Create an account
         </h3>
-        <p className="text-xs text-zinc-300 leading-tight">
+        <p className="text-xs text-zinc-400 leading-tight">
           Keep track of the films and books you love.
         </p>
       </div>
 
       {error && (
-        <div className="mb-3.5 px-3 py-2 rounded-lg bg-ember/15 border border-ember/30 text-ember text-xs leading-tight">
+        <div className="mb-3.5 px-3 py-2 rounded-lg bg-red-500/15 border border-red-500/30 text-red-300 text-xs leading-tight">
           {error}
         </div>
       )}
 
-      <form suppressHydrationWarning onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form suppressHydrationWarning onSubmit={handleSubmit} className="flex flex-col gap-3.5">
         <div>
           <label className="block text-[11px] font-medium text-zinc-400 mb-1 uppercase tracking-wider">
             Username
@@ -267,7 +267,7 @@ export default function AuthCard({ onClose }) {
             value={username}
             onChange={e => setUsername(e.target.value)}
             placeholder="yourname"
-            className="w-full bg-[#1A1A20] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:border-white/25 focus:ring-1 focus:ring-white/20 focus:bg-[#202028]"
+            className="w-full bg-[#0A0A0A] border border-[#222222] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-[#555555] outline-none transition-all duration-200 focus:border-white/30 focus:ring-1 focus:ring-white/15"
           />
         </div>
 
@@ -282,7 +282,7 @@ export default function AuthCard({ onClose }) {
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="w-full bg-[#1A1A20] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:border-white/25 focus:ring-1 focus:ring-white/20 focus:bg-[#202028]"
+            className="w-full bg-[#0A0A0A] border border-[#222222] rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-[#555555] outline-none transition-all duration-200 focus:border-white/30 focus:ring-1 focus:ring-white/15"
           />
         </div>
 
@@ -298,7 +298,7 @@ export default function AuthCard({ onClose }) {
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full bg-[#1A1A20] border border-white/10 rounded-xl pl-3.5 pr-10 py-2 text-xs text-white placeholder-zinc-500 outline-none transition-all duration-200 focus:border-white/25 focus:ring-1 focus:ring-white/20 focus:bg-[#202028]"
+              className="w-full bg-[#0A0A0A] border border-[#222222] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-white placeholder-[#555555] outline-none transition-all duration-200 focus:border-white/30 focus:ring-1 focus:ring-white/15"
             />
             <button
               type="button"
@@ -316,20 +316,20 @@ export default function AuthCard({ onClose }) {
           type="submit"
           disabled={loading}
           suppressHydrationWarning
-          className="mt-1.5 w-full py-2.5 rounded-full bg-[#F4F4F5] text-[#121216] hover:bg-white font-semibold text-xs flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:shadow-white/10 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-highlight mt-1 w-full py-2.5 rounded-full font-semibold text-xs flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading && <Loader2 size={13} className="animate-spin" />}
           <span>{loading ? 'Creating account…' : 'Create account →'}</span>
         </button>
       </form>
 
-      <div className="mt-4 pt-3.5 border-t border-white/10 text-center text-xs text-zinc-400">
+      <div className="mt-5 pt-4 border-t border-[#222222] text-center text-xs text-[#888888]">
         Already have an account?{' '}
         <button
           type="button"
           suppressHydrationWarning
           onClick={() => { setMode('login'); setError(''); }}
-          className="text-white font-medium hover:text-ember transition-colors ml-1"
+          className="text-white font-medium hover:text-[#E0E0E0] transition-colors ml-1"
         >
           Sign in
         </button>
