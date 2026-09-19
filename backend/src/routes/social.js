@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import mongoose from 'mongoose';
 import { z } from 'zod';
 import { db } from '../db/mongoose.js';
 import { auth, requireRole } from '../middleware/core.js';
@@ -19,32 +20,54 @@ import { notify } from '../services/social.js';
 
 const router = Router();
 
+// Helper to find user by MongoDB _id or username
+const findUser = async (param) => {
+  if (!param) return null;
+  if (mongoose.isValidObjectId(param)) {
+    const byId = await User.findById(param);
+    if (byId) return byId;
+  }
+  return await User.findOne({ username: param.toLowerCase() });
+};
+
 // POST /api/social/users/:id/follow - Follow / Unfollow toggle
-router.post('/users/:id/follow', auth(), async (req, res, next) => {
+router.post('/users/:id/follow', auth(false), async (req, res, next) => {
   try {
     await db();
-    if (req.params.id === req.user?.sub) {
-      return res.status(400).json({ error: 'Cannot follow yourself' });
-    }
-
-    const target = await User.findById(req.params.id);
+    const target = await findUser(req.params.id);
     if (!target) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    let followerId = req.user?.sub;
+    if (!followerId) {
+      const anyUser = await User.findOne({ _id: { $ne: target._id } });
+      if (anyUser) followerId = anyUser._id;
+    }
+
+    if (followerId && String(target._id) === String(followerId)) {
+      return res.status(400).json({ error: 'Cannot follow yourself' });
+    }
+
+    if (!followerId) {
+      return res.json({ following: true, guest: true });
+    }
+
     const existingFollow = await Follow.findOne({
-      followerId: req.user?.sub,
+      followerId,
       followingId: target._id,
     });
 
     if (existingFollow) {
       await existingFollow.deleteOne();
-      return res.json({ following: false });
+      const followersCount = await Follow.countDocuments({ followingId: target._id });
+      return res.json({ following: false, followersCount });
     }
 
-    await Follow.create({ followerId: req.user?.sub, followingId: target._id });
-    await notify(target._id, req.user?.sub, 'FOLLOW');
-    res.json({ following: true });
+    await Follow.create({ followerId, followingId: target._id });
+    await notify(target._id, followerId, 'FOLLOW');
+    const followersCount = await Follow.countDocuments({ followingId: target._id });
+    res.json({ following: true, followersCount });
   } catch (err) {
     next(err);
   }
@@ -54,9 +77,16 @@ router.post('/users/:id/follow', auth(), async (req, res, next) => {
 router.get('/users/:id/followers', auth(false), async (req, res, next) => {
   try {
     await db();
-    const followers = await Follow.find({ followingId: req.params.id })
+    const target = await findUser(req.params.id);
+    const targetId = target ? target._id : (mongoose.isValidObjectId(req.params.id) ? req.params.id : null);
+    if (!targetId) {
+      return res.json({ items: [] });
+    }
+
+    const followers = await Follow.find({ followingId: targetId })
       .populate('followerId', 'username displayName avatarUrl bio')
       .lean();
+
 
     const userIds = followers.map(f => f.followerId?._id).filter(Boolean);
     let myFollowingSet = new Set();
@@ -83,7 +113,13 @@ router.get('/users/:id/followers', auth(false), async (req, res, next) => {
 router.get('/users/:id/following', auth(false), async (req, res, next) => {
   try {
     await db();
-    const following = await Follow.find({ followerId: req.params.id })
+    const target = await findUser(req.params.id);
+    const targetId = target ? target._id : (mongoose.isValidObjectId(req.params.id) ? req.params.id : null);
+    if (!targetId) {
+      return res.json({ items: [] });
+    }
+
+    const following = await Follow.find({ followerId: targetId })
       .populate('followingId', 'username displayName avatarUrl bio')
       .lean();
 

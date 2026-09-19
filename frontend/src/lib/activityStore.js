@@ -102,18 +102,6 @@ export function getUserFavourites(type) {
       }
     } catch {}
   }
-  // Default fallback items if none favorited yet
-  if (results.length === 0) {
-    if (!type) {
-      return pool.filter(c => ['m-in-the-mood-for-love', 'b-ficciones', 'm-stalker'].includes(c._id));
-    }
-    if (type === 'MOVIE') {
-      return pool.filter(c => ['m-in-the-mood-for-love', 'm-stalker'].includes(c._id));
-    }
-    if (type === 'BOOK') {
-      return pool.filter(c => ['b-ficciones', 'b-the-secret-history'].includes(c._id));
-    }
-  }
   return results;
 }
 
@@ -127,17 +115,6 @@ export function getUserLiked(type) {
         results.push(item);
       }
     } catch {}
-  }
-  if (results.length === 0) {
-    if (!type) {
-      return pool.filter(c => ['m-stalker', 'b-the-secret-history', 'm-paris-texas'].includes(c._id));
-    }
-    if (type === 'MOVIE') {
-      return pool.filter(c => ['m-stalker', 'm-paris-texas'].includes(c._id));
-    }
-    if (type === 'BOOK') {
-      return pool.filter(c => ['b-the-secret-history', 'b-dune'].includes(c._id));
-    }
   }
   return results;
 }
@@ -153,13 +130,6 @@ export function getUserWatched(type = 'MOVIE') {
         results.push(item);
       }
     } catch {}
-  }
-  if (results.length === 0) {
-    if (type === 'MOVIE') {
-      return pool.filter(c => ['m-in-the-mood-for-love', 'm-paris-texas'].includes(c._id));
-    } else {
-      return pool.filter(c => ['b-the-secret-history', 'b-the-master-and-margarita'].includes(c._id));
-    }
   }
   return results;
 }
@@ -177,15 +147,50 @@ export function getUserWatchlist(type = 'MOVIE') {
       }
     } catch {}
   }
-  if (results.length === 0) {
-    if (type === 'MOVIE') {
-      return pool.filter(c => ['m-stalker', 'm-persona'].includes(c._id));
-    } else {
-      return pool.filter(c => ['b-ficciones', 'b-dune'].includes(c._id));
-    }
+  return results;
+}
+
+export function getUserRatings() {
+  if (typeof window === 'undefined') return [];
+  const results = [];
+  for (const item of ALL_CURATED) {
+    try {
+      const score = localStorage.getItem(`rating_${item._id}`);
+      if (score && Number(score) > 0) {
+        results.push({
+          ...item,
+          userRating: Number(score),
+          loggedDate: localStorage.getItem(`logged_date_${item._id}`) || new Date().toISOString(),
+        });
+      }
+    } catch {}
   }
   return results;
 }
+
+export function getUserReviews() {
+  if (typeof window === 'undefined') return [];
+  const results = [];
+  for (const item of ALL_CURATED) {
+    try {
+      const raw = localStorage.getItem(`review_${item._id}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.body) {
+          results.push({
+            ...item,
+            reviewBody: parsed.body,
+            reviewTitle: parsed.title,
+            rating: parsed.rating || Number(localStorage.getItem(`rating_${item._id}`)) || null,
+            createdAt: parsed.createdAt || new Date().toISOString(),
+          });
+        }
+      }
+    } catch {}
+  }
+  return results;
+}
+
 
 export function getLoggedDate(contentId) {
   if (typeof window === 'undefined') return null;

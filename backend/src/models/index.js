@@ -13,6 +13,9 @@ const UserSchema = new Schema(
     bio: { type: String, default: '' },
     avatarUrl: { type: String, default: '' },
     role: { type: String, enum: ['MEMBER', 'MODERATOR', 'ADMIN'], default: 'MEMBER' },
+    location: { type: String, default: '' },
+    website: { type: String, default: '' },
+    favoriteGenres: [{ type: String }],
     privacy: {
       profile: { type: String, enum: ['PUBLIC', 'FOLLOWERS', 'PRIVATE'], default: 'PUBLIC' },
       activity: { type: String, enum: ['PUBLIC', 'FOLLOWERS', 'PRIVATE'], default: 'FOLLOWERS' },

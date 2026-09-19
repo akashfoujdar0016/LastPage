@@ -51,6 +51,10 @@ export default function UserProfilePage({ params }) {
     if (!user || user.isSelf) return;
     const next = toggleFollowUser(user.username);
     setIsFollowing(next);
+    setUser(prev => prev ? ({
+      ...prev,
+      followersCount: Math.max(0, (prev.followersCount || 0) + (next ? 1 : -1)),
+    }) : null);
   };
 
   // Filter items by media type

@@ -43,7 +43,11 @@ export default function Nav() {
   useEffect(() => {
     syncUser();
     window.addEventListener('storage', syncUser);
-    return () => window.removeEventListener('storage', syncUser);
+    window.addEventListener('userProfileUpdated', syncUser);
+    return () => {
+      window.removeEventListener('storage', syncUser);
+      window.removeEventListener('userProfileUpdated', syncUser);
+    };
   }, []);
 
   // Scroll detection for backdrop saturation
@@ -263,11 +267,15 @@ export default function Nav() {
                   : 'bg-white/[0.05] border-white/[0.08] hover:border-white/[0.20] text-[#888888] hover:text-white'
               }`}
             >
-              <div className="w-6 h-6 rounded-full bg-white/10 text-white border border-white/20 flex items-center justify-center font-serif text-xs font-semibold shrink-0">
-                {(user?.username || 'C').charAt(0).toUpperCase()}
+              <div className="w-6 h-6 rounded-full bg-white/10 text-white border border-white/20 overflow-hidden flex items-center justify-center font-serif text-xs font-semibold shrink-0">
+                {user?.avatarUrl ? (
+                  <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  (user?.displayName || user?.username || 'C').charAt(0).toUpperCase()
+                )}
               </div>
-              <span className="text-xs font-medium tracking-wide hidden sm:inline">
-                {user?.username || 'Profile'}
+              <span className="text-xs font-medium tracking-wide hidden sm:inline truncate max-w-[120px]">
+                {user?.displayName || user?.username || 'Profile'}
               </span>
             </Link>
           </div>

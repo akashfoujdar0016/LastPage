@@ -124,14 +124,51 @@ router.post('/refresh', async (req, res, next) => {
 });
 
 // GET /api/auth/me
-router.get('/me', auth(), async (req, res, next) => {
+router.get('/me', auth(false), async (req, res, next) => {
   try {
     await db();
-    const user = await User.findById(req.user?.sub).select('-passwordHash').lean();
+    if (!req.user?.sub) {
+      return res.json({ user: null });
+    }
+    const user = await User.findById(req.user.sub).select('-passwordHash').lean();
     res.json({ user });
   } catch (err) {
     next(err);
   }
 });
+
+// PATCH /api/auth/me - Update user profile
+const handleUpdateProfile = async (req, res, next) => {
+  try {
+    await db();
+    const { displayName, bio, avatarUrl, location, website, favoriteGenres } = req.body;
+    const update = {};
+    if (displayName !== undefined) update.displayName = displayName.trim();
+    if (bio !== undefined) update.bio = bio.trim();
+    if (avatarUrl !== undefined) update.avatarUrl = avatarUrl.trim();
+    if (location !== undefined) update.location = location.trim();
+    if (website !== undefined) update.website = website.trim();
+    if (Array.isArray(favoriteGenres)) update.favoriteGenres = favoriteGenres;
+
+    if (!req.user?.sub) {
+      // Guest or local mode update
+      return res.json({ ok: true, user: { ...update, guest: true } });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.sub,
+      { $set: update },
+      { new: true }
+    ).select('-passwordHash').lean();
+
+    res.json({ ok: true, user: updatedUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
+router.patch('/me', auth(false), handleUpdateProfile);
+router.put('/me', auth(false), handleUpdateProfile);
+
 
 export default router;

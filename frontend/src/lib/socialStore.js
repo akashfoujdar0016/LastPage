@@ -124,6 +124,7 @@ export function toggleFollowUser(username) {
 
 // Get user profile by username
 export function getUserByUsername(username) {
+  if (!username) return null;
   const uname = username.toLowerCase();
   // Check active user
   let activeUser = null;
@@ -134,19 +135,26 @@ export function getUserByUsername(username) {
     } catch {}
   }
 
-  if (activeUser && (activeUser.username?.toLowerCase() === uname || uname === 'me')) {
+  const isCurrent =
+    (activeUser && (activeUser.username?.toLowerCase() === uname || activeUser.id === uname || activeUser._id === uname)) ||
+    uname === 'me' ||
+    uname === 'member';
+
+  if (isCurrent) {
     const following = getFollowingList();
     const followers = getFollowersList();
     return {
-      _id: activeUser._id || 'user-active-me',
-      username: activeUser.username || 'member',
-      displayName: activeUser.displayName || activeUser.username || 'Member',
-      bio: activeUser.bio || 'Tracking cinema and literature in a private journal.',
-      avatarUrl: activeUser.avatarUrl || '',
-      initial: (activeUser.username || 'M').charAt(0).toUpperCase(),
+      _id: activeUser?._id || activeUser?.id || 'user-active-me',
+      username: activeUser?.username || 'curator',
+      displayName: activeUser?.displayName || activeUser?.username || 'Curator',
+      bio: activeUser?.bio || '',
+      avatarUrl: activeUser?.avatarUrl || '',
+      location: activeUser?.location || '',
+      website: activeUser?.website || '',
+      favoriteGenres: activeUser?.favoriteGenres || [],
+      initial: (activeUser?.displayName || activeUser?.username || 'C').charAt(0).toUpperCase(),
       followersCount: followers.length,
       followingCount: following.length,
-      reviewsCount: 8,
       isSelf: true,
       watched: [],
       favourites: [],
@@ -159,11 +167,11 @@ export function getUserByUsername(username) {
   // Find in peer users
   const peer = PEER_USERS.find(u => u.username.toLowerCase() === uname);
   if (peer) {
-    const followingList = getFollowingList();
+    const followingList = getFollowingList().map(x => x.toLowerCase());
     const isFollowed = followingList.includes(uname);
     return {
       ...peer,
-      followersCount: peer.followersCount + (isFollowed && !followingList.includes(uname) ? 0 : isFollowed ? 1 : 0),
+      followersCount: peer.followersCount + (isFollowed ? 1 : 0),
       isFollowing: isFollowed,
       isSelf: false,
     };
@@ -174,21 +182,50 @@ export function getUserByUsername(username) {
 
 // Get accounts list for modal (Following or Followers)
 export function getAccountsForModal(type, targetUsername) {
-  const followingList = getFollowingList();
-  const followersList = getFollowersList();
+  const followingList = getFollowingList().map(x => x.toLowerCase());
+  const followersList = getFollowersList().map(x => x.toLowerCase());
 
-  if (type === 'FOLLOWING') {
-    if (targetUsername === 'me' || targetUsername === 'member') {
-      return PEER_USERS.filter(p => followingList.includes(p.username));
+  let currentUsername = 'curator';
+  let activeUser = null;
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = localStorage.getItem('currentUser');
+      if (raw) {
+        activeUser = JSON.parse(raw);
+        if (activeUser?.username) currentUsername = activeUser.username.toLowerCase();
+      }
+    } catch {}
+  }
+
+  const isCurrentUser =
+    !targetUsername ||
+    targetUsername === 'me' ||
+    targetUsername === 'member' ||
+    targetUsername.toLowerCase() === currentUsername;
+
+  if (isCurrentUser) {
+    if (type === 'FOLLOWING') {
+      return PEER_USERS.filter(p => followingList.includes(p.username.toLowerCase()));
+    } else {
+      return PEER_USERS.filter(p => followersList.includes(p.username.toLowerCase()));
     }
-    // For peer users, return sample peers they follow
-    return PEER_USERS.filter(p => p.username !== targetUsername);
   } else {
-    // Followers
-    if (targetUsername === 'me' || targetUsername === 'member') {
-      return PEER_USERS.filter(p => followersList.includes(p.username));
+    // For peer user
+    const targetUname = targetUsername.toLowerCase();
+    if (type === 'FOLLOWERS') {
+      const list = [];
+      if (followingList.includes(targetUname)) {
+        list.push({
+          username: activeUser?.username || 'curator',
+          displayName: activeUser?.displayName || activeUser?.username || 'You (Curator)',
+          bio: activeUser?.bio || 'Cultural journal curator.',
+          initial: (activeUser?.displayName || activeUser?.username || 'Y').charAt(0).toUpperCase(),
+          isSelf: true,
+        });
+      }
+      return list;
     }
-    return PEER_USERS.filter(p => p.username !== targetUsername);
+    return [];
   }
 }
 

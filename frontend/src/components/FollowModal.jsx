@@ -91,10 +91,16 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
         </div>
 
         {/* Modal Account List */}
-        <div className="overflow-y-auto p-4 divide-y divide-theme-border-subtle space-y-1">
+        <div className="overflow-y-auto p-4 divide-y divide-theme-border/30 space-y-1">
           {displayedAccounts.length === 0 ? (
-            <div className="py-12 text-center text-xs text-text-secondary">
-              {filterQuery ? `No matches found for "${filterQuery}"` : 'No accounts in this list yet.'}
+            <div className="py-12 px-6 text-center">
+              <p className="text-xs text-text-secondary leading-relaxed mb-3">
+                {filterQuery
+                  ? `No matches found for "${filterQuery}".`
+                  : type === 'FOLLOWING'
+                  ? "You aren't following any curators yet. Search and discover taste peers below to build your cultural circle."
+                  : 'No followers yet. As you log films, books, and write reviews, fellow curators will discover your journal.'}
+              </p>
             </div>
           ) : (
             displayedAccounts.map((acc) => {
@@ -104,50 +110,59 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
               return (
                 <div
                   key={acc.username}
-                  className="flex items-center justify-between py-3.5 px-2 hover:bg-bg-surface-subtle rounded-xl transition-colors gap-3"
+                  className="flex items-center justify-between py-3 px-2.5 hover:bg-bg-surface-raised/50 rounded-xl transition-colors gap-3"
                 >
                   <Link
                     href={`/user/${acc.username}`}
                     onClick={onClose}
                     className="flex items-center gap-3.5 min-w-0 flex-1 group"
                   >
-                    <div className="w-10 h-10 rounded-full bg-theme-accent-dim border border-theme-accent-border text-theme-accent flex items-center justify-center font-serif text-base font-medium shrink-0 group-hover:scale-105 transition-transform">
+                    <div className="w-10 h-10 rounded-full bg-theme-accent-dim border border-theme-accent/30 text-theme-accent flex items-center justify-center font-serif text-base font-medium shrink-0 group-hover:scale-105 transition-transform">
                       {acc.initial || acc.username.charAt(0).toUpperCase()}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-sm font-medium text-text-primary truncate group-hover:text-theme-accent transition-colors">
-                          {acc.displayName}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-xs sm:text-sm font-medium text-text-primary truncate group-hover:text-theme-accent transition-colors">
+                          {acc.displayName || acc.username}
                         </span>
-                        <span className="text-xs text-text-secondary truncate">
+                        <span className="text-[11px] text-text-secondary font-mono truncate">
                           @{acc.username}
                         </span>
                       </div>
 
                       {acc.bio && (
-                        <p className="text-xs text-text-secondary truncate mt-0.5 font-normal">
+                        <p className="text-[11px] text-text-muted truncate mt-0.5 font-sans">
                           {acc.bio}
                         </p>
                       )}
                     </div>
                   </Link>
 
-                  {/* Follow / Following Toggle Button */}
-                  <button
-                    onClick={() => toggleFollowUser(acc.username)}
-                    onMouseEnter={() => setHoveredBtnUser(acc.username)}
-                    onMouseLeave={() => setHoveredBtnUser(null)}
-                    className={`shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
-                      following
-                        ? 'border border-theme-border text-text-secondary hover:border-white/30 hover:text-white hover:bg-white/5'
-                        : 'btn-highlight'
-                    }`}
-                  >
-                    {following
-                      ? isHovered ? 'Unfollow' : 'Following'
-                      : 'Follow'}
-                  </button>
+                  {/* Self Badge or Follow / Following Toggle Button */}
+                  {acc.isSelf ? (
+                    <span className="shrink-0 px-3 py-1 rounded-full text-[11px] font-medium bg-bg-surface-raised border border-theme-border text-text-secondary">
+                      You
+                    </span>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        toggleFollowUser(acc.username);
+                        setRefresh(p => p + 1);
+                      }}
+                      onMouseEnter={() => setHoveredBtnUser(acc.username)}
+                      onMouseLeave={() => setHoveredBtnUser(null)}
+                      className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                        following
+                          ? isHovered
+                            ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                            : 'border border-theme-border text-text-secondary hover:text-text-primary hover:bg-bg-surface-raised'
+                          : 'bg-theme-accent text-bg-base hover:bg-theme-accent-hover font-semibold shadow-sm'
+                      }`}
+                    >
+                      {following ? (isHovered ? 'Unfollow' : 'Following') : 'Follow'}
+                    </button>
+                  )}
                 </div>
               );
             })
