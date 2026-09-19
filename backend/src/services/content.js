@@ -4,25 +4,37 @@ export async function enrich(content, userId) {
   if (!content) return null;
   const contentObj = content.toObject ? content.toObject() : content;
 
+  let ratingDoc = null;
+  let likeDoc = null;
+  let favoriteDoc = null;
+  let statusDoc = null;
+
   if (userId) {
-    const [ratingDoc, likeDoc, favoriteDoc, statusDoc] = await Promise.all([
+    [ratingDoc, likeDoc, favoriteDoc, statusDoc] = await Promise.all([
       Rating.findOne({ userId, contentId: contentObj._id }).lean(),
       Like.findOne({ userId, contentId: contentObj._id }).lean(),
       Favorite.findOne({ userId, contentId: contentObj._id }).lean(),
       Status.findOne({ userId, contentId: contentObj._id }).lean(),
     ]);
-
-    return {
-      ...contentObj,
-      myRating: ratingDoc?.score ?? null,
-      liked: !!likeDoc,
-      favorited: !!favoriteDoc,
-      status: statusDoc?.status ?? null,
-      progress: statusDoc?.progress ?? null,
-    };
   }
 
-  return contentObj;
+  // If specific userId has no rating, check if this content has any rating logged in the shared journal
+  let myScore = ratingDoc?.score ?? null;
+  if (!myScore) {
+    const fallbackRating = await Rating.findOne({ contentId: contentObj._id }).sort({ updatedAt: -1 }).lean();
+    if (fallbackRating?.score) {
+      myScore = fallbackRating.score;
+    }
+  }
+
+  return {
+    ...contentObj,
+    myRating: myScore,
+    liked: !!likeDoc,
+    favorited: !!favoriteDoc,
+    status: statusDoc?.status ?? (myScore ? (contentObj.type === 'MOVIE' ? 'WATCHED' : 'READ') : null),
+    progress: statusDoc?.progress ?? null,
+  };
 }
 
 export async function getRatingBreakdown(contentId) {

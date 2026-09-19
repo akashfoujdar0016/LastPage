@@ -120,19 +120,22 @@ export default function Profile() {
     setRefreshTrigger((p) => p + 1);
   };
 
-  // Helper to merge local items with cloud items (deduplicated by slug or _id)
+  // Helper to merge local items with cloud items (deduplicated by slug, _id, or contentId)
   const mergeItems = (localItems = [], cloudItems = []) => {
     const map = new Map();
     for (const it of cloudItems || []) {
-      if (it && (it.slug || it._id)) {
-        const key = String(it.slug || it._id).toLowerCase().replace(/^[mb]-/, '');
+      const idVal = it?.slug || it?._id || it?.contentId;
+      if (idVal) {
+        const key = String(idVal).toLowerCase().replace(/^[mb]-/, '');
         map.set(key, it);
       }
     }
     for (const it of localItems || []) {
-      if (it && (it.slug || it._id)) {
-        const key = String(it.slug || it._id).toLowerCase().replace(/^[mb]-/, '');
-        map.set(key, { ...map.get(key), ...it });
+      const idVal = it?.slug || it?._id || it?.contentId;
+      if (idVal) {
+        const key = String(idVal).toLowerCase().replace(/^[mb]-/, '');
+        const existing = map.get(key) || {};
+        map.set(key, { ...existing, ...it });
       }
     }
     return Array.from(map.values());
@@ -142,7 +145,15 @@ export default function Profile() {
   const allWatched = useMemo(() => {
     const local = [...getUserWatched('MOVIE'), ...getUserWatched('BOOK')];
     const cloud = cloudLibrary?.watched || [];
-    return mergeItems(local, cloud);
+    const rated = (cloudLibrary?.ratings || []).map((r) => ({
+      ...r,
+      status: r.type === 'MOVIE' ? 'WATCHED' : 'READ',
+    }));
+    const reviewed = (cloudLibrary?.reviews || []).map((rv) => ({
+      ...rv,
+      status: rv.type === 'MOVIE' ? 'WATCHED' : 'READ',
+    }));
+    return mergeItems([...local, ...rated, ...reviewed], cloud);
   }, [cloudLibrary, refreshTrigger]);
 
   const watchedMovies = useMemo(() => allWatched.filter((it) => it.type === 'MOVIE'), [allWatched]);
@@ -181,9 +192,10 @@ export default function Profile() {
   };
 
   const displayedWatched = useMemo(() => filterByMedia(allWatched), [allWatched, activeMediaFilter]);
+  const displayedRatings = useMemo(() => filterByMedia(userRatings), [userRatings, activeMediaFilter]);
+  const displayedReviews = useMemo(() => filterByMedia(userReviews), [userReviews, activeMediaFilter]);
   const displayedFavourites = useMemo(() => filterByMedia(favourites), [favourites, activeMediaFilter]);
   const displayedWatchlist = useMemo(() => filterByMedia(allWatchlist), [allWatchlist, activeMediaFilter]);
-  const displayedReviews = useMemo(() => filterByMedia(userReviews), [userReviews, activeMediaFilter]);
 
 
   const searchedFriends = useMemo(() => {
@@ -350,7 +362,7 @@ export default function Profile() {
         </div>
 
         {/* ── 2. Quick Authentic Stats Bento ── */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
           <button
             onClick={() => {
               setActiveTab('WATCHED');
@@ -380,6 +392,28 @@ export default function Profile() {
           </button>
 
           <button
+            onClick={() => setActiveTab('RATINGS')}
+            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+          >
+            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
+              <span className="group-hover:text-theme-accent transition-colors font-medium">Ratings</span>
+              <Star size={14} className="text-theme-accent" />
+            </div>
+            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{userRatings.length}</div>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('REVIEWS')}
+            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
+          >
+            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
+              <span className="group-hover:text-theme-accent transition-colors font-medium">Reviews</span>
+              <MessageSquare size={14} className="text-theme-accent" />
+            </div>
+            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{userReviews.length}</div>
+          </button>
+
+          <button
             onClick={() => setActiveTab('FAVOURITES')}
             className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
           >
@@ -388,17 +422,6 @@ export default function Profile() {
               <Heart size={14} className="text-theme-accent" />
             </div>
             <div className="font-serif text-2xl sm:text-3xl text-text-primary">{favourites.length}</div>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('REVIEWS')}
-            className="p-4 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all text-left group"
-          >
-            <div className="flex items-center justify-between text-[11px] text-text-secondary mb-2">
-              <span className="group-hover:text-theme-accent transition-colors font-medium">Reviews & Ratings</span>
-              <Star size={14} className="text-theme-accent" />
-            </div>
-            <div className="font-serif text-2xl sm:text-3xl text-text-primary">{userRatings.length}</div>
           </button>
         </div>
 
@@ -430,9 +453,10 @@ export default function Profile() {
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
             {[
               { id: 'WATCHED', label: 'Watched / Read', count: displayedWatched.length },
+              { id: 'RATINGS', label: 'Ratings', count: displayedRatings.length },
+              { id: 'REVIEWS', label: 'Reviews', count: displayedReviews.length },
               { id: 'FAVOURITES', label: 'Favourites', count: displayedFavourites.length },
               { id: 'WATCHLIST', label: 'Watchlist / TBR', count: displayedWatchlist.length },
-              { id: 'REVIEWS', label: 'My Reviews', count: displayedReviews.length },
               { id: 'NETWORK', label: 'Taste Network', count: following.length },
             ].map((tab) => {
               const isActive = activeTab === tab.id;
@@ -663,6 +687,77 @@ export default function Profile() {
           </div>
         )}
 
+        {activeTab === 'RATINGS' && (
+          <div>
+            {displayedRatings.length === 0 ? (
+              <div className="py-20 text-center rounded-2xl bg-bg-surface border border-theme-border p-8">
+                <div className="w-12 h-12 rounded-full bg-theme-accent-dim text-theme-accent flex items-center justify-center mx-auto mb-3">
+                  <Star size={20} />
+                </div>
+                <h3 className="font-serif text-lg text-text-primary mb-1">No rated works yet</h3>
+                <p className="text-xs text-text-secondary max-w-sm mx-auto mb-5 leading-relaxed">
+                  Rate films and books to record your ratings in your cultural journal.
+                </p>
+                <Link
+                  href="/hub"
+                  className="px-4 py-2 rounded-full bg-theme-accent text-bg-base text-xs font-semibold hover:bg-theme-accent-hover transition-colors inline-block"
+                >
+                  Explore Works to Rate
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+                {displayedRatings.map((item) => {
+                  const isMovie = item.type === 'MOVIE';
+                  const href = `/${isMovie ? 'movies' : 'books'}/${item._id || item.slug || item.contentId}`;
+                  const poster = item.imageUrl || getItemImage(item._id || item.contentId, item.type);
+                  const score = item.userRating || item.score || item.averageRating;
+                  return (
+                    <div key={item._id || item.contentId} className="flex flex-col group">
+                      <Link
+                        href={href}
+                        className="relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-bg-surface border border-theme-border group-hover:border-theme-accent transition-all shadow-md"
+                      >
+                        {poster ? (
+                          <img
+                            src={poster}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-text-muted text-xs">
+                            No Cover
+                          </div>
+                        )}
+                        {score && (
+                          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/80 backdrop-blur-md border border-theme-accent/50 text-theme-accent text-[11px] font-mono font-semibold flex items-center gap-1">
+                            <Star size={10} className="fill-theme-accent" />
+                            <span>{Number(score).toFixed(1)}</span>
+                          </div>
+                        )}
+                      </Link>
+                      <Link
+                        href={href}
+                        className="mt-2.5 font-serif text-sm text-text-primary hover:text-theme-accent truncate transition-colors"
+                      >
+                        {item.title}
+                      </Link>
+                      <div className="text-[11px] text-text-secondary truncate mt-0.5 flex items-center justify-between">
+                        <span>{item.year || (isMovie ? 'Film' : 'Book')}</span>
+                        {score && (
+                          <span className="text-theme-accent font-mono text-[10px]">
+                            ★ {Number(score).toFixed(1)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === 'REVIEWS' && (
           <div>
             {displayedReviews.length === 0 ? (
@@ -684,32 +779,53 @@ export default function Profile() {
             ) : (
               <div className="max-w-3xl flex flex-col gap-4">
                 {displayedReviews.map((rev) => {
-                  const href = `/${rev.type === 'MOVIE' ? 'movies' : 'books'}/${rev._id || rev.slug}`;
+                  const isMovie = rev.type === 'MOVIE';
+                  const href = `/${isMovie ? 'movies' : 'books'}/${rev._id || rev.slug || rev.contentId}`;
+                  const poster = rev.imageUrl || getItemImage(rev._id || rev.contentId, rev.type);
                   return (
                     <div
-                      key={rev._id}
-                      className="p-5 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all flex flex-col gap-3"
+                      key={rev._id || rev.contentId}
+                      className="p-5 rounded-xl bg-bg-surface border border-theme-border hover:border-theme-accent transition-all flex gap-4"
                     >
-                      <div className="flex items-center justify-between gap-4">
-                        <Link href={href} className="font-serif text-base text-text-primary hover:text-theme-accent truncate">
-                          {rev.title}
+                      {poster && (
+                        <Link
+                          href={href}
+                          className="w-16 h-24 rounded-lg overflow-hidden shrink-0 border border-theme-border shadow-sm hidden sm:block"
+                        >
+                          <img src={poster} alt={rev.title} className="w-full h-full object-cover" />
                         </Link>
-                        {rev.rating && (
-                          <span className="text-xs font-semibold text-theme-accent bg-theme-accent-dim px-2 py-0.5 rounded-full border border-theme-accent-border">
-                            ★ {Number(rev.rating).toFixed(1)}
-                          </span>
-                        )}
-                      </div>
-                      {rev.reviewBody && (
-                        <p className="text-xs text-text-secondary leading-relaxed font-sans pl-3 border-l-2 border-theme-accent italic">
-                          &ldquo;{rev.reviewBody}&rdquo;
-                        </p>
                       )}
-                      <div className="text-[10px] text-text-muted font-mono flex items-center justify-between pt-1">
-                        <span>{formatLogDate(rev.createdAt)}</span>
-                        <Link href={href} className="text-theme-accent hover:underline">
-                          View Work Page →
-                        </Link>
+                      <div className="flex-1 flex flex-col gap-2 min-w-0">
+                        <div className="flex items-center justify-between gap-4">
+                          <Link
+                            href={href}
+                            className="font-serif text-base text-text-primary hover:text-theme-accent truncate"
+                          >
+                            {rev.title}
+                          </Link>
+                          {rev.rating && (
+                            <span className="text-xs font-semibold text-theme-accent bg-theme-accent-dim px-2 py-0.5 rounded-full border border-theme-accent-border flex items-center gap-1 shrink-0 font-mono">
+                              <Star size={10} className="fill-theme-accent" />
+                              <span>{Number(rev.rating).toFixed(1)}</span>
+                            </span>
+                          )}
+                        </div>
+                        {rev.reviewTitle && rev.reviewTitle !== rev.title && (
+                          <h4 className="text-xs font-semibold text-text-primary font-serif tracking-wide">
+                            &ldquo;{rev.reviewTitle}&rdquo;
+                          </h4>
+                        )}
+                        {rev.reviewBody && (
+                          <p className="text-xs text-text-secondary leading-relaxed font-sans pl-3 border-l-2 border-theme-accent italic">
+                            {rev.reviewBody}
+                          </p>
+                        )}
+                        <div className="text-[10px] text-text-muted font-mono flex items-center justify-between pt-1">
+                          <span>{formatLogDate(rev.createdAt)}</span>
+                          <Link href={href} className="text-theme-accent hover:underline">
+                            View Work Page →
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   );

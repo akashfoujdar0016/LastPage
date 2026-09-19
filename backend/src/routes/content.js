@@ -124,10 +124,12 @@ router.get('/:id', auth(false), async (req, res, next) => {
       getRatingBreakdown(content._id),
     ]);
 
-    const enriched = await enrich(content.toObject ? content.toObject() : content, req.user?.sub);
+    const effectiveUserId = await getEffectiveUserId(req);
+    const enriched = await enrich(content.toObject ? content.toObject() : content, effectiveUserId);
     enriched.ratingBreakdown = breakdown.percentages;
     enriched.ratingCounts = breakdown.counts;
     enriched.ratingCount = breakdown.total;
+    enriched.averageRating = breakdown.avg;
 
     res.json({
       content: enriched,
@@ -195,7 +197,7 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
     }
 
     const { score } = z.object({
-      score: z.number().min(0.5).max(5),
+      score: z.union([z.number().min(0.5).max(5), z.string().transform(Number)]),
     }).parse(req.body);
 
     const userId = await getEffectiveUserId(req);
@@ -204,6 +206,14 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
       { userId, contentId: content._id },
       { $set: { score } },
       { upsert: true, new: true }
+    );
+
+    // Auto-mark status as WATCHED or READ
+    const defaultStatus = content.type === 'MOVIE' ? 'WATCHED' : 'READ';
+    await Status.findOneAndUpdate(
+      { userId, contentId: content._id },
+      { $setOnInsert: { status: defaultStatus } },
+      { upsert: true }
     );
 
     const { averageRating, ratingCount, breakdown } = await recalcRating(content._id);
@@ -228,6 +238,7 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
 
 // Helper for toggle operations (like / favorite)
 async function toggleInteraction(Model, field, actionType, req, res) {
+  await db();
   const content = await findContent(req.params.id);
   if (!content) {
     return res.status(404).json({ error: 'Content not found' });
@@ -235,6 +246,7 @@ async function toggleInteraction(Model, field, actionType, req, res) {
 
   const userId = await getEffectiveUserId(req);
   const existing = await Model.findOne({ userId, contentId: content._id });
+
   if (existing) {
     await Model.deleteOne({ _id: existing._id });
     await Content.updateOne({ _id: content._id }, { $inc: { [field]: -1 } });
@@ -252,16 +264,16 @@ async function toggleInteraction(Model, field, actionType, req, res) {
 }
 
 // POST /api/content/:id/like
-router.post('/:id/like', auth(false), (req, res, next) =>
-  toggleInteraction(Like, 'likeCount', 'LIKED', req, res).catch(next)
-);
+router.post('/:id/like', auth(false), (req, res, next) => {
+  toggleInteraction(Like, 'likeCount', 'LIKED', req, res).catch(next);
+});
 
 // POST /api/content/:id/favorite
-router.post('/:id/favorite', auth(false), (req, res, next) =>
-  toggleInteraction(Favorite, 'favoriteCount', 'FAVORITED', req, res).catch(next)
-);
+router.post('/:id/favorite', auth(false), (req, res, next) => {
+  toggleInteraction(Favorite, 'favoriteCount', 'FAVORITED', req, res).catch(next);
+});
 
-// POST /api/content/:id/reviews - Create review
+// POST /api/content/:id/reviews - Create a review
 router.post('/:id/reviews', auth(false), async (req, res, next) => {
   try {
     await db();
@@ -271,27 +283,36 @@ router.post('/:id/reviews', auth(false), async (req, res, next) => {
     }
 
     const reviewData = z.object({
-      title: z.string().max(200).optional(),
-      rating: z.number().min(0.5).max(5).optional(),
+      title: z.string().max(200).optional().nullable(),
+      rating: z.union([z.number().min(0.5).max(5), z.string().transform(Number), z.null(), z.undefined()]).optional(),
       body: z.string().min(1).max(10000),
       spoiler: z.boolean().default(false),
     }).parse(req.body);
 
     const userId = await getEffectiveUserId(req);
+
+    let finalRating = (typeof reviewData.rating === 'number' && !isNaN(reviewData.rating)) ? reviewData.rating : undefined;
+    if (!finalRating) {
+      const existingRating = await Rating.findOne({ userId, contentId: content._id });
+      if (existingRating?.score) {
+        finalRating = existingRating.score;
+      }
+    }
+
     const review = await Review.create({
       userId,
       contentId: content._id,
       title: reviewData.title || '',
-      rating: reviewData.rating || undefined,
+      rating: finalRating,
       body: reviewData.body,
       spoiler: reviewData.spoiler || false,
     });
 
-    // If rating was supplied, also update or create the Rating record
-    if (reviewData.rating) {
+    // If rating was supplied or found, ensure Rating record and content averages are updated
+    if (finalRating) {
       await Rating.findOneAndUpdate(
         { userId, contentId: content._id },
-        { $set: { score: reviewData.rating } },
+        { $set: { score: finalRating } },
         { upsert: true, new: true }
       );
       await recalcRating(content._id);
