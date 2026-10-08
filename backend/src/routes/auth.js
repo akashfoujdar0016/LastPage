@@ -205,8 +205,7 @@ router.post('/forgot-password', async (req, res, next) => {
 
     res.json({
       ok: true,
-      message: 'Password reset code generated.',
-      resetToken: token,
+      message: 'A 6-digit password reset code has been sent to your email.',
     });
   } catch (err) {
     next(err);

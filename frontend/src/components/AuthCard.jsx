@@ -78,11 +78,9 @@ export default function AuthCard({ onClose }) {
 
     setLoading(true);
     try {
-      const res = await forgotPassword(email);
-      setSuccessMsg('Reset code generated! Please enter your code and new password below.');
-      if (res?.resetToken) {
-        setResetCode(res.resetToken);
-      }
+      await forgotPassword(email);
+      setSuccessMsg('Reset code sent! Please enter your 6-digit code and new password below.');
+      setResetCode('');
       setResetStep(2);
     } catch (err) {
       setError(err.message || 'Failed to request reset code.');
