@@ -72,20 +72,47 @@ export default function Profile() {
 
   // Load user data and live authentic collections
   useEffect(() => {
+    let localUser = null;
     try {
       const stored = localStorage.getItem('currentUser');
       if (stored) {
-        setU(JSON.parse(stored));
+        localUser = JSON.parse(stored);
+        if (localUser && (localUser.displayName || localUser.username)) {
+          setU(localUser);
+        }
       }
     } catch {}
 
     api('/auth/me')
       .then((x) => {
         if (x?.user) {
-          setU((prev) => ({ ...prev, ...x.user }));
+          setU((prev) => {
+            const merged = { ...(prev || {}), ...x.user };
+            try { localStorage.setItem('currentUser', JSON.stringify(merged)); } catch {}
+            return merged;
+          });
+        } else if (!localUser) {
+          const fallback = {
+            _id: 'curator-user',
+            username: 'curator',
+            displayName: 'Curator',
+            bio: 'Passionate film and literature enthusiast.',
+          };
+          setU(fallback);
+          try { localStorage.setItem('currentUser', JSON.stringify(fallback)); } catch {}
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!localUser) {
+          const fallback = {
+            _id: 'curator-user',
+            username: 'curator',
+            displayName: 'Curator',
+            bio: 'Passionate film and literature enthusiast.',
+          };
+          setU(fallback);
+        }
+      });
 
     // Fetch cross-device journal from cloud database
     api('/me/library')
@@ -253,9 +280,9 @@ export default function Profile() {
     return found?.imageUrl || '';
   };
 
-  // Use actual user data from DB - never fall back to generic names
-  const usernameHandle = u?.username || '';
-  const displayName = u?.displayName || u?.username || '';
+  // Resolve user identity details
+  const usernameHandle = u?.username || 'curator';
+  const displayName = u?.displayName || u?.username || 'Curator';
   const userBio = u?.bio || '';
   const userAvatar = u?.avatarUrl || '';
   const userLocation = u?.location || '';

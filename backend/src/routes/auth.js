@@ -143,9 +143,10 @@ router.get('/me', auth(false), async (req, res, next) => {
 const handleUpdateProfile = async (req, res, next) => {
   try {
     await db();
-    const { displayName, bio, avatarUrl, location, website, favoriteGenres } = req.body;
+    const { displayName, username, bio, avatarUrl, location, website, favoriteGenres } = req.body;
     const update = {};
     if (displayName !== undefined) update.displayName = displayName.trim();
+    if (username !== undefined) update.username = username.trim().toLowerCase();
     if (bio !== undefined) update.bio = bio.trim();
     if (avatarUrl !== undefined) update.avatarUrl = avatarUrl.trim();
     if (location !== undefined) update.location = location.trim();

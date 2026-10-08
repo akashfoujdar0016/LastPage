@@ -120,6 +120,7 @@ export default function EditProfileModal({ isOpen, onClose, user, onSave }) {
         method: 'PATCH',
         body: {
           displayName: updatedProfile.displayName,
+          username: updatedProfile.username,
           bio: updatedProfile.bio,
           avatarUrl: updatedProfile.avatarUrl,
           location: updatedProfile.location,
