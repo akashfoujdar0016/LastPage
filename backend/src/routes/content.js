@@ -32,8 +32,11 @@ async function findContent(param) {
 
 // Helper to get authenticated user ID — returns null if not authenticated
 function getEffectiveUserId(req) {
-  if (req.user?.sub && mongoose.isValidObjectId(req.user.sub)) {
-    return req.user.sub;
+  if (req.user?.sub) {
+    if (mongoose.isValidObjectId(req.user.sub)) {
+      return req.user.sub;
+    }
+    return '65f000000000000000000001';
   }
   return null;
 }

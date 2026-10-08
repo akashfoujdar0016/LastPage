@@ -111,15 +111,52 @@ export default function Detail({ type, params }) {
   useEffect(() => {
     load();
     try {
-      setLiked(localStorage.getItem(`like_${id}`) === 'true');
-      setFavorited(localStorage.getItem(`fav_${id}`) === 'true');
-      setLoggedStatus(localStorage.getItem(`status_${id}`) || '');
-      const savedDate = localStorage.getItem(`logged_date_${id}`);
+      const canonicalKey = d?.content?._id || id;
+      setLiked(localStorage.getItem(`like_${canonicalKey}`) === 'true' || localStorage.getItem(`like_${id}`) === 'true');
+      setFavorited(localStorage.getItem(`fav_${canonicalKey}`) === 'true' || localStorage.getItem(`fav_${id}`) === 'true');
+      setLoggedStatus(localStorage.getItem(`status_${canonicalKey}`) || localStorage.getItem(`status_${id}`) || '');
+      const savedDate = localStorage.getItem(`logged_date_${canonicalKey}`) || localStorage.getItem(`logged_date_${id}`);
       setLoggedDate(savedDate || '');
-      const savedRating = localStorage.getItem(`rating_${id}`);
+      const savedRating = localStorage.getItem(`rating_${canonicalKey}`) || localStorage.getItem(`rating_${id}`);
       if (savedRating) setRating(Number(savedRating));
+
+      // Restore locally published review if present
+      const rawRev = localStorage.getItem(`review_${canonicalKey}`) || localStorage.getItem(`review_${id}`);
+      if (rawRev) {
+        const parsed = JSON.parse(rawRev);
+        if (parsed?.body) {
+          let currentUser = null;
+          try {
+            const rawUser = localStorage.getItem('currentUser');
+            if (rawUser) currentUser = JSON.parse(rawUser);
+          } catch {}
+
+          const localRevObj = {
+            _id: 'local-rev-' + id,
+            title: parsed.title || '',
+            body: parsed.body,
+            rating: parsed.rating || (savedRating ? Number(savedRating) : undefined),
+            userId: {
+              displayName: currentUser?.displayName || currentUser?.username || 'You',
+              username: currentUser?.username || '',
+              avatarUrl: currentUser?.avatarUrl || '',
+            },
+            createdAt: parsed.createdAt || new Date().toISOString(),
+            isSelf: true,
+          };
+
+          setD((prev) => {
+            const prevReviews = prev?.reviews || [];
+            if (prevReviews.some((r) => r.isSelf || r.body === parsed.body)) return prev;
+            return {
+              ...(prev || { content: curatedFallback }),
+              reviews: [localRevObj, ...prevReviews],
+            };
+          });
+        }
+      }
     } catch {}
-  }, [id]);
+  }, [id, d?.content?._id]);
 
   // ── Cross-device SSE sync ────────────────────────────────────────────────
   // Listen for 'rating_updated' events pushed by the SSE stream from another
@@ -184,7 +221,7 @@ export default function Detail({ type, params }) {
   // Check if user is logged in
   const isLoggedIn = () => {
     if (typeof window === 'undefined') return false;
-    return !!localStorage.getItem('accessToken');
+    return !!localStorage.getItem('accessToken') || !!localStorage.getItem('currentUser');
   };
 
   const handleStatus = async (status) => {

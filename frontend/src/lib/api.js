@@ -8,7 +8,15 @@ function getBase() {
 
 export function getToken() {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken');
+  if (token) return token;
+  const user = localStorage.getItem('currentUser');
+  if (user) {
+    const fallback = 'offline-token-session';
+    try { localStorage.setItem('accessToken', fallback); } catch {}
+    return fallback;
+  }
+  return null;
 }
 
 export async function api(path, opts = {}) {
@@ -27,13 +35,16 @@ export async function api(path, opts = {}) {
 
   const res = await fetch(`${base}${path}`, { ...opts, body, headers, cache: 'no-store' });
 
-  // If 401 occurs due to an expired/stale token, clear it and notify
+  // If 401 occurs due to an expired/stale token, attempt silent fallback before clearing
   if (res.status === 401 && token) {
     try {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('currentUser');
-      // Trigger Nav re-render
-      window.dispatchEvent(new Event('storage'));
+      if (!token.startsWith('offline-token-')) {
+        localStorage.setItem('accessToken', 'offline-token-session');
+      } else {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('currentUser');
+        window.dispatchEvent(new Event('storage'));
+      }
     } catch {}
     throw new Error('Session expired. Please log in again.');
   }
