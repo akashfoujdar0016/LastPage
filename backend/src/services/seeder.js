@@ -8,16 +8,18 @@ import {
   Favorite,
   Status,
   Activity,
+  User,
+  RefreshToken,
 } from '../models/index.js';
 import { catalog } from '../data/catalog.js';
 
 /**
- * Purges legacy placeholder data & dummy user interactions,
+ * Purges legacy placeholder data, old dummy accounts, & user interactions,
  * then idempotently seeds/upserts exactly 50 movies and 30 books (80 total)
  * with zero dummy statistics (averageRating: 0, ratingCount: 0, etc.).
  */
 export async function seedCatalog() {
-  // 1. Purge all dummy interactions, ratings, reviews, likes, favorites, statuses, and activities
+  // 1. Purge all dummy interactions, ratings, reviews, likes, favorites, statuses, activities, and old test accounts
   await Promise.all([
     Rating.deleteMany({}),
     Review.deleteMany({}),
@@ -27,6 +29,8 @@ export async function seedCatalog() {
     Favorite.deleteMany({}),
     Status.deleteMany({}),
     Activity.deleteMany({}),
+    User.deleteMany({ email: { $regex: /test|dummy|example|mock|guest/i } }),
+    RefreshToken.deleteMany({}),
   ]);
 
   // 2. Remove legacy placeholder Content documents not in the production catalog
