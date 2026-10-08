@@ -218,6 +218,17 @@ const RefreshSchema = new Schema(
 );
 RefreshSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
+// Password Reset Token Schema
+const PasswordResetSchema = new Schema(
+  {
+    userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
+    token: { type: String, required: true, index: true },
+    expiresAt: { type: Date, required: true },
+  },
+  opts
+);
+PasswordResetSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
 export const User = models.User || model('User', UserSchema);
 export const Content = models.Content || model('Content', ContentSchema);
 export const Rating = models.Rating || model('Rating', RatingSchema);
@@ -234,3 +245,4 @@ export const Activity = models.Activity || model('Activity', ActivitySchema);
 export const Notification = models.Notification || model('Notification', NotificationSchema);
 export const Report = models.Report || model('Report', ReportSchema);
 export const RefreshToken = models.RefreshToken || model('RefreshToken', RefreshSchema);
+export const PasswordResetToken = models.PasswordResetToken || model('PasswordResetToken', PasswordResetSchema);

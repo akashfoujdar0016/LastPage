@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { User, RefreshToken } from '../models/index.js';
+import { User, RefreshToken, PasswordResetToken } from '../models/index.js';
 import { db } from '../db/mongoose.js';
 import { env } from '../config/env.js';
 import { hashToken, randomToken, signAccess } from '../utils/auth.js';
@@ -179,5 +179,74 @@ const handleUpdateProfile = async (req, res, next) => {
 router.patch('/me', auth(false), handleUpdateProfile);
 router.put('/me', auth(false), handleUpdateProfile);
 
+// POST /api/auth/forgot-password - Request password reset token
+router.post('/forgot-password', async (req, res, next) => {
+  try {
+    await db();
+    const { email } = z.object({
+      email: z.string().email('Please enter a valid email address'),
+    }).parse(req.body);
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ error: 'No account found with that email address.' });
+    }
+
+    // Generate a 6-digit reset code
+    const token = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 3600000);
+
+    await PasswordResetToken.deleteMany({ userId: user._id });
+    await PasswordResetToken.create({
+      userId: user._id,
+      token,
+      expiresAt,
+    });
+
+    res.json({
+      ok: true,
+      message: 'Password reset code generated.',
+      resetToken: token,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/auth/reset-password - Reset password using token
+router.post('/reset-password', async (req, res, next) => {
+  try {
+    await db();
+    const { email, token, newPassword } = z.object({
+      email: z.string().email('Please enter a valid email address'),
+      token: z.string().min(1, 'Reset code is required'),
+      newPassword: z.string().min(6, 'Password must be at least 6 characters long'),
+    }).parse(req.body);
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) {
+      return res.status(404).json({ error: 'Account not found.' });
+    }
+
+    const tokenDoc = await PasswordResetToken.findOne({
+      userId: user._id,
+      token: token.trim(),
+    });
+
+    if (!tokenDoc || tokenDoc.expiresAt < new Date()) {
+      return res.status(400).json({ error: 'Invalid or expired password reset code.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    user.passwordHash = passwordHash;
+    await user.save();
+
+    await PasswordResetToken.deleteMany({ userId: user._id });
+
+    res.json({ ok: true, message: 'Password updated successfully. You can now sign in.' });
+  } catch (err) {
+    next(err);
+  }
+});
 
 export default router;

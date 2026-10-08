@@ -109,3 +109,17 @@ export const logout = () => {
     window.location.href = '/';
   }
 };
+
+export const forgotPassword = async (email) => {
+  return await api('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+};
+
+export const resetPassword = async (email, token, newPassword) => {
+  return await api('/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ email, token, newPassword }),
+  });
+};
