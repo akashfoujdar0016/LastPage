@@ -39,11 +39,14 @@ app.use('/api/events', eventsRouter);
 // Centralized Error Handling
 app.use((err, _req, res, _next) => {
   console.error('[API Error]:', err?.message || err);
-  const status = err?.name === 'ZodError' ? 400 : (err?.status || 500);
-  const message = err?.message;
+  const isZod = err?.name === 'ZodError' || Array.isArray(err?.issues);
+  const status = isZod ? 400 : (err?.status || 500);
+  const message = isZod
+    ? err.issues?.map(i => i.message).filter(Boolean).join('. ') || 'Invalid input'
+    : err?.message || 'Internal server error';
+
   res.status(status).json({
-    error: err?.name === 'ZodError' ? 'Invalid request data' : 'Internal server error',
-    details: message || String(err),
+    error: message,
   });
 });
 

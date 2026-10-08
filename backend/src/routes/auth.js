@@ -10,9 +10,14 @@ import { auth } from '../middleware/core.js';
 const router = Router();
 
 const registerSchema = z.object({
-  username: z.string().min(3).max(30).regex(/^[a-zA-Z0-9_]+$/),
-  email: z.string().email(),
-  password: z.string().min(8).max(128),
+  username: z.string()
+    .min(3, 'Username must be at least 3 characters long')
+    .max(30, 'Username must be 30 characters or less')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string()
+    .min(6, 'Password must be at least 6 characters long')
+    .max(128, 'Password is too long'),
   displayName: z.string().min(1).max(80).optional(),
 });
 

@@ -29,12 +29,16 @@ export default function AuthCard({ onClose }) {
     e.preventDefault();
     setError('');
 
-    if (!email || !email.includes('@')) {
-      setError('Please enter a valid email.');
+    if (mode === 'register' && username.trim().length < 3) {
+      setError('Username must be at least 3 characters long.');
       return;
     }
-    if (!password) {
-      setError('Please enter your password.');
+    if (!email || !email.includes('@')) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    if (!password || password.length < 6) {
+      setError('Password must be at least 6 characters long.');
       return;
     }
 
@@ -49,7 +53,7 @@ export default function AuthCard({ onClose }) {
       window.dispatchEvent(new Event('storage'));
       router.push('/hub');
     } catch (err) {
-      setError(err.message || 'Authentication failed. Please check your credentials or create an account.');
+      setError(err.message || 'Authentication failed. Please check your details.');
     } finally {
       setLoading(false);
     }
