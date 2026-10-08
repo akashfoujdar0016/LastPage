@@ -46,20 +46,10 @@ export default function AuthCard({ onClose }) {
         const u = username.trim() || email.split('@')[0];
         await register(u, email, password, u);
       }
+      window.dispatchEvent(new Event('storage'));
       router.push('/hub');
-    } catch {
-      // Offline fallback
-      const fallbackUser = {
-        _id: 'member-' + Date.now(),
-        username: (username.trim() || email.split('@')[0] || 'member'),
-        displayName: (username.trim() || email.split('@')[0] || 'Member').replace('.', ' '),
-        email,
-      };
-      try {
-        localStorage.setItem('currentUser', JSON.stringify(fallbackUser));
-        localStorage.setItem('accessToken', 'offline-token-' + Date.now());
-      } catch {}
-      router.push('/hub');
+    } catch (err) {
+      setError(err.message || 'Authentication failed. Please check your credentials or create an account.');
     } finally {
       setLoading(false);
     }

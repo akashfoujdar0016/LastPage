@@ -77,7 +77,7 @@ router.post('/login', async (req, res, next) => {
 
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Invalid email or password. Please create an account first if you do not have one.' });
     }
 
     const tokenData = await generateTokens(user);
