@@ -254,14 +254,50 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
           ) : null}
         </div>
 
-        {/* Touch-friendly View link — always visible on touch devices (hidden on hover-capable desktop) */}
-        <Link
-          href={href}
-          className="mt-2 sm:hidden inline-flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-semibold bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 transition-colors"
-        >
-          <ArrowUpRight size={11} />
-          View
-        </Link>
+        {/* Touch-friendly Mobile Action Bar (Always accessible on touch screens without needing desktop hover) */}
+        <div className="mt-2.5 sm:hidden flex items-center justify-between gap-1.5 pt-2 border-t border-white/[0.08]">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleLike}
+              title={liked ? 'Unlike' : 'Like'}
+              className={`p-1.5 rounded-full text-[10px] font-medium transition-all ${
+                liked
+                  ? 'bg-white text-black font-semibold shadow-sm'
+                  : 'bg-white/5 border border-white/10 text-zinc-400 hover:text-white'
+              }`}
+            >
+              <Heart size={11} className={liked ? 'fill-black stroke-black' : 'stroke-current'} />
+            </button>
+
+            <button
+              onClick={handleFavorite}
+              title={favorited ? 'Remove from favourites' : 'Favourite'}
+              className={`p-1.5 rounded-full text-[10px] font-medium transition-all ${
+                favorited
+                  ? 'bg-white text-black font-semibold shadow-sm'
+                  : 'bg-white/5 border border-white/10 text-zinc-400 hover:text-white'
+              }`}
+            >
+              <svg
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                className={favorited ? 'fill-black stroke-black' : 'fill-none stroke-current'}
+                strokeWidth="2"
+              >
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </button>
+          </div>
+
+          <Link
+            href={href}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-white text-black hover:bg-zinc-200 transition-colors shadow-sm"
+          >
+            <span>View</span>
+            <ArrowUpRight size={10} strokeWidth={2.5} />
+          </Link>
+        </div>
       </div>
     </div>
   );

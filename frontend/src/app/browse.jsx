@@ -292,7 +292,7 @@ export default function Browse({ type, title }) {
                     }`}
                   >
                     <Icon size={13} className={isActive ? 'text-[#09090B]' : 'text-zinc-400'} />
-                    <span className="hidden xs:inline sm:inline">{tab.label}</span>
+                    <span className="inline">{tab.label}</span>
                     <span
                       className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
                         isActive
