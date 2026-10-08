@@ -100,6 +100,14 @@ export default {
         'ease-expo': 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
+    screens: {
+      xs: '475px',
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
   },
   plugins: [],
 };

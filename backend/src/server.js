@@ -7,6 +7,7 @@ import contentRouter from './routes/content.js';
 import socialRouter from './routes/social.js';
 import libraryRouter from './routes/library.js';
 import discoveryRouter from './routes/discovery.js';
+import eventsRouter from './routes/events.js';
 import { Content } from './models/index.js';
 import { catalog } from './data/catalog.js';
 import { seedCatalog } from './services/seeder.js';
@@ -33,6 +34,7 @@ app.use('/api/content', contentRouter);
 app.use('/api/social', socialRouter);
 app.use('/api/me', libraryRouter);
 app.use('/api/discovery', discoveryRouter);
+app.use('/api/events', eventsRouter);
 
 // Centralized Error Handling
 app.use((err, _req, res, _next) => {

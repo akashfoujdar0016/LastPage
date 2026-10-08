@@ -85,7 +85,7 @@ export default function CollectionLayout({
       {/* Ambient monochrome glow */}
       <div className="fixed top-12 left-1/4 w-96 h-96 rounded-full bg-radial from-white/[0.015] to-transparent blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 relative z-10">
 
         {/* ── Page Header ── */}
         <div className="pt-10 pb-6 border-b border-[#212121] mb-8">
@@ -149,7 +149,7 @@ export default function CollectionLayout({
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
             {displayedItems.map(item => (
               <ContentCard
                 key={item._id}

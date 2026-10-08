@@ -121,6 +121,56 @@ export default function Detail({ type, params }) {
     } catch {}
   }, [id]);
 
+  // ── Cross-device SSE sync ────────────────────────────────────────────────
+  // Listen for 'rating_updated' events pushed by the SSE stream from another
+  // session (e.g. the user rated this item on their phone).  Update all local
+  // state so the UI reflects the change instantly without a hard refresh.
+  useEffect(() => {
+    function handleRatingUpdated(e) {
+      const payload = e.detail;
+      if (!payload) return;
+
+      // Match either by MongoDB ObjectId OR by slug
+      const c = d?.content || curatedFallback;
+      const currentContentId = c?._id || id;
+      const currentSlug = c?.slug || id;
+
+      const isForThisContent =
+        payload.contentId === String(currentContentId) ||
+        payload.contentSlug === currentSlug ||
+        payload.contentId === id ||
+        payload.contentSlug === id;
+
+      if (!isForThisContent) return;
+
+      // Sync user's own rating into localStorage and React state
+      try {
+        localStorage.setItem(`rating_${currentContentId}`, String(payload.score));
+      } catch {}
+      setRating(payload.score);
+
+      // Sync community aggregate numbers into the content state
+      setD((prev) => {
+        if (!prev?.content) return prev;
+        return {
+          ...prev,
+          content: {
+            ...prev.content,
+            myRating: payload.score,
+            averageRating: payload.averageRating,
+            ratingCount: payload.ratingCount,
+            ratingBreakdown: payload.ratingBreakdown,
+            ratingCounts: payload.ratingCounts,
+          },
+        };
+      });
+    }
+
+    window.addEventListener('rating_updated', handleRatingUpdated);
+    return () => window.removeEventListener('rating_updated', handleRatingUpdated);
+  }, [id, d?.content?._id, d?.content?.slug]);
+
+
   const showToast = (msg, type = 'ok') => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(''), 2800);
@@ -465,7 +515,7 @@ export default function Detail({ type, params }) {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-theme-accent/5 via-transparent to-transparent pointer-events-none" />
 
         {/* Floating Top Navigation Breadcrumbs */}
-        <div className="absolute top-6 inset-x-0 max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between z-20">
+        <div className="absolute top-6 inset-x-0 max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex items-center justify-between z-20">
           <Link
             href={isMovie ? '/movies' : '/books'}
             className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/15 text-xs font-medium text-white transition-all shadow-md"
@@ -474,13 +524,13 @@ export default function Detail({ type, params }) {
             <span>{isMovie ? 'Back to Cinema' : 'Back to Library'}</span>
           </Link>
 
-          <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-theme-accent-border">
+          <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-[0.22em] text-theme-accent bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-theme-accent-border">
             {isMovie ? 'Cinema Archive' : 'Literary Archive'}
           </span>
         </div>
 
         {/* Hero Title and Metadata Overlay */}
-        <div className="absolute bottom-8 inset-x-0 max-w-7xl mx-auto px-6 md:px-12 z-20">
+        <div className="absolute bottom-8 inset-x-0 max-w-7xl mx-auto px-4 sm:px-6 md:px-12 z-20">
           <div className="flex items-center gap-2.5 mb-2">
             <span
               className="text-[10px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-md bg-white/10 text-white border border-white/20"
@@ -503,7 +553,7 @@ export default function Detail({ type, params }) {
       </div>
 
       {/* ── MAIN CONTENT CONTAINER: SPLIT-COLUMN LAYOUT ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-20 -mt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 relative z-20 -mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
 
           {/* ── LEFT COLUMN: STICKY METADATA PANEL & DUAL-MEDIA STATS (5 cols) ── */}
@@ -768,7 +818,7 @@ export default function Detail({ type, params }) {
             </div>
 
             {/* ── INTERACTIVE 5-STAR RATING WIDGET (0.5 INCREMENTS) ── */}
-            <div className="bg-bg-surface/90 backdrop-blur-md border border-theme-border rounded-2xl p-6 flex items-center justify-between gap-4 shadow-luxury">
+            <div className="bg-bg-surface/90 backdrop-blur-md border border-theme-border rounded-2xl p-5 sm:p-6 flex items-center justify-between gap-4 flex-wrap shadow-luxury">
               <div>
                 <p className="text-xs text-text-secondary mb-2.5 font-medium uppercase tracking-wider">
                   Your Personal Rating
@@ -844,8 +894,8 @@ export default function Detail({ type, params }) {
 
 
             {/* ── WRITE A JOURNAL REVIEW FORM ── */}
-            <form onSubmit={handlePublishReview} className="bg-bg-surface/90 border border-theme-border rounded-2xl p-7 flex flex-col gap-4 shadow-luxury">
-              <div className="flex justify-between items-baseline">
+            <form onSubmit={handlePublishReview} className="bg-bg-surface/90 border border-theme-border rounded-2xl p-5 sm:p-7 flex flex-col gap-4 shadow-luxury">
+              <div className="flex flex-wrap justify-between items-baseline gap-2">
                 <label className="font-serif text-xl font-normal text-text-primary">
                   Write Your Reflection
                 </label>

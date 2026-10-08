@@ -226,6 +226,29 @@ img { display: block; max-width: 100%; }
 
 /* ─── Smooth page entry ──────────────────────────────────────── */
 main { animation: fadeIn 0.2s ease both; }
+/* ─── Touch / Pointer-Coarse helpers ─────────────────────────── */
 
+/* On touch devices (no hover capability), make the card action overlay
+   permanently slightly visible so users know cards are tappable */
+@media (hover: none) and (pointer: coarse) {
+  /* Bring the hover overlay to a subtle persistent state */
+  .group .group-hover\:opacity-100 {
+    opacity: 0.85 !important;
+  }
+  /* Remove translate so overlay doesn't need a hover to drop down */
+  .group .group-hover\:translate-y-0 {
+    transform: translateY(0) !important;
+  }
+  /* Ensure pointer events work on touch */
+  .group .pointer-events-none {
+    pointer-events: auto !important;
+  }
+}
 
+/* Horizontal scroll containers: contain overscroll on touch so swiping
+   tabs doesn't accidentally trigger browser back navigation */
+.overflow-x-auto {
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
 

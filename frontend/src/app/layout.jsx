@@ -1,5 +1,6 @@
 import './globals.css';
 import Nav from '../components/Nav';
+import SyncProvider from '../components/SyncProvider';
 
 export const metadata = {
   title: 'LastPage — Cinematic & Literary Journal',
@@ -18,6 +19,8 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body suppressHydrationWarning className="bg-[#000000] text-[#E0E0E0] antialiased min-h-screen selection:bg-white/15 selection:text-white">
+        {/* SyncProvider opens the SSE stream for cross-device real-time sync */}
+        <SyncProvider />
         <Nav />
         <main>{children}</main>
       </body>

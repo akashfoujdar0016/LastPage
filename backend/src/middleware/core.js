@@ -30,15 +30,22 @@ export const security = [
 
 export function auth(required = true) {
   return (req, res, next) => {
+    // Primary: Authorization: Bearer <token> header
+    // Fallback: ?token=<token> query param (needed for EventSource / SSE which
+    //           cannot set custom request headers in the browser)
     const authHeader = req.headers.authorization;
-    if (!authHeader) {
+    const rawToken = authHeader
+      ? authHeader.replace(/^Bearer\s+/i, '')
+      : (req.query.token ? String(req.query.token) : null);
+
+    if (!rawToken) {
       if (required) {
         return res.status(401).json({ error: 'Authentication required' });
       }
       return next();
     }
     try {
-      req.user = verifyAccess(authHeader.replace(/^Bearer\s+/i, ''));
+      req.user = verifyAccess(rawToken);
       next();
     } catch {
       if (!required) {

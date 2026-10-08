@@ -102,16 +102,27 @@ export default function Profile() {
     setFriendsFeed(getFriendsActivity());
   }, [refreshTrigger]);
 
-  // Listen to profile updates & social changes
+  // Listen to profile updates, social changes, and cross-device SSE sync events
   useEffect(() => {
     const handleUpdate = () => setRefreshTrigger((p) => p + 1);
+
+    // Cross-device SSE event: re-fetch the cloud library so the Ratings tab
+    // shows the updated score immediately on all active sessions.
+    const handleRatingUpdated = () => {
+      api('/me/library')
+        .then((data) => { if (data) setCloudLibrary(data); })
+        .catch(() => {});
+    };
+
     window.addEventListener('socialUpdated', handleUpdate);
     window.addEventListener('activityUpdated', handleUpdate);
     window.addEventListener('userProfileUpdated', handleUpdate);
+    window.addEventListener('rating_updated', handleRatingUpdated);
     return () => {
       window.removeEventListener('socialUpdated', handleUpdate);
       window.removeEventListener('activityUpdated', handleUpdate);
       window.removeEventListener('userProfileUpdated', handleUpdate);
+      window.removeEventListener('rating_updated', handleRatingUpdated);
     };
   }, []);
 

@@ -6,6 +6,7 @@ import { db } from '../db/mongoose.js';
 import { auth } from '../middleware/core.js';
 import { enrich, recalcRating, getRatingBreakdown } from '../services/content.js';
 import { activity } from '../services/social.js';
+import { broadcast } from '../services/sse.js';
 import { seedCatalog } from '../services/seeder.js';
 
 const router = Router();
@@ -202,13 +203,14 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
     const userId = getEffectiveUserId(req);
     if (!userId) return res.status(401).json({ error: 'Login required to rate' });
 
+    // ── 1. Write to DB (findOneAndUpdate guarantees an atomic upsert) ─────────
     const updatedRating = await Rating.findOneAndUpdate(
       { userId, contentId: content._id },
       { $set: { score } },
       { upsert: true, new: true }
     );
 
-    // Auto-mark status as WATCHED or READ
+    // ── 2. Auto-mark status as WATCHED or READ (setOnInsert = no override) ────
     const defaultStatus = content.type === 'MOVIE' ? 'WATCHED' : 'READ';
     await Status.findOneAndUpdate(
       { userId, contentId: content._id },
@@ -216,21 +218,45 @@ router.post('/:id/rating', auth(false), async (req, res, next) => {
       { upsert: true }
     );
 
+    // ── 3. Recalculate community average AFTER write commits ─────────────────
+    //    recalcRating reads from the primary and then writes back, so the
+    //    averageRating the client receives is always consistent with the DB.
     const { averageRating, ratingCount, breakdown } = await recalcRating(content._id);
+
+    // ── 4. Record activity (best-effort — do not fail the request on error) ───
     if (userId) {
       try {
         await activity(userId, 'RATED', content._id);
       } catch {}
     }
 
-    res.json({
+    // ── 5. Build the full response payload ───────────────────────────────────
+    const responsePayload = {
       ok: true,
       rating: updatedRating,
       averageRating,
       ratingCount,
       ratingBreakdown: breakdown.percentages,
       ratingCounts: breakdown.counts,
-    });
+    };
+
+    // ── 6. Push a real-time SSE event to all OTHER sessions for this user ─────
+    //    We broadcast AFTER sending the HTTP response so the mutating session
+    //    also gets the canonical numbers via the response body, while every
+    //    other session (mobile, second tab) receives the push event.
+    try {
+      broadcast(String(userId), 'rating_updated', {
+        contentId: String(content._id),
+        contentSlug: content.slug,
+        score,
+        averageRating,
+        ratingCount,
+        ratingBreakdown: breakdown.percentages,
+        ratingCounts: breakdown.counts,
+      });
+    } catch {}
+
+    res.json(responsePayload);
   } catch (err) {
     next(err);
   }

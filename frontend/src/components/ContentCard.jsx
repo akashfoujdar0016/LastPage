@@ -215,23 +215,23 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
         {/* Title */}
         <Link
           href={href}
-          className="font-serif text-[17px] text-[#FFFFFF] font-normal leading-tight truncate transition-colors duration-200 hover:text-[#E0E0E0] mb-0.5"
+          className="font-serif text-[15px] sm:text-[17px] text-[#FFFFFF] font-normal leading-tight truncate transition-colors duration-200 hover:text-[#E0E0E0] mb-0.5"
         >
           {item.title}
         </Link>
 
         {/* Author / Director & Year */}
-        <div className="text-[12px] text-[#888888] truncate tracking-tight mb-1 flex items-center justify-between">
+        <div className="text-[11px] sm:text-[12px] text-[#888888] truncate tracking-tight mb-1.5 flex items-center justify-between">
           <span className="truncate">{creator || 'Unknown'}</span>
           {item.year && (
-            <span className="text-zinc-500 font-mono text-[11px] shrink-0 ml-1.5">{item.year}</span>
+            <span className="text-zinc-500 font-mono text-[10px] sm:text-[11px] shrink-0 ml-1">{item.year}</span>
           )}
         </div>
 
         {/* Star Rating & Log Status */}
-        <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center justify-between gap-1 flex-wrap">
           {displayedRating > 0 ? (
-            <div className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-white">
+            <div className="inline-flex items-center gap-1 text-[11px] font-semibold text-white">
               <svg
                 width="11"
                 height="11"
@@ -246,13 +246,22 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
             <span className="text-[10px] text-zinc-500">Unrated</span>
           )}
 
-          {/* Log status badge */}
+          {/* Log status badge — only show if space allows */}
           {(loggedStatus === 'WATCHED' || loggedStatus === 'READ') && loggedDate ? (
-            <span className="text-[10px] text-zinc-500 font-mono">
-              {isMovie ? 'Watched' : 'Read'} {formatLogDate(loggedDate)}
+            <span className="text-[9px] sm:text-[10px] text-zinc-500 font-mono truncate max-w-[80px] sm:max-w-none">
+              {isMovie ? 'Watched' : 'Read'}
             </span>
           ) : null}
         </div>
+
+        {/* Touch-friendly View link — always visible on touch devices (hidden on hover-capable desktop) */}
+        <Link
+          href={href}
+          className="mt-2 sm:hidden inline-flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-semibold bg-white/5 border border-white/10 text-zinc-300 hover:bg-white/10 transition-colors"
+        >
+          <ArrowUpRight size={11} />
+          View
+        </Link>
       </div>
     </div>
   );

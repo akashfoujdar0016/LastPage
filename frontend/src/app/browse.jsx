@@ -272,8 +272,8 @@ export default function Browse({ type, title }) {
           </div>
 
           {/* ── Standardized 5 Sub-sections / Tabs (NO category-wise filters) ── */}
-          <div className="flex items-center justify-between gap-3 overflow-x-auto no-scrollbar pt-6">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between gap-3 pt-6 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto no-scrollbar pb-0.5">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {tabs.map(tab => {
                 const isActive = activeTab === tab.id && !browseCatalogueMode;
                 const Icon = tab.icon;
@@ -285,16 +285,16 @@ export default function Browse({ type, title }) {
                       setBrowseCatalogueMode(false);
                       setSearchQuery('');
                     }}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs tracking-wide transition-all duration-200 shrink-0 ${
+                    className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs tracking-wide transition-all duration-200 shrink-0 ${
                       isActive
                         ? 'bg-white text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.22)] active:scale-[0.99]'
                         : 'text-zinc-400 hover:text-white hover:bg-white/[0.05] border border-transparent'
                     }`}
                   >
                     <Icon size={13} className={isActive ? 'text-[#09090B]' : 'text-zinc-400'} />
-                    <span>{tab.label}</span>
+                    <span className="hidden xs:inline sm:inline">{tab.label}</span>
                     <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
                         isActive
                           ? 'bg-black/15 text-black font-semibold'
                           : 'bg-white/10 text-zinc-400'
@@ -332,7 +332,7 @@ export default function Browse({ type, title }) {
                 <p className="text-xs text-zinc-400">Try searching for a different title, director, or author.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
                 {searchResults.map(item => (
                   <ContentCard
                     key={item._id}
@@ -451,7 +451,7 @@ export default function Browse({ type, title }) {
                 </button>
               </div>
             ) : viewMode === 'grid' ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
                 {currentTabItems.map(item => (
                   <ContentCard
                     key={item._id}
@@ -470,21 +470,21 @@ export default function Browse({ type, title }) {
                   return (
                     <div
                       key={item._id}
-                      className="flex items-center justify-between gap-4 py-3.5 px-3 hover:bg-white/[0.02] rounded-xl transition-colors group"
+                      className="flex items-center justify-between gap-3 py-3.5 px-2 sm:px-3 hover:bg-white/[0.02] rounded-xl transition-colors group"
                     >
-                      <div className="flex items-center gap-4 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0">
                         <Link href={href} className="shrink-0">
                           <img
                             src={item.imageUrl}
                             alt={item.title}
-                            className="w-12 aspect-[2/3] object-cover rounded shadow-md border border-white/10"
+                            className="w-10 sm:w-12 aspect-[2/3] object-cover rounded shadow-md border border-white/10"
                           />
                         </Link>
 
                         <div className="min-w-0">
                           <Link
                             href={href}
-                            className="font-serif text-base text-white font-normal hover:text-[#E0E0E0] transition-colors truncate block"
+                            className="font-serif text-sm sm:text-base text-white font-normal hover:text-[#E0E0E0] transition-colors truncate block"
                           >
                             {item.title}
                           </Link>
@@ -494,15 +494,23 @@ export default function Browse({ type, title }) {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4 shrink-0">
-                        <div className="text-xs text-white font-semibold">
+                      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                        <div className="text-xs text-white font-semibold whitespace-nowrap">
                           ★ {Number(item.averageRating || 0).toFixed(1)}
                         </div>
+                        {/* Full label on sm+, icon-only on mobile */}
                         <Link
                           href={href}
-                          className="text-xs text-zinc-400 hover:text-white px-3 py-1 rounded-full bg-white/5 border border-white/10 hover:border-white/20 transition-colors"
+                          className="hidden sm:inline-flex text-xs text-zinc-400 hover:text-white px-3 py-1 rounded-full bg-white/5 border border-white/10 hover:border-white/20 transition-colors items-center gap-1"
                         >
-                          View Review →
+                          View →
+                        </Link>
+                        <Link
+                          href={href}
+                          className="sm:hidden inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/5 border border-white/10 hover:border-white/20 transition-colors text-zinc-400 hover:text-white"
+                          aria-label="View"
+                        >
+                          <ArrowUpRight size={13} />
                         </Link>
                       </div>
                     </div>
