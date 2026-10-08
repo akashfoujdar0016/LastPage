@@ -79,7 +79,6 @@ export default function LandingPage() {
       {/* Footer Branding */}
       <div className="w-full max-w-6xl mx-auto pt-16 flex items-center justify-between text-[11px] text-[#555555] border-t border-[#222222] relative z-10 mt-12">
         <span>© LastPage · The Literary & Cinematic Journal</span>
-        <span className="font-mono text-[10px]">v2.0 · Ultra-Clean Edition</span>
       </div>
     </div>
   );

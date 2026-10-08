@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { X, Search, UserPlus, Check } from 'lucide-react';
-import { getAccountsForModal, isFollowingUser, toggleFollowUser } from '../lib/socialStore';
+import { getAccountsForModal, isFollowingUser, toggleFollowUser, searchUsers } from '../lib/socialStore';
 
 export default function FollowModal({ isOpen, onClose, type, username }) {
   const [accounts, setAccounts] = useState([]);
@@ -27,13 +27,17 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
   const displayedAccounts = useMemo(() => {
     if (!filterQuery.trim()) return accounts;
     const q = filterQuery.trim().toLowerCase();
-    return accounts.filter(
+    const localMatches = accounts.filter(
       acc =>
         acc.username.toLowerCase().includes(q) ||
         (acc.displayName && acc.displayName.toLowerCase().includes(q)) ||
         (acc.bio && acc.bio.toLowerCase().includes(q))
     );
-  }, [accounts, filterQuery]);
+    if (localMatches.length > 0) return localMatches;
+
+    // Fall back to searching all community curators so user can find new people to follow
+    return searchUsers(q, username);
+  }, [accounts, filterQuery, username]);
 
   if (!isOpen) return null;
 
@@ -53,7 +57,7 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
               {type === 'FOLLOWING' ? 'Following' : 'Followers'}
             </span>
             <span className="text-xs text-text-secondary font-mono">
-              ({displayedAccounts.length}{filterQuery ? ` of ${accounts.length}` : ''})
+              ({displayedAccounts.length}{filterQuery ? ` matches` : ''})
             </span>
           </div>
 
@@ -75,7 +79,7 @@ export default function FollowModal({ isOpen, onClose, type, username }) {
               suppressHydrationWarning
               value={filterQuery}
               onChange={e => setFilterQuery(e.target.value)}
-              placeholder={`Search ${type === 'FOLLOWING' ? 'following' : 'followers'}…`}
+              placeholder="Search people to follow or filter list…"
               className="w-full bg-bg-surface-raised border border-theme-border rounded-full pl-8 pr-7 py-1.5 text-xs text-text-primary placeholder-text-muted outline-none focus:border-theme-accent focus:ring-1 focus:ring-theme-accent-dim transition-all"
             />
             {filterQuery && (

@@ -286,8 +286,6 @@ export default function Profile() {
   const userBio = u?.bio || '';
   const userAvatar = u?.avatarUrl || '';
   const userLocation = u?.location || '';
-  const userWebsite = u?.website || '';
-  const userGenres = Array.isArray(u?.favoriteGenres) ? u.favoriteGenres : [];
 
   return (
     <div className="min-h-[calc(100vh-60px)] bg-[#000000] text-[#E0E0E0] pb-24 relative overflow-hidden font-sans">
@@ -370,37 +368,13 @@ export default function Profile() {
                   </p>
                 )}
 
-                {/* Optional Location, Website, and Genre Tags */}
-                <div className="flex items-center gap-4 mt-3 flex-wrap text-xs text-text-muted">
-                  {userLocation && (
+                {/* Optional Location */}
+                {userLocation && (
+                  <div className="flex items-center gap-4 mt-3 flex-wrap text-xs text-text-muted">
                     <span className="inline-flex items-center gap-1">
                       <MapPin size={11} className="text-theme-accent" />
                       <span>{userLocation}</span>
                     </span>
-                  )}
-                  {userWebsite && (
-                    <a
-                      href={userWebsite.startsWith('http') ? userWebsite : `https://${userWebsite}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 hover:text-theme-accent transition-colors underline underline-offset-2"
-                    >
-                      <Globe size={11} className="text-theme-accent" />
-                      <span>{userWebsite.replace(/^https?:\/\//, '')}</span>
-                    </a>
-                  )}
-                </div>
-
-                {userGenres.length > 0 && (
-                  <div className="flex items-center gap-1.5 mt-3 flex-wrap">
-                    {userGenres.map((g) => (
-                      <span
-                        key={g}
-                        className="text-[10px] px-2 py-0.5 rounded-full bg-bg-surface-raised border border-theme-border text-text-secondary"
-                      >
-                        {g}
-                      </span>
-                    ))}
                   </div>
                 )}
               </div>
