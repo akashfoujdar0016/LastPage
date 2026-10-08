@@ -193,15 +193,15 @@ export default function Browse({ type, title }) {
   };
 
   return (
-    <div className="min-h-[calc(100vh-56px)] bg-[#000000] text-[#E0E0E0] pb-24 selection:bg-white/15 selection:text-white relative overflow-hidden">
+    <div className="min-h-[calc(100vh-56px)] bg-[#000000] text-[#E0E0E0] pb-24 selection:bg-white/15 selection:text-white relative overflow-x-hidden w-full">
       {/* Subtle ambient lighting */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/[0.02] via-transparent to-transparent pointer-events-none" />
-      <div className="fixed top-12 left-1/3 w-[30rem] h-[30rem] rounded-full bg-radial from-white/[0.015] to-transparent blur-3xl pointer-events-none" />
+      <div className="fixed top-12 left-1/2 -translate-x-1/2 w-[20rem] sm:w-[30rem] h-[20rem] sm:h-[30rem] rounded-full bg-radial from-white/[0.015] to-transparent blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
 
         {/* ── Page Header ── */}
-        <div className="pt-8 pb-6 border-b border-white/[0.08] mb-6">
+        <div className="pt-6 sm:pt-8 pb-5 sm:pb-6 border-b border-white/[0.08] mb-6">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1.5">
@@ -210,7 +210,7 @@ export default function Browse({ type, title }) {
                 ) : (
                   <BookOpen size={14} className="text-white" />
                 )}
-                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#888888]">
+                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-[#888888]">
                   {isMovie ? 'CINEMA JOURNAL' : 'LITERARY JOURNAL'}
                 </p>
               </div>
@@ -221,8 +221,8 @@ export default function Browse({ type, title }) {
             </div>
 
             {/* Inset Search Capsule & View Mode */}
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="relative flex-1 md:w-72">
+            <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+              <div className="relative flex-1 md:w-72 min-w-0">
                 <Search
                   size={14}
                   className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
@@ -271,9 +271,9 @@ export default function Browse({ type, title }) {
             </div>
           </div>
 
-          {/* ── Standardized 5 Sub-sections / Tabs (NO category-wise filters) ── */}
-          <div className="flex items-center justify-between gap-3 pt-6 -mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto no-scrollbar pb-0.5">
-            <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* ── Standardized 6 Sub-sections / Tabs ── */}
+          <div className="w-full overflow-x-auto no-scrollbar pt-6 pb-0.5 touch-pan-x">
+            <div className="flex items-center gap-1.5 sm:gap-2 min-w-max">
               {tabs.map(tab => {
                 const isActive = activeTab === tab.id && !browseCatalogueMode;
                 const Icon = tab.icon;
@@ -306,8 +306,6 @@ export default function Browse({ type, title }) {
                 );
               })}
             </div>
-
-
           </div>
         </div>
 

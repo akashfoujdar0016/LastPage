@@ -129,15 +129,15 @@ export default function ContentCard({ item, onLikeToggle, onFavoriteToggle }) {
           )}
 
           {/* Top Overlays: Media & Genre Pill */}
-          <div className="absolute top-2.5 inset-x-2.5 flex items-center justify-between z-10 pointer-events-none">
+          <div className="absolute top-2 inset-x-2 flex items-center justify-between z-10 pointer-events-none">
             <span
-              className="text-[9.5px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-md backdrop-blur-md border shadow-sm bg-black/75 text-white border-white/20"
+              className="text-[9px] sm:text-[9.5px] font-semibold tracking-wider uppercase px-1.5 sm:px-2 py-0.5 rounded-md backdrop-blur-md border shadow-sm bg-black/75 text-white border-white/20 shrink-0"
             >
               {isMovie ? 'Film' : 'Book'}
             </span>
 
             {primaryGenre && (
-              <span className="text-[9.5px] font-medium text-zinc-300 bg-black/60 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10 truncate max-w-[90px]">
+              <span className="text-[9px] sm:text-[9.5px] font-medium text-zinc-300 bg-black/60 backdrop-blur-md px-1.5 sm:px-2 py-0.5 rounded-md border border-white/10 truncate max-w-[65px] sm:max-w-[85px]">
                 {primaryGenre}
               </span>
             )}

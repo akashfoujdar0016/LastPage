@@ -130,23 +130,24 @@ export default function Nav() {
             : 'bg-[#000000]/80 backdrop-blur-md border-b border-[#212121]/50'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-2 sm:gap-4 w-full">
 
           {/* ── Left: Section Branding ── */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {isMovieSection ? (
               <Link
                 href="/movies"
-                className="flex items-center gap-2.5 text-white hover:text-[#E0E0E0] transition-colors group"
+                className="flex items-center gap-2 sm:gap-2.5 text-white hover:text-[#E0E0E0] transition-colors group"
               >
-                <div className="w-8 h-8 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-                  <Film size={15} />
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+                  <Film size={14} className="sm:hidden" />
+                  <Film size={15} className="hidden sm:block" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-serif text-base sm:text-lg font-normal tracking-tight text-white leading-tight">
+                  <span className="font-serif text-sm sm:text-lg font-normal tracking-tight text-white leading-tight">
                     LastPage
                   </span>
-                  <span className="text-[10px] tracking-[0.18em] uppercase text-[#888888] font-semibold leading-none">
+                  <span className="text-[9px] sm:text-[10px] tracking-[0.18em] uppercase text-[#888888] font-semibold leading-none">
                     Cinema
                   </span>
                 </div>
@@ -154,16 +155,17 @@ export default function Nav() {
             ) : isBookSection ? (
               <Link
                 href="/books"
-                className="flex items-center gap-2.5 text-white hover:text-[#E0E0E0] transition-colors group"
+                className="flex items-center gap-2 sm:gap-2.5 text-white hover:text-[#E0E0E0] transition-colors group"
               >
-                <div className="w-8 h-8 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center text-white group-hover:scale-105 transition-transform">
-                  <BookOpen size={15} />
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+                  <BookOpen size={14} className="sm:hidden" />
+                  <BookOpen size={15} className="hidden sm:block" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-serif text-base sm:text-lg font-normal tracking-tight text-white leading-tight">
+                  <span className="font-serif text-sm sm:text-lg font-normal tracking-tight text-white leading-tight">
                     LastPage
                   </span>
-                  <span className="text-[10px] tracking-[0.18em] uppercase text-[#888888] font-semibold leading-none">
+                  <span className="text-[9px] sm:text-[10px] tracking-[0.18em] uppercase text-[#888888] font-semibold leading-none">
                     Library
                   </span>
                 </div>
@@ -171,16 +173,16 @@ export default function Nav() {
             ) : (
               <Link
                 href="/hub"
-                className="flex items-center gap-2.5 text-white hover:text-[#E0E0E0] transition-colors group"
+                className="flex items-center gap-2 sm:gap-2.5 text-white hover:text-[#E0E0E0] transition-colors group"
               >
-                <div className="w-8 h-8 rounded-lg bg-white/[0.10] border border-white/[0.16] flex items-center justify-center text-white font-serif font-bold text-sm group-hover:scale-105 transition-transform">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/[0.10] border border-white/[0.16] flex items-center justify-center text-white font-serif font-bold text-xs sm:text-sm group-hover:scale-105 transition-transform">
                   CL
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-serif text-base sm:text-lg font-normal tracking-tight text-white leading-tight">
+                  <span className="font-serif text-sm sm:text-lg font-normal tracking-tight text-white leading-tight">
                     LastPage
                   </span>
-                  <span className="text-[10px] tracking-[0.18em] uppercase text-[#888888] font-semibold leading-none">
+                  <span className="text-[9px] sm:text-[10px] tracking-[0.18em] uppercase text-[#888888] font-semibold leading-none">
                     Journal
                   </span>
                 </div>
@@ -189,12 +191,12 @@ export default function Nav() {
           </div>
 
           {/* ── Center: Quick-Switch Toggle & Search Trigger ── */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Quick Switch Button (Movies <-> Books) */}
             {isMovieSection ? (
               <Link
                 href="/books"
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium text-[#888888] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.20] hover:text-white transition-all shadow-sm group"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-medium text-[#888888] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.20] hover:text-white transition-all shadow-sm group"
                 title="Switch to Library (Books)"
               >
                 <BookOpen size={13} className="text-white/50" />
@@ -204,7 +206,7 @@ export default function Nav() {
             ) : isBookSection ? (
               <Link
                 href="/movies"
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium text-[#888888] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.20] hover:text-white transition-all shadow-sm group"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-medium text-[#888888] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.20] hover:text-white transition-all shadow-sm group"
                 title="Switch to Cinema (Movies)"
               >
                 <Film size={13} className="text-white/50" />
@@ -212,17 +214,17 @@ export default function Nav() {
                 <span className="text-[#888888] group-hover:translate-x-0.5 transition-transform">→</span>
               </Link>
             ) : isProfile ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
                 <Link
                   href="/movies"
-                  className="px-3 py-1 rounded-full text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                  className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
                 >
                   Cinema
                 </Link>
                 <span className="text-zinc-600">•</span>
                 <Link
                   href="/books"
-                  className="px-3 py-1 rounded-full text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                  className="px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
                 >
                   Library
                 </Link>
@@ -248,11 +250,11 @@ export default function Nav() {
           </div>
 
           {/* ── Far Right: Profile Pinned Corner ── */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Mobile Search Icon */}
             <button
               onClick={() => setPaletteOpen(true)}
-              className="lg:hidden p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
+              className="lg:hidden p-1.5 sm:p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/5 transition-colors"
               aria-label="Search"
             >
               <Search size={16} />
@@ -261,13 +263,13 @@ export default function Nav() {
             {/* Pinned Profile Button */}
             <Link
               href="/profile"
-              className={`flex items-center gap-2.5 px-3 py-1.5 rounded-full border transition-all duration-200 shadow-sm ${
+              className={`flex items-center gap-2 px-2 sm:px-3 py-1.5 rounded-full border transition-all duration-200 shadow-sm ${
                 isProfile
                   ? 'bg-white/[0.08] border-white/[0.20] text-white'
                   : 'bg-white/[0.05] border-white/[0.08] hover:border-white/[0.20] text-[#888888] hover:text-white'
               }`}
             >
-              <div className="w-6 h-6 rounded-full bg-white/10 text-white border border-white/20 overflow-hidden flex items-center justify-center font-serif text-xs font-semibold shrink-0">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white/10 text-white border border-white/20 overflow-hidden flex items-center justify-center font-serif text-[10px] sm:text-xs font-semibold shrink-0">
                 {user?.avatarUrl ? (
                   <img src={user.avatarUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
